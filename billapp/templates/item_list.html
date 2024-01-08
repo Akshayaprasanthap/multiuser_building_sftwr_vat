@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: white;
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add{
+        background-color: #FFADB0;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: #FFADB0;
+        color: black;
+    }
+
+    #add_btn{
+        border: 2px solid #68020F;
+        color: black;
+    }
+
+    #add_btn:hover{
+        background-color: #68020F;
+        color: white;
+    }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+
+    @media screen and (max-width:575px) {
+        #searchdiv{
+            width: 10%;
+        }
+    }
+
+    #myTable tbody:hover td:not(:last-child){
+        border-right: 1px solid #044A42;
+    }
+    #myTable tbody:hover td{
+        cursor: pointer;
+        background-color: white;
+    }
+</style>
+
+{% if itm %}
+<div class="body-wrapper">
+    <br><br><br><br><br><br>
+    <div class="row ps-3 pe-3 m-0">
+        <div class="col-sm-12 col-lg-3  ps-2 pe-3 pb-2" style="height: 50rem;">
+            <div class="card bg-light bs"style="height:100%;">
+                <div class="row m-0">
+                    <div class="col-12 p-4 pt-3" style="z-index:2">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-between">
+                                <span id="search_item" class="fa fa-search tb ms-2 mt-1" style="border-radius: 50%;padding: 0.77rem; background-color: #FFADB0; color: black;"></span>
+                                <a id="add_item_btn" class="btn btn-sm rounded p-2 mt-1 btn_add" href="{% url 'load_item_create' %}"><span class="fa fa-plus"></span> Add Item</a>
+                            </div>
+                        
+                            <input id="search_item_input" class="form-control border-dark text-dark mt-2" type="text" placeholder="search here.." name="searching_item"
+                            hx-post=""
+                            hx-trigger="keyup"
+                            hx-target="#item_search_filter_target" style="display: none;">
+                        </form>
+                    </div>
+                    <div class="ps-3 pe-3">
+                        <hr class="p-0 m-0">
+                    </div>
+                    <div class="col-12 p-3 pt-0">
+                        <div id="item_search_filter_target">
+                            <form action="" method="post">
+                                {% csrf_token %}
+
+                                <div style="overflow: auto;height: 42rem;">
+                                <table class="table w-100 table-hover">
+                                    <thead style="background: #68020F;">
+                                        <th class="text-start fs-2 tb text-light">ITEM</th>
+                                        <th class="text-end fs-2 tb text-light">QUANTITY</th>
+                                    </thead>
+                                    <tbody >
+                                        {% for i in itm %}
+                                        <tr class="item_lists_hide" style="background-color: #FFD6D7;">
+                                            <td style="cursor:pointer" class="text-start fs-2 fw-bold text-dark"
+                                            hx-post=""
+                                            hx-trigger="click delay:0s"
+                                            hx-target="#item_get_detail_target"
+                                            >{{ i.itm_name|capfirst }}</td>
+                                            <td class="text-end fs-2 fw-bolder" style="color: green;">
+                                                {{ i.itm_stock_in_hand }}
+                                                <div class="btn-group mb-1">
+                                                    <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="fa fa-ellipsis-v text-dark fs-1 ps-2"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item fw-bold tb" href=""><span class="fa fa-eye pe-2 tg"></span> View / Edit</a></li>
+                                                    <li><a class="dropdown-item fw-bold tb" type="button" onclick="confirm_delete()"><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-9  ps-2 pe-3" style="height: 80%;">
+        <div id="item_get_detail_target">
+            <div class="row m-0" style="height:20%">
+                <div class="p-3 mb-3">
+                    <div class="p-4" style="background-color: #FFADB0; border-radius: 1vh;">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="tb text-capitalize" style="color: black;">{{ fitm.itm_name }}</h4>
+                            <button class="btn btn-sm fs-2"data-bs-toggle="modal" data-bs-target="#myModal1" data-bs-whatever="@getbootstrap"
+                                        hx-get=""
+                                        hx-trigger="click delay:0s"
+                                        hx-target="#item_get_details_for_modal_target" style="background-color: #68020F; color: white;">
+                                        <span class="fa fa-sliders-h pe-1" ></span> ADJUST  STOCK
+                                    </button>
+                        </div>
+                        <p></p>
+                        <div class="d-flex justify-content-between" style="color: black;">
+                            <p class="tb fw-bolder fs-2">SALE PRICE  <span class="ps-2 tg" style="color: black;"> - &nbsp;&nbsp;  ₹{{ fitm.itm_sale_price }}</span></p>
+                            <p class="tb fw-bolder fs-2">STOCK QUANTITY  <span class="ps-2 tg" style="color: black;"> - &nbsp;&nbsp; {{ fitm.itm_stock_in_hand }}</span></p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="tb fw-bolder fs-2">PURCHASE PRICE  <span class="ps-2 tg" style="color: black;"> - &nbsp;&nbsp; ₹{{ fitm.itm_purchase_price }}</span></p>
+                            <p class="tb fw-bolder fs-2">STOCK VALUE  <span class="ps-2 tg" style="color: black;"> - &nbsp;&nbsp; ₹{{ fitm.itm_at_price }}</span></p>
+                        </div>
+                    </div>
+                    <hr style="height: .5%;">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-12">
+                            <h4> ITEM &nbsp;&nbsp; TRANSACTIONS</h4>
+                            <div class="d-flex justify-content-between">
+                                <div id="searchdiv">
+                                    <div class="position-relative">
+                                        <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                            <span class="fa fa-search fs-5 text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <input id="search_input1" style="padding-inline-start: 2rem; width:200%; border: 1px solid #062925;" class="text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                                </div>
+                                <div>
+                                    <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()" style="color: #FF474D;">
+                                        <i class="fas fa-file-excel" style="font-size:175%;"></i><br>EXCEL
+                                    </button>
+                                    <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()" style="color: #FF474D;">
+                                        <i class="fas fa-file-pdf" style="font-size:175%;"></i><br>PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-6 pt-1">
+                            
+                        </div>
+                            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                                <table id="myTable" class="table table-bordered  tb table-responsive w-100">
+                                    <thead style="background: #68020F; color: white;">
+                                        <th>#</th>
+                                        <th class="text-center fs-2">TYPE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">INVOICE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">NAME <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">DATE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">QUANTITY <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">PRICE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center fs-2">STATUS <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                        <th class="text-center p-0 m-0"></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for f in ftrans %}
+                                        <tr style="background-color: #FFD6D7;">
+                                            <td class="text-center">{{forloop.counter}}</td>
+                                            <td class="text-center">{{ f.trans_type }}</td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center">{{  f.trans_date|date:"d-m-Y" }}</td>
+                                            <td class="text-center">{{ f.trans_current_qty }}</td>
+                                            <td class="text-center">{{ f.trans_price }}</td>
+                                            <td class="p-0 pt-1 m-0">
+                                                <div class="btn-group mb-1">
+                                                    <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                    <li><button type="button" data-bs-toggle="modal" data-bs-target="#myModal2" class="dropdown-item fw-bold tb hide_table_text_v" 
+                                                        hx-get=""
+                                                        hx-trigger="click delay:0s"
+                                                        hx-target="#item_transaction_view_or_edit_target"
+                                                        ><span class="fa fa-eye pe-2 tg"></span> View / Edit</button></li>
+                                                    <li><button type="button" onclick="delete_transaction()" class="dropdown-item fw-bold tb hide_table_text_d" href=""><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</button></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="body-wrapper" >
+    <br><br><br>
+    <div class="p-5 text-center" style="display: flex;justify-content: center;">
+        <div class="card " style="background-color: #FFD6D7;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="rounded pt-3" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                        <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">MULTIUSER BILLING SOFTWARE</h1>
+                        <p class="card-text">Welcome to Multiuser Billing Software, We're committed to providing a seamless and secure online marketplace for buyers and sellers. Our platform offers a range of features.</p>
+                        <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">You can manage all you items here.</p>
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-sm-12 col-md-6 pb-3">
+                    <img  src="{% static 'img/item-empty.jpg' %}" class="card-img" alt="no img">
+                    <a class="btn btn-lg" href="{% url 'load_item_create' %}" id="add_btn">Add Your First Item</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %} 
+
+<script>
+    function exportToExcel() {
+        $('.hide_table_text_v').text('')
+        $('.hide_table_text_d').text('')
+        const table = document.getElementById('myTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "table_data.xlsx");
+        $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
+        $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
+    }
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $('#search_item_input').toggle()
+        })
+    })
+</script>
+
+{% endblock content %}
