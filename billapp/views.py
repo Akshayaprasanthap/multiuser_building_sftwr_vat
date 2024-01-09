@@ -8,6 +8,7 @@ import random
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
+from .models import Company
 
 def home(request):
   return render(request, 'home.html')
@@ -366,29 +367,28 @@ def item_create(request):
 
 
 
+def party_list(request):
+  if request.user.is_company:
+    party = Party.objects.filter(company = request.user.company)
+  else:
+    party = Party.objects.filter(company = request.user.employee.company)
+  
+  if party:
+    fparty = party[0]
+    ftrans = Transactions_party.objects.filter(party = fparty)
+    context = {'party':party, 'usr':request.user, 'fparty':fparty, 'ftrans':ftrans}
+  else:
+        context = {'party':party, 'usr':request.user}
+  return render(request,'parties_list.html',context)
 
 
-def add_parties(request):
-  return render(request,'add_parties.html')
-
-
-
-
+def load_party_create(request):
+  tod = timezone.now().date().strftime("%Y-%m-%d")
+  return render(request,'add_parties.html',{'tod':tod, 'usr':request.user})
 
 
 def addNewParty(request):
-  if 'staff_id' in request.session:
-    if request.session.has_key('staff_id'):
-      staff_id = request.session['staff_id']
-            
-    else:
-      return redirect('/')
-    staff =  Company.objects.get(id=staff_id)
-
     if request.method == 'POST':
-      Company = Company.objects.get(id = staff.company.id)
-      user_id = request.user.id
-      
       party_name = request.POST['partyname']
       gst_no = request.POST['gstno']
       contact = request.POST['contact']
@@ -404,73 +404,28 @@ def addNewParty(request):
       additionalfield1 = request.POST['additionalfield1']
       additionalfield2 = request.POST['additionalfield2']
       additionalfield3 = request.POST['additionalfield3']
-      comp=Company
-      if (not party_name):
-        return render(request, 'add_parties.html')
 
       part = Party(party_name=party_name, gst_no=gst_no,contact=contact,gst_type=gst_type, state=state,address=address, email=email, openingbalance=openingbalance,payment=payment,
-                      current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3,company=comp)
+                      current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3)
       part.save()
 
-      return JsonResponse({'status':True})
+      # return JsonResponse({'status':True})
+      trans = Transactions_party(user = request.user,trans_type ='Opening Balance',trans_number=gst_no,trans_date =current_date,total=openingbalance, balance=openingbalance)
+
+    if request.user.is_company:
+      part.company = request.user.company
+      trans.company = request.user.company
+
+    else:
+      part.company = request.user.employee.company
+      trans.company = request.user.employee.company
+ 
+    part.save()
+    trans.save()
+
+    if request.POST.get('save_and_next'):
+      return redirect('load_party_create')
+    elif request.POST.get('save'):
+      return redirect('party_list')
     
 
-
-
-
-def view_parties(request):
-  staff_id = request.session['staff_id']
-  staff =  staff_details.objects.get(id=staff_id)
-  
- 
-  Party=party.objects.filter(company=staff.company.id)
-  allmodules= modules_list.objects.get(company=staff.company,status='New')
-  return render(request, 'company/view_parties.html',{'staff':staff,'allmodules':allmodules,'Party':Party})
-
-def save_parties(request):
-    if request.method == 'POST':
-        staff_id = request.session['staff_id']
-        staff =  staff_details.objects.get(id=staff_id)
-        
-        party_name = request.POST['partyname']
-        gst_no = request.POST['gstno']
-        contact = request.POST['contact']
-        gst_type = request.POST['gst']
-        state = request.POST['state']
-        address = request.POST['address']
-        email = request.POST['email']
-        openingbalance = request.POST.get('balance', '')
-        payment = request.POST.get('paymentType', '')
-        creditlimit = request.POST.get('creditlimit', '')
-        current_date = request.POST['currentdate']
-        End_date = request.POST.get('enddate', None)
-        additionalfield1 = request.POST['additionalfield1']
-        additionalfield2 = request.POST['additionalfield2']
-        additionalfield3 = request.POST['additionalfield3']
-       
-        if (
-          not party_name
-          
-      ):
-          return render(request, 'add_parties.html')
-
-        part = party(party_name=party_name, gst_no=gst_no,contact=contact,gst_type=gst_type, state=state,address=address, email=email, openingbalance=openingbalance,payment=payment,
-                       creditlimit=creditlimit,current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3,user=staff.company.user,company=staff.company)
-        part.save() 
-
-        if 'save_and_new' in request.POST:
-            
-            return render(request, 'company/add_parties.html')
-        else:
-          
-            return redirect('view_parties')
-
-    return render(request, 'company/add_parties.html')  
-
-def view_party(request,id):
-  staff_id = request.session['staff_id']
-  staff =  staff_details.objects.get(id=staff_id)
-  getparty=Party.objects.get(id=id)
-  Party=Party.objects.filter(company=staff.company.id)
-  allmodules= modules_list.objects.get(company=staff.company,status='New')
-  return render(request, 'company/view_party.html',{'staff':staff,'allmodules':allmodules,'Party':Party,'getparty':getparty})

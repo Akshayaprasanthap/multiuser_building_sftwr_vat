@@ -84,3 +84,14 @@ class Party(models.Model):
     additionalfield1 = models.CharField(max_length=100,null=True,blank=True)
     additionalfield2 = models.CharField(max_length=100,null=True,blank=True)
     additionalfield3 = models.CharField(max_length=100,null=True,blank=True)
+
+
+class Transactions_party(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)
+    company = models.ForeignKey(Company,on_delete= models.CASCADE,null=True,blank=True)
+    party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True)
+    trans_type = models.CharField(max_length=255)
+    trans_number = models.CharField(max_length=255)
+    trans_date = models.DateTimeField()
+    total=models.CharField(max_length=255)
+    balance=models.CharField(max_length=255)

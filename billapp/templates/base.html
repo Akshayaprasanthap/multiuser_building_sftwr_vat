@@ -103,10 +103,10 @@
               {% endif %}
 
               <li class="sidebar-item" style="display: flex; justify-content: space-between;">
-                <a class="sidebar-link mt-2" href="" aria-expanded="false" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;">
+                <a class="sidebar-link mt-2" href="{% url 'party_list' %}" aria-expanded="false" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;">
                   <span class="hide-menu text-light"><i class="material-icons text-light">peoples</i><b>Parties</b></span> </a>
 
-                  <a href="{% url 'add_parties' %}" class="sidebar-link  mt-2 plus-icon"
+                  <a href="{% url 'load_party_create' %}" class="sidebar-link  mt-2 plus-icon"
                 style="background-color: rgb(210, 235, 241, 0.5); border-radius: 0px 10px 10px 0px; text-decoration: none; color: rgb(0, 0, 0);">
                 <span>
                   <b style="margin-right: 10px;"><i class="fa fa-plus"></i></b>
