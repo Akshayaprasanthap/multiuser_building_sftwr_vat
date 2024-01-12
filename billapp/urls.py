@@ -40,6 +40,8 @@ urlpatterns = [
     path('party_list/',views.party_list,name='party_list'),  
     path('load_party_create/',views.load_party_create,name='load_party_create'),
     path('addNewParty',views.addNewParty,name='addNewParty'),
+    path('deleteparty/<int:party_id>',views.deleteparty,name='deleteparty'),
+
 
 
 

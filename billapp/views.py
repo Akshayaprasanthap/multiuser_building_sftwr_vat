@@ -388,6 +388,8 @@ def load_party_create(request):
 
 
 def addNewParty(request):
+    cmp =  Company.objects.get(user = request.user)
+    
     if request.method == 'POST':
       party_name = request.POST['partyname']
       gst_no = request.POST['gstno']
@@ -398,7 +400,6 @@ def addNewParty(request):
       email = request.POST['email']
       openingbalance = request.POST.get('balance', '')
       payment = request.POST.get('paymentType', '')
-      # creditlimit = request.POST.get('creditlimit', '')
       current_date = request.POST['currentdate']
       End_date = request.POST.get('enddate', None)
       additionalfield1 = request.POST['additionalfield1']
@@ -428,4 +429,24 @@ def addNewParty(request):
     elif request.POST.get('save'):
       return redirect('party_list')
     
+
+# def deleteparty(request,party_id):
+#     Party=Party.objects.get(id=party_id)
+#     Party.delete()
+#     return redirect('parties_list')
+    
+
+
+from django.http import JsonResponse
+
+def deleteparty(request, party_id):
+    if request.method == 'POST':
+        # Your delete logic here
+        # Assuming you have a Party model, adjust this based on your actual model
+        party = Party.objects.get(id=party_id)
+        party.delete()
+        return JsonResponse({'status': 'success'})
+    else:
+        # Handle GET requests if needed
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
