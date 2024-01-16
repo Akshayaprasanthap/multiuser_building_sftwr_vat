@@ -70,9 +70,9 @@ class Party(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
     party_name = models.CharField(max_length=100)
-    gst_no = models.CharField(max_length=100,null=True,blank=True)
+    trn_no = models.CharField(max_length=100,null=True,blank=True)
     contact = models.CharField(max_length=255,null=True,blank=True)
-    gst_type = models.CharField(max_length=255,null=True,blank=True)
+    trn_type = models.CharField(max_length=255,null=True,blank=True)
     state = models.CharField(max_length=100,null=True,blank=True)
     address = models.CharField(max_length=100,null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)
@@ -95,3 +95,53 @@ class Transactions_party(models.Model):
     trans_date = models.DateTimeField()
     total=models.CharField(max_length=255)
     balance=models.CharField(max_length=255)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class SalesInvoice(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)
+    company = models.ForeignKey(Company,on_delete= models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
+    party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True)
+    party_name = models.CharField(max_length=100,null=True,blank=True)
+    contact = models.CharField(max_length=255,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
+    invoice_no = models.IntegerField(default=0,null=True,blank=True)
+    date = models.DateField()
+    description = models.TextField(max_length=255,null=True,blank=True)
+    subtotal = models.IntegerField(default=0, null=True)
+    vat = models.CharField(max_length=100,default=0, null=True)
+    adjustment = models.CharField(max_length=100,default=0)
+    grandtotal = models.FloatField(default=0, null=True)
+    
+
+
+
+
+
+
+class SalesInvoiceItem(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
+    salesinvoice = models.ForeignKey(SalesInvoice, on_delete=models.CASCADE,null=True,blank=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,null=True,blank=True)
+    hsn = models.IntegerField(default=0,null=True,blank=True)
+    quantity = models.IntegerField(default=0,null=True,blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00,null=True,blank=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00,null=True,blank=True)
+    tax =  models.CharField(max_length=255,null=True,blank=True)
+    totalamount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00,null=True,blank=True)

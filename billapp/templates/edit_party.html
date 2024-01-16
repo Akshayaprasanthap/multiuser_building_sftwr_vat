@@ -96,26 +96,26 @@
 </style>
 
 <body style="background-color: #FFD6D7;">
-    <form method="POST" action="{% url 'addNewParty' %}" class="p-5" enctype="multipart/form-data" novalidate
+    <form method="POST" action="{% url 'edit_saveparty' getparty.id  %}" class="p-5" enctype="multipart/form-data" novalidate
     id="forms" >
     {% csrf_token %}
     <div class="body-wrapper">
         <div class="container-fluid">
             <div class="col-md-3">
-                <a class="text-dark" style="font-size: 1.5rem;">Add Party</a>
+                <a class="text-dark" style="font-size: 1.5rem;">Edit Party</a>
             </div>
             <div class="col-md-9 row" style="margin-top: 3vw;">
                 <div class="col-md-4">
-                    <input type="text" style="background-color: white;" class="form-control" id="partyname" name="partyname" placeholder="Party Name" required>
+                    <input type="text" style="background-color: white;" class="form-control" id="partyname" name="partyname" placeholder="Party Name" value="{{getparty.party_name}}">
                 </div>                
                 <div class="col-md-4" style="position: relative;">
-                    <input type="text" style="background-color: white;" class="form-control" id="trn_no" name="trn_no" placeholder="TRN NO" oninput="validateGSTIN(this)">
+                    <input type="text" style="background-color: white;" class="form-control" id="trn_no" name="trn_no" placeholder="TRN NO" value="{{getparty.trn_no}}" oninput="validateGSTIN(this)">
                     <span id="gstno-validation" style="position: absolute; right: 14px; top: 8px;"></span>
                     <label style="color: rgb(101, 3, 3);">* 32AAQFR1222B1ZS</label>
                 </div>
                 
                 <div class="col-md-4" style="position: relative;">
-                    <input required type="number" style="background-color: white;" class="form-control" id="contact" pattern="[0-9]{10}" name="contact" placeholder="Phone Number" oninput="validatePhoneNumber(this)">
+                    <input  type="number" style="background-color: white;" class="form-control" id="contact" pattern="[0-9]{10}" name="contact" placeholder="Phone Number" value="{{getparty.contact}}" oninput="validatePhoneNumber(this)">
                     <span id="contact-validation" style="position: absolute; right: 15px; top: 8px;"></span>
                 </div>  
                 
@@ -131,38 +131,38 @@
             </div>
             <fieldset id="GST" class="GST">
                 <div style="background-color: white;" class="col-sm-5"><select class="form-control mt-4 " id="trn_type" name="trn_type">
-                        <option disabled selected>Select TRN Type</option>
+                        <option value="{{getparty.trn_type}}">{{getparty.trn_type}}</option>
                         <option >Unregistered/Consumers</option>
                         <option>Registered Business - Regular</option>
                         <option>Registered Business - Composition</option>
                     </select>
                 </div>
                 <div class="col-sm-5 ">
-                    <textarea style="background-color: white;" class="form-control mt-4" name="address" id="" cols="56" rows="3"
-                        placeholder="&nbsp;Address"></textarea>
+                    <textarea style="background-color: white;" class="form-control mt-4" name="address" id="" cols="56" rows="3">{{getparty.address}}</textarea>
                 </div>
         
                 <div class="col-sm-5 ">
-                    <input style="background-color: white;" type="text" class="form-control mt-4" id="state" name="state" placeholder="State">
+                    <input style="background-color: white;" type="text" class="form-control mt-4" value="{{getparty.state}}"  id="state" name="state" placeholder="State">
                 </div> 
                 
 
         
         <div class="col-sm-5 ">
-            <input style="background-color: white;" type="email" class="form-control mt-4" id="email" name="email" placeholder="Email">
+            <input style="background-color: white;" type="email" class="form-control mt-4" value="{{getparty.email}}" id="email" name="email" placeholder="Email">
         </div>
         </fieldset>
 
         <fieldset id="Credit" class="Credit" style="display:none;">
             <div class="col-sm-5">
-                <input style="background-color: white;" type="number" class="form-control mt-4" id="balance" name="balance" placeholder="Opening Balance">
+                <input style="background-color: white;" type="number" class="form-control mt-4" id="balance" name="balance" placeholder="Opening Balance"  value="{{getparty.openingbalance}}">
             </div>
         
             <div  class="col-sm-7 mt-4">
                 <label class="radio-label">To Pay</label>
-                <input type="radio" class="radio-input" id="toPayRadio" name="paymentType" value="To Pay" style="margin-right: 2vw; margin-left: 5px;">
+                <input type="radio" class="radio-input" id="toPayRadio" name="paymentType" value="To Pay" {% if getparty.payment == 'To Pay' %}checked{% endif %}   style="margin-right: 2vw; margin-left: 5px;">
                 <label class="radio-label">To Receive</label>
-                <input type="radio" class="radio-input" id="toReceiveRadio" name="paymentType" value="To Receive" style="margin-right: 2vw; margin-left: 5px;">
+                <input type="radio" class="radio-input" id="toReceiveRadio" name="paymentType" value="To Receive" {% if getparty.payment == 'To Receive' %}checked{% endif %}
+                style="margin-right: 2vw; margin-left: 5px;">
             </div>
         
             <!-- <label class="switchbox mt-4" style="margin-right: 1vw;">Credit Limit</label>
@@ -188,7 +188,7 @@
             </script> -->
         
             <div class="col-md-5 mt-4">
-                <input  type="date" class="form-control" id="current-date" name="currentdate" placeholder="Current Date" style="background-color: white;" >
+                <input  type="date" class="form-control" id="current-date" name="currentdate" placeholder="Current Date"  value="{{getparty.current_date|date:'Y-m-d'}}" style="background-color: white;" >
             </div>
         
 
@@ -196,22 +196,22 @@
         
         <fieldset id="additionalfield" class="additionalfield" style="display:none;">
             <div class="col-md-5 mt-4">
-                <input type="text" class="form-control" name="additionalfield1" id="additionalfield1" placeholder="Additional Field" style="background-color: white;">
+                <input type="text" class="form-control" name="additionalfield1" id="additionalfield1" placeholder="Additional Field" value="{{getparty.additionalfield1}}" style="background-color: white;">
             </div>
     
             <div class="col-md-5 mt-4">
-                <input type="text" class="form-control" name="additionalfield2" id="additionalfield2" placeholder="Additional Field" style="background-color: white;">
+                <input type="text" class="form-control" name="additionalfield2" id="additionalfield2" placeholder="Additional Field" value="{{getparty.additionalfield2}}" style="background-color: white;">
             </div>
     
             <div class="col-md-5 mt-4">
-                <input type="text" class="form-control" name="additionalfield3" id="additionalfield3" placeholder="Additional Field" style="background-color: white;">
+                <input type="text" class="form-control" name="additionalfield3" id="additionalfield3" placeholder="Additional Field" value="{{getparty.additionalfield3}}" style="background-color: white;">
             </div>
         </fieldset>
 
        
         <div class="col-md-5 mt-4">
-            <input type="submit" class="btn btn-primary save-button" name="save_and_new" value="Save&New">
-            <input type="submit" class="btn btn-primary save-button" name="save" value="Save">
+            {% comment %} <input type="submit" class="btn btn-primary save-button" value="Save & New"> {% endcomment %}
+            <input type="submit" class="btn btn-primary save-button" value="Save">
         </div>
 
     </div>
@@ -239,19 +239,19 @@
 
 
     // Function to format the date as "YYYY-MM-DD"
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
+    // function formatDate(date) {
+    //     const year = date.getFullYear();
+    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    //     const day = date.getDate().toString().padStart(2, '0');
+    //     return `${year}-${month}-${day}`;
+    // }
 
-    // Get the current date
-    const currentDateInput = document.getElementById("current-date");
-    const currentDate = new Date();
+    // // Get the current date
+    // const currentDateInput = document.getElementById("current-date");
+    // const currentDate = new Date();
 
-    // Format the date as "YYYY-MM-DD" and set it in the input field
-    currentDateInput.value = formatDate(currentDate);
+    // // Format the date as "YYYY-MM-DD" and set it in the input field
+    // currentDateInput.value = formatDate(currentDate);
 
 
 function validatePhoneNumber(inputElement) {
