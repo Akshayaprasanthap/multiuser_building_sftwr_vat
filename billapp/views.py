@@ -447,7 +447,7 @@ def view_party(request,id):
   fparty = Party.objects.get(id=id)
   ftrans = Transactions_party.objects.filter(party = fparty)
   context = {'party':party, 'usr':request.user, 'fparty':fparty, 'ftrans':ftrans}
-  return render(request,'view_party.html',context)
+  return render(request,'parties_list.html',context)
 
 
 
@@ -488,8 +488,8 @@ def edit_saveparty(request,id):
 
         getparty.save()
 
-        return redirect('view_party', id=id)
-    print(getparty.id)
+        return redirect('view_party')
+    
 
     return render(request,'edit_party.html', {'getparty': getparty, 'party': party, 'Company': Company,'usr':request.user})
 
