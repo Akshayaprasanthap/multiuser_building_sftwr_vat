@@ -4,6 +4,26 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6"
+    integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<!-- Include html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<script src="https://unpkg.com/htmx.org@1.9.6"
+    integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+    crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
     .bs {
         box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
@@ -121,12 +141,12 @@
                                                     
                                                     <div class="dropdown-menu" style="display: none; position: absolute; right: 0;">
                                                     
-                                                        <a class="dropdown-item" href="{% url 'edit_party' id=p.id %}">Edit</a>
+                                                        <a class="dropdown-item" href="">Edit</a>
                                                       
                                                         
-                                                        <a class="dropdown-item" href="#"
-                                                            onclick="confirmDelete({{ party.id }})">Delete Party</a>
-                                                          
+                                                        <a class="dropdown-item" href="{% url 'deleteparty' p.id %}" >Delete Party</a>
+                                                        <a class="dropdown-item" href="{% url 'history_purchasebill' p.id %}" >History</a>
+                                                        
                                                     </div>
                                                 </td>
                                             </tr>
@@ -170,40 +190,9 @@
                                         &nbsp;&nbsp; {{ fparty.trn_no }}</span></p>
                             </div>
                         </div>
-                        <!-- <hr style="height: .5%;">
-                        <div class="row m-0 p-0 pt-3">
-                            <div class="col-sm-12 col-lg-12">
-                                <h4>TRANSACTIONS</h4>
-                                <div class="d-flex justify-content-between">
-                                    <div id="searchdiv">
-                                        <div class="position-relative">
-                                            <div class="position-absolute"
-                                                style="margin-top:0.4rem;margin-left: 0.5rem;">
-                                                <span class="fa fa-search fs-5 text-danger"></span>
-                                            </div>
-                                        </div>
-                                        <input id="search_input1"
-                                            style="padding-inline-start: 2rem; width:200%; border: 1px solid #062925;"
-                                            class="text-dark pt-1 pb-1 pe-1 rounded" type="text"
-                                            placeholder=" search here..">
-                                    </div>
-                                    <div>
-                                        <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()"
-                                            style="color: #FF474D;">
-                                            <i class="fas fa-file-excel" style="font-size:175%;"></i><br>EXCEL
-                                        </button>
-                                        <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()"
-                                            style="color: #FF474D;">
-                                            <i class="fas fa-file-pdf" style="font-size:175%;"></i><br>PDF
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-lg-6 pt-1">
-
-                            </div> -->
+                        
                         <hr style="height: .5%;">
-                        <div class="row m-0 p-0 pt-3">
+                        <div class="row m-0 p-0 pt-3" >
                             <div class="col-sm-12 col-lg-12">
                                 <h4>TRANSACTIONS</h4>
                                 <div class="d-flex justify-content-between">
@@ -225,14 +214,14 @@
                                             style="color: #FF474D;">
                                             <i class="fas fa-file-excel" style="font-size:175%;"></i><br>EXCEL
                                         </button>
-                                        <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()"
+                                        <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToPDF()"
                                             style="color: #FF474D;">
                                             <i class="fas fa-file-pdf" style="font-size:175%;"></i><br>PDF
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                            <div class="mt-3" style="overflow: scroll;height: 31rem;" id="print_export_section">
                                 <table id="myTable"
                                     class="table table-bordered  tb table-responsive w-100 table-stripped table-hover text-dark ">
                                     <thead style="background: #68020F; color: white;">
@@ -282,7 +271,7 @@
                                                                 hx-get="" hx-trigger="click delay:0s"
                                                                 hx-target="#item_transaction_view_or_edit_target"><span
                                                                     class="fa fa-eye pe-2 tg"></span> <a
-                                                                    href="{% url 'edit_party' p.id %}"> View /
+                                                                    href=""> View /
                                                                     Edit</a></button></li>
                                                         <li><button type="button" onclick="delete_transaction()"
                                                                 class="dropdown-item fw-bold tb hide_table_text_d"
@@ -340,15 +329,38 @@
     {% endif %}
 
     <script>
-        function exportToExcel() {
-            $('.hide_table_text_v').text('')
-            $('.hide_table_text_d').text('')
-            const table = document.getElementById('myTable');
-            const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-            XLSX.writeFile(wb, "table_data.xlsx");
-            $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
-            $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
-        }
+
+function exportToExcel() {
+                const table = document.getElementById('print_export_section');
+                const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+                XLSX.writeFile(wb, "Party_transaction.xlsx");
+            }
+
+
+    
+            function exportToPDF() {
+                var content = document.getElementById('print_export_section');
+
+                var opt = {
+                    margin: 0.1,
+                    filename: 'transaction.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(content).save();
+            }
+
+        // function exportToExcel() {
+        //     $('.hide_table_text_v').text('')
+        //     $('.hide_table_text_d').text('')
+        //     const table = document.getElementById('myTable');
+        //     const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        //     XLSX.writeFile(wb, "table_data.xlsx");
+        //     $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
+        //     $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
+        // }
         $(document).ready(function () {
             $("#search_input1").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -389,30 +401,5 @@
 
 
 
-    <script>
-        // Function to display a confirmation prompt
-        function confirmDelete(partyId) {
-            var confirmation = confirm("Are you sure you want to delete this party?");
-            if (confirmation) {
-                // If confirmed, send an AJAX request for deletion
-                $.ajax({
-                    type: 'POST',
-                    url: '/deleteparty/' + partyId + '/',
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}',  // Add CSRF token for security
-                    },
-                    success: function (response) {
-                        // Handle the success response, e.g., show a message or reload the page
-                        console.log(response);
-                        // Reload the page for simplicity; you might want to update the UI dynamically
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle the error, e.g., show an error message
-                        console.error(error);
-                    }
-                });
-            }
-        }
-    </script>
+ 
     {% endblock content %}

@@ -98,7 +98,17 @@ class Transactions_party(models.Model):
 
 
 
-
+class PartyTransactionHistory(models.Model):
+    Transactions_party = models.ForeignKey(Transactions_party,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)
+    company = models.ForeignKey(Company,on_delete= models.CASCADE,null=True,blank=True)
+    party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True)
+    CHOICES = [
+        ('Created', 'Created'),
+        ('Updated', 'Updated'),
+    ]
+    action = models.CharField(max_length=20, choices=CHOICES)
+    transactiondate = models.DateField(auto_now=True)
 
 
 

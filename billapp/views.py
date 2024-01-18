@@ -451,74 +451,73 @@ def view_party(request,id):
 
 
 
-def edit_party(request,id):
-  if request.user.is_company:
-    party = Party.objects.filter(company = request.user.company)
-  else:
-    party = Party.objects.filter(company = request.user.employee.company)
+# def edit_party(request,id):
+#   if request.user.is_company:
+#     party = Party.objects.filter(company = request.user.company)
+#   else:
+#     party = Party.objects.filter(company = request.user.employee.company)
 
-  getparty=Party.objects.get(id=id)
-  parties=Party.objects.filter(user=request.user)
-  return render(request, 'edit_party.html',{'usr':request.user,'party':party,'getparty':getparty,'parties':parties})
+#   getparty=Party.objects.get(id=id)
+#   parties=Party.objects.filter(user=request.user)
+#   return render(request, 'edit_party.html',{'usr':request.user,'party':party,'getparty':getparty,'parties':parties})
 
 
 
-def edit_saveparty(request,id):
+# def edit_saveparty(request,id):
+#     if request.user.is_company:
+#       party = Party.objects.filter(company = request.user.company)
+#     else:
+#       party = Party.objects.filter(company = request.user.employee.company)
+#     getparty = Party.objects.get(id=id)
+#     # Company = company.objects.get(user=request.user)
+
+#     if request.method == 'POST':
+#         getparty.party_name = request.POST.get('partyname')
+#         getparty.trn_no = request.POST.get('trn_no')
+#         getparty.contact = request.POST['contact']
+#         getparty.trn_type = request.POST['trn_type']
+#         getparty.state = request.POST['state']
+#         getparty.address = request.POST['address']
+#         getparty.email = request.POST['email']
+#         getparty.openingbalance = request.POST['balance']
+#         getparty.payment = request.POST.get('paymentType')
+#         getparty.current_date = request.POST['currentdate']
+#         getparty.additionalfield1 = request.POST['additionalfield1']
+#         getparty.additionalfield2 = request.POST['additionalfield2']
+#         getparty.additionalfield3 = request.POST['additionalfield3']
+
+#         getparty.save()
+
+#         return redirect('view_party')
+    
+
+#     return render(request,'edit_party.html', {'getparty': getparty, 'party': party, 'Company': Company,'usr':request.user})
+
+
+
+
+def deleteparty(request,id):
     if request.user.is_company:
       party = Party.objects.filter(company = request.user.company)
     else:
       party = Party.objects.filter(company = request.user.employee.company)
-    getparty = Party.objects.get(id=id)
-    # Company = company.objects.get(user=request.user)
 
-    if request.method == 'POST':
-        getparty.party_name = request.POST.get('partyname')
-        getparty.trn_no = request.POST.get('trn_no')
-        getparty.contact = request.POST['contact']
-        getparty.trn_type = request.POST['trn_type']
-        getparty.state = request.POST['state']
-        getparty.address = request.POST['address']
-        getparty.email = request.POST['email']
-        getparty.openingbalance = request.POST['balance']
-        getparty.payment = request.POST.get('paymentType')
-        getparty.current_date = request.POST['currentdate']
-        getparty.additionalfield1 = request.POST['additionalfield1']
-        getparty.additionalfield2 = request.POST['additionalfield2']
-        getparty.additionalfield3 = request.POST['additionalfield3']
-
-        getparty.save()
-
-        return redirect('view_party')
-    
-
-    return render(request,'edit_party.html', {'getparty': getparty, 'party': party, 'Company': Company,'usr':request.user})
-
-
-
-
-
-
-
-
-
-
-# def deleteparty(request,party_id):
-#     Party=Party.objects.get(id=party_id)
-#     Party.delete()
-#     return redirect('parties_list')
+    party=Party.objects.get(id=id)
+    party.delete()
+    return redirect('party_list')
     
 
 
-from django.http import JsonResponse
 
-def deleteparty(request, party_id):
-    if request.method == 'POST':
-        # Your delete logic here
-        # Assuming you have a Party model, adjust this based on your actual model
-        party = Party.objects.get(id=party_id)
-        party.delete()
-        return JsonResponse({'status': 'success'})
-    else:
-        # Handle GET requests if needed
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+def history_purchasebill(request,id):
+  if request.user.is_company:
+      party = Party.objects.filter(company = request.user.company) 
+  else:
+      party = Party.objects.filter(company = request.user.employee.company)
+  fparty = Party.objects.get(id=id)
+  ftrans = Transactions_party.objects.filter(party = fparty)
+  hst= PartyTransactionHistory.objects.filter(party__in=party, Transactions_party__in=ftrans)
+
+  context = {'party':party,'hst':hst,'ftrans':ftrans,'usr':request.user, 'fparty':fparty}
+  return render(request,'purchasebillhistory.html',context)
 

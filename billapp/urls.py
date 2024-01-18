@@ -40,10 +40,10 @@ urlpatterns = [
     path('party_list/',views.party_list,name='party_list'),  
     path('load_party_create/',views.load_party_create,name='load_party_create'),
     path('addNewParty',views.addNewParty,name='addNewParty'),
-    path('deleteparty/<int:party_id>',views.deleteparty,name='deleteparty'),
+    path('deleteparty/<int:id>',views.deleteparty,name='deleteparty'),
     path('view_party/<int:id>',views.view_party,name='view_party'),
-    path('edit_party/<int:id>',views.edit_party,name='edit_party'),
-    path('edit_saveparty/<int:id>',views.edit_saveparty,name='edit_saveparty'),
-
+    # path('edit_party/<int:id>',views.edit_party,name='edit_party'),
+    # path('edit_saveparty/<int:id>',views.edit_saveparty,name='edit_saveparty'),
+    path('history_purchasebill/<int:id>',views.history_purchasebill,name='history_purchasebill'),
 
 ]
