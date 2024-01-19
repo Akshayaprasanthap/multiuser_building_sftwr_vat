@@ -61,7 +61,7 @@
     } */
 </style>
 
-{% if party %}
+
 <div class="body-wrapper">
     <br><br><br><br><br><br>
     <div class="row ps-3 pe-3 m-0">
@@ -253,47 +253,21 @@
                                     </thead>
 
                                     <tbody>
-                                        {% for i in ftrans %}
-                                        <tr>
-                                            <td
-                                                style="font-size: 20px; color: {% if party.0.payment == 'To Pay' %}red{% elif party.0.payment == 'To Receive' %}green{% else %}black{% endif %}; vertical-align: middle;">
-                                                &#8226;
-                                            </td>
-                                            <td class="name" style="color: black;">{{i.trans_type}}</td>
-                                            <td class="number name" style="color: black;">{{ i.trans_number }}</td>
-                                            <td class="date name" style="color: black;">{{ i.trans_date }}</td>
-                                            <td class="number" style="color: black;">{{ i.total }}</td>
-                                            <td class="number" style="color: black;">{{ i.balance }}</td>
-
-
-
-
-                                            <td class="p-0 pt-1 m-0">
-                                                <div class="btn-group mb-1">
-                                                    <button style="border: none;background: none;" type="button"
-                                                        class="ropdown-toggle dropdown-toggle-split"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><button type="button" data-bs-toggle="modal"
-                                                                data-bs-target="#myModal2"
-                                                                class="dropdown-item fw-bold tb hide_table_text_v"
-                                                                hx-get="" hx-trigger="click delay:0s"
-                                                                hx-target="#item_transaction_view_or_edit_target"><span
-                                                                    class="fa fa-eye pe-2 tg"></span> <a
-                                                                    href="{% url 'edit_party' p.id %}"> View /
-                                                                    Edit</a></button></li>
-                                                        <li><button type="button" onclick="delete_transaction()"
-                                                                class="dropdown-item fw-bold tb hide_table_text_d"
-                                                                href=""><span class="fa fa-trash-alt tr"
-                                                                    style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span>
-                                                                Delete</button></li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
+                                        {% if getparty.openingbalance != "" %}
+                                        <tbody>
+                                            <tr>
+                                                <td style="font-size: 20px; color: {% if getparty.payment == 'To Pay' %}red{% elif getparty.payment == 'To Receive' %}green{% else %}black{% endif %}; vertical-align: middle;">&#8226;</td>
+                                                <td class="name" style="color: black;">Opening Balance</td>
+                                                <td class="number name" style="color: black;">{{getparty.gst_no}}</td>
+                                                <td class="date name" style="color: black;">{{getparty.current_date}}</td>
+                                                <td class="number" style="color: black;">{{getparty.openingbalance}}</td>
+                                                <td class="number"  style="color: black;">{{getparty.openingbalance}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                        </div>
+                        {% endif %}
                                     </tbody>
 
                                 </table>
@@ -307,37 +281,7 @@
         </div>
     </div>
 
-    {% else %}
-    <div class="body-wrapper">
-        <br><br><br>
-        <div class="p-5 text-center" style="display: flex;justify-content: center;">
-            <div class="card "
-                style="background-color: #FFD6D7;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="rounded pt-3" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
-                            <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">MULTIUSER BILLING
-                                SOFTWARE</h1>
-                            <p class="card-text">Welcome to Multiuser Billing Software, We're committed to providing a
-                                seamless and secure online marketplace for buyers and sellers. Our platform offers a
-                                range
-                                of features.</p>
-                            <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">You can manage all
-                                you
-                                items here.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3"></div>
-                    <div class="col-sm-12 col-md-6 pb-3">
-                        <img src="{% static 'img/item-empty.jpg' %}" class="card-img" alt="no img">
-                        <a class="btn btn-lg" href="{% url 'load_party_create' %}" id="add_btn">Add Your First party</a>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
     <script>
         function exportToExcel() {

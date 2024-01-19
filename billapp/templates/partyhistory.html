@@ -33,49 +33,49 @@
     
 </style>
 
-
+<body style="background-color: #FFD6D7;">
 <div class="body-wrapper ">
-    <br><br>
+    <br><br><br><br><br>
   
     <div class="p-3 text-center" style="display: flex;justify-content: center;">
-        <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+        <div class="card " style="background-color: white; width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
             <div class="row">
                 <div class="col-md-4">
-                    <h4 class="text-primary">TRANSACTION HISTORY</h4>
+                    <h4 class="text-dark">TRANSACTION HISTORY</h4>
                 </div>
                 <div class="col-md-7"></div>
                 <div class="col-md-1">
-                    <a href="{% url 'party_list' %}" style="text-align: right; font-size: large;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
+                    <a href="{% url 'party_list' %}"  style="text-align: right; font-size: large; color: #68020F;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
                 </div>
             </div>
-            <div class="tablediv" style="overflow: scroll;height: 35rem; width: 97%;">
-                <table class="table table-bordered table-info table-striped tb table-responsive w-100" id="billtable"  style="text-align: center;">
-                    <thead >
+            <div class="tablediv" style="overflow: scroll;height: 33rem; width: 97%;">
+                <table id="myTable" class="table table-bordered  tb table-responsive w-100 table-stripped table-hover text-dark ">
+                    <thead style="background: #68020F; color: white;">
                         <tr class="fs-2 tb" >
-                            <th class="bg-secondary text-white">
+                            <th class="">
                                 # 
                             </th>
-                            <th class="bg-secondary text-white">
+                            <th class="">
                                 DATE 
                             </th>
-                            <th class="bg-secondary text-white">
+                            <th class="">
                                 NAME 
                             </th>
-                            <th class="bg-secondary text-white">
+                            <th class="">
                                 ACTION
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for h in ftrans %}
-                        <tr>
+                        <tr class="item_lists_hide" style="background-color: #FFD6D7;">
                             <td>{{forloop.counter}}</td>
                             <td style="color: black;" >{{h.party.current_date | date:'d-m-Y'}}</td>
                             <td style="color: black;" >{{ h.party.party_name }}</td>
                             {% if h.action == 'Created' %}
                                 <td style="color: red;" >{{h.action}}</td>
                             {% else %}
-                                <td style="color: #154c79;" >{{h.action}}</td>
+                                <td style="color: #154c79;" >{{ h.action }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -85,5 +85,5 @@
         </div>
     </div>
 </div>
-
+</body>
 {% endblock  %}
