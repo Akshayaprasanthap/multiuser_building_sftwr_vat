@@ -550,6 +550,7 @@ def history_party(request,id):
       party = Party.objects.filter(company = request.user.company) 
   else:
       party = Party.objects.filter(company = request.user.employee.company)
+  
   fparty = Party.objects.get(id=id)
   ftrans = Transactions_party.objects.filter(party = fparty)
   hst= PartyTransactionHistory.objects.filter(party__in=party, Transactions_party__in=ftrans)
@@ -557,3 +558,31 @@ def history_party(request,id):
   context = {'party':party,'hst':hst,'ftrans':ftrans,'usr':request.user, 'fparty':fparty}
   return render(request,'partyhistory.html',context)
 
+# from django.http import Http404
+
+# def history_party(request, id):
+#     if request.user.is_company:
+#         party = Party.objects.filter(company=request.user.company)
+#     else:
+#         party = Party.objects.filter(company=request.user.employee.company)
+
+#     try:
+#         fparty = Party.objects.get(id=id)
+#         ftrans = Transactions_party.objects.filter(party=fparty)
+        
+#         # Print debug information
+#         print("ID:", id)
+#         print("ftrans:", ftrans)
+
+#         # Retrieve the PartyTransactionHistory instance using filter
+#         hst = PartyTransactionHistory.objects.filter(id=id).first()
+        
+#         if hst is None:
+#             raise PartyTransactionHistory.DoesNotExist
+
+#     except PartyTransactionHistory.DoesNotExist:
+#         raise Http404("PartyTransactionHistory does not exist")
+
+#     # Rest of your code
+#     context = {'party': party, 'hst': hst, 'ftrans': ftrans, 'usr': request.user, 'fparty': fparty}
+#     return render(request, 'partyhistory.html', context)
