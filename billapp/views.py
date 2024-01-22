@@ -1,3 +1,4 @@
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import *
@@ -12,6 +13,14 @@ from .models import Company
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Party 
+
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from io import BytesIO
+from xhtml2pdf import pisa
+from django.http.response import JsonResponse, HttpResponse
+
 
 def home(request):
   return render(request, 'home.html')
@@ -390,50 +399,119 @@ def load_party_create(request):
   return render(request,'add_parties.html',{'tod':tod, 'usr':request.user})
 
 
+
+
+
 def addNewParty(request):
     if request.user.is_company:
         cmp = request.user.company
     else:
         cmp = request.user.employee.company
         print(cmp)
+
     if request.method == 'POST':
-      party_name = request.POST['partyname']
-      trn_no = request.POST['trn_no']
-      contact = request.POST['contact']
-      trn_type = request.POST['trn_type']
-      state = request.POST.get('state')
-      address = request.POST['address']
-      email = request.POST['email']
-      openingbalance = request.POST.get('balance', '')
-      payment = request.POST.get('paymentType', '')
-      current_date = request.POST['currentdate']
-      End_date = request.POST.get('enddate', None)
-      additionalfield1 = request.POST['additionalfield1']
-      additionalfield2 = request.POST['additionalfield2']
-      additionalfield3 = request.POST['additionalfield3']
+        party_name = request.POST['partyname']
+        trn_no = request.POST['trn_no']
+        contact = request.POST['contact']
+        trn_type = request.POST['trn_type']
+        state = request.POST.get('state')
+        address = request.POST['address']
+        email = request.POST['email']
+        openingbalance = request.POST.get('balance', '')
+        payment = request.POST.get('paymentType', '')
+        current_date = request.POST['currentdate']
+        End_date = request.POST.get('enddate', None)
+        additionalfield1 = request.POST['additionalfield1']
+        additionalfield2 = request.POST['additionalfield2']
+        additionalfield3 = request.POST['additionalfield3']
 
-      part = Party(party_name=party_name, trn_no=trn_no,contact=contact,trn_type=trn_type, state=state,address=address, email=email, openingbalance=openingbalance,payment=payment,
-                      current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3)
-      part.save()
+        part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
+                     address=address, email=email, openingbalance=openingbalance, payment=payment,
+                     current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
+                     additionalfield2=additionalfield2, additionalfield3=additionalfield3)
 
-      # return JsonResponse({'status':True})
-      trans = Transactions_party(user = request.user,trans_type ='Opening Balance',trans_number=trn_no,trans_date =current_date,total=openingbalance, balance=openingbalance,party=part)
+        if request.user.is_company:
+            part.company = request.user.company
+        else:
+            part.company = request.user.employee.company
 
-    if request.user.is_company:
-      part.company = request.user.company
-      trans.company = request.user.company
+        part.save()
 
-    else:
-      part.company = request.user.employee.company
-      trans.company = request.user.employee.company
+        trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
+                                   trans_date=current_date, total=openingbalance, balance=openingbalance, party=part)
+
+        if request.user.is_company:
+            trans.company = request.user.company
+        else:
+            trans.company = request.user.employee.company
+
+        trans.save()
+
+        tr_history = PartyTransactionHistory(party=part, Transactions_party=trans, action="CREATED")
+        tr_history.save()
+
+        if request.POST.get('save_and_next'):
+            return redirect('load_party_create')
+        elif request.POST.get('save'):
+            return redirect('party_list')
+
+    return render(request, 'your_template.html')
+
+
+
+
+
+
+
+
+
+# def addNewParty(request):
+#     if request.user.is_company:
+#         cmp = request.user.company
+#     else:
+#         cmp = request.user.employee.company
+#         print(cmp)
+#     if request.method == 'POST':
+#       party_name = request.POST['partyname']
+#       trn_no = request.POST['trn_no']
+#       contact = request.POST['contact']
+#       trn_type = request.POST['trn_type']
+#       state = request.POST.get('state')
+#       address = request.POST['address']
+#       email = request.POST['email']
+#       openingbalance = request.POST.get('balance', '')
+#       payment = request.POST.get('paymentType', '')
+#       current_date = request.POST['currentdate']
+#       End_date = request.POST.get('enddate', None)
+#       additionalfield1 = request.POST['additionalfield1']
+#       additionalfield2 = request.POST['additionalfield2']
+#       additionalfield3 = request.POST['additionalfield3']
+
+#       part = Party(party_name=party_name, trn_no=trn_no,contact=contact,trn_type=trn_type, state=state,address=address, email=email, openingbalance=openingbalance,payment=payment,
+#                       current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3)
+#       part.save()
+
+#       # return JsonResponse({'status':True})
+#       trans = Transactions_party(user = request.user,trans_type ='Opening Balance',trans_number=trn_no,trans_date =current_date,total=openingbalance, balance=openingbalance,party=part)
+#       tr_history = PartyTransactionHistory(party=part,
+#                                               Transactions_party=trans,      
+#                                               action="CREATED",)
+#       tr_history.save()
+#     if request.user.is_company:
+#       part.company = request.user.company
+#       trans.company = request.user.company
+
+#     else:
+#       part.company = request.user.employee.company
+#       trans.company = request.user.employee.company
  
-    part.save()
-    trans.save()
+#     part.save()
+#     trans.save()
 
-    if request.POST.get('save_and_next'):
-      return redirect('load_party_create')
-    elif request.POST.get('save'):
-      return redirect('party_list')
+#     if request.POST.get('save_and_next'):
+#       return redirect('load_party_create')
+#     elif request.POST.get('save'):
+#       return redirect('party_list')
     
 
 
@@ -469,13 +547,15 @@ def edit_party(request,id):
 from django.shortcuts import render, redirect
 from .models import Party, Transactions_party
 
-def edit_saveparty(request, id):
-    if request.user.is_company:
-        party_qs = Party.objects.filter(company=request.user.company)
-    else:
-        party_qs = Party.objects.filter(company=request.user.employee.company)
 
-    getparty = Party.objects.get(id=id)
+
+
+
+from django.shortcuts import get_object_or_404
+def edit_saveparty(request, id):
+    company = request.user.company if request.user.is_company else request.user.employee.company
+    party_qs = Party.objects.filter(company=company)
+    getparty = get_object_or_404(Party, id=id, company=company)
 
     if request.method == 'POST':
         # Update party details
@@ -516,19 +596,93 @@ def edit_saveparty(request, id):
                 trans_date=getparty.current_date,
                 total=getparty.openingbalance,
                 balance=getparty.openingbalance,
-                party=getparty
+                party=getparty,
+                company=company
             )
-
-            if request.user.is_company:
-                trans.company = request.user.company
-            else:
-                trans.company = request.user.employee.company
-
-            trans.save()
+            tr_history = PartyTransactionHistory(party=getparty,
+                                                  Transactions_party=trans,
+                                                  action="UPDATED")
+            tr_history.save()
 
         return redirect('view_party', id=getparty.id)
 
     return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def edit_saveparty(request, id):
+#     if request.user.is_company:
+#         party_qs = Party.objects.filter(company=request.user.company)
+#     else:
+#         party_qs = Party.objects.filter(company=request.user.employee.company)
+
+#     getparty = Party.objects.get(id=id)
+
+#     if request.method == 'POST':
+#         # Update party details
+#         getparty.party_name = request.POST.get('partyname')
+#         getparty.trn_no = request.POST.get('trn_no')
+#         getparty.contact = request.POST['contact']
+#         getparty.trn_type = request.POST['trn_type']
+#         getparty.state = request.POST['state']
+#         getparty.address = request.POST['address']
+#         getparty.email = request.POST['email']
+#         getparty.openingbalance = request.POST['balance']
+#         getparty.payment = request.POST.get('paymentType')
+#         getparty.current_date = request.POST['currentdate']
+#         getparty.additionalfield1 = request.POST['additionalfield1']
+#         getparty.additionalfield2 = request.POST['additionalfield2']
+#         getparty.additionalfield3 = request.POST['additionalfield3']
+
+#         # Save the party changes
+#         getparty.save()
+
+#         # Check if a transaction with the same party_id exists
+#         existing_transaction = Transactions_party.objects.filter(party_id=id).first()
+
+#         # Update or create a new transaction
+#         if existing_transaction:
+#             existing_transaction.trans_type = 'Opening Balance'
+#             existing_transaction.trans_number = getparty.trn_no
+#             existing_transaction.trans_date = getparty.current_date
+#             existing_transaction.total = getparty.openingbalance
+#             existing_transaction.balance = getparty.openingbalance
+#             existing_transaction.save()
+#         else:
+#             # Create and save a new transaction
+#             trans = Transactions_party(
+#                 user=request.user,
+#                 trans_type='Opening Balance',
+#                 trans_number=getparty.trn_no,
+#                 trans_date=getparty.current_date,
+#                 total=getparty.openingbalance,
+#                 balance=getparty.openingbalance,
+#                 party=getparty
+#             )
+#             tr_history = PartyTransactionHistory(party=getparty,
+#                                               Transactions_party=trans,      
+#                                               action="UPDATED",)
+#             tr_history.save()
+#             if request.user.is_company:
+#                 trans.company = request.user.company
+#             else:
+#                 trans.company = request.user.employee.company
+
+#             trans.save()
+
+#         return redirect('view_party', id=getparty.id)
+
+#     return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
 
 
 
@@ -553,10 +707,88 @@ def history_party(request,id):
   
   fparty = Party.objects.get(id=id)
   ftrans = Transactions_party.objects.filter(party = fparty)
-  hst= PartyTransactionHistory.objects.filter(party__in=party, Transactions_party__in=ftrans)
+  hst= PartyTransactionHistory.objects.filter(Transactions_party=id)
 
   context = {'party':party,'hst':hst,'ftrans':ftrans,'usr':request.user, 'fparty':fparty}
   return render(request,'partyhistory.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def shareTransactionpartyToEmail(request,id):
+  if request.user.is_company:
+      party = Party.objects.filter(company = request.user.company)
+
+  else:
+      party = Party.objects.filter(company = request.user.employee.company)
+  if request.method == "POST":
+        fparty=Party.objects.get(id=id)
+        
+        ftrans =Transactions_party.objects.filter(party=fparty)
+        context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
+       
+        
+        email_message = request.POST['email_message']
+        my_subject = "Transaction REPORT"
+        emails_string = request.POST['email_ids']
+        emails_list = [email.strip() for email in emails_string.split(',')]
+        # recipient_email = request.POST.get('email_ids')
+        html_message = render_to_string('transaction_pdf.html',context)#add ur html
+        # vyaparapp\templates\index.html
+        # vyaparapp\templates\company\gstr3B_pdf.html
+        plain_message = strip_tags(html_message)
+        pdf_content = BytesIO()
+        pisa_document = pisa.CreatePDF(html_message.encode("UTF-8"), pdf_content) 
+        pdf_content.seek(0)
+        # todo: need to update the from_email
+        filename = f'transaction .pdf'
+        message = EmailMultiAlternatives(
+            subject=my_subject,
+            body= f"Hi,\nPlease find the attached Gstr9 Report -  \n{email_message}\n--\nRegards,\n",
+            from_email='altostechnologies6@gmail.com',
+            to= emails_list ,  # Use the recipient_email variable here
+            )
+        message.attach(filename, pdf_content.read(), 'application/pdf')
+        
+        try:
+            message.send()
+            return HttpResponse('<script>alert("Report has been shared via successfully..!");window.location="/party_list"</script>')
+        except Exception as e:
+            # Handle the exception, log the error, or provide an error message
+            return HttpResponse('<script>alert("Failed to send email!");window.location="/party_list"</script>')
+
+  return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>') 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # from django.http import Http404
 

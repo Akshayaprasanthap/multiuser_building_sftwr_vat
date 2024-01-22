@@ -71,16 +71,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for h in ftrans %}
+                         
+                            {% for h in hst %}
                             <tr class="item_lists_hide" style="background-color: #FFD6D7;">
                                 <td>{{ forloop.counter }}</td>
-                                <td style="color: black;">{{ h.party.current_date | date:'d-m-Y' }}</td>
+                                <td style="color: black;">{{ h.transactiondate | date:'d-m-Y' }}</td>
                                 <td style="color: black;">{{ h.party.party_name }}</td>
-                                
-                                <td style="color: {% if h.action == 'Created' %}red{% else %}#154c79{% endif %};">{{ h.action }}</td>
+
+                                <td>{{ h.action }}</td>
                             </tr>
                             {% endfor %}
 
+ 
                         </tbody>
                     </table>
                 </div>

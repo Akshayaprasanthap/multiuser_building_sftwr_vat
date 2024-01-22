@@ -45,5 +45,6 @@ urlpatterns = [
     path('edit_party/<int:id>',views.edit_party,name='edit_party'),
     path('edit_saveparty/<int:id>',views.edit_saveparty,name='edit_saveparty'),
     path('history_party/<int:id>',views.history_party,name='history_party'),
+    path('shareTransactionpartyToEmail/<int:id>',views.shareTransactionpartyToEmail,name='share_transaction_party_to_email'),
 
 ]
