@@ -447,7 +447,7 @@ def addNewParty(request):
 
         trans.save()
 
-        tr_history = PartyTransactionHistory(party=part, Transactions_party=trans, action="CREATED")
+        tr_history = PartyTransactionHistory(party=part,Transactions_party=trans, action="CREATED")
         tr_history.save()
 
         if request.POST.get('save_and_next'):
@@ -544,89 +544,18 @@ def edit_party(request,id):
 
 
 
-from django.shortcuts import render, redirect
-from .models import Party, Transactions_party
+# from django.shortcuts import render, redirect
+# from .models import Party, Transactions_party
 
 
 
 
 
-from django.shortcuts import get_object_or_404
-def edit_saveparty(request, id):
-    company = request.user.company if request.user.is_company else request.user.employee.company
-    party_qs = Party.objects.filter(company=company)
-    getparty = get_object_or_404(Party, id=id, company=company)
-
-    if request.method == 'POST':
-        # Update party details
-        getparty.party_name = request.POST.get('partyname')
-        getparty.trn_no = request.POST.get('trn_no')
-        getparty.contact = request.POST['contact']
-        getparty.trn_type = request.POST['trn_type']
-        getparty.state = request.POST['state']
-        getparty.address = request.POST['address']
-        getparty.email = request.POST['email']
-        getparty.openingbalance = request.POST['balance']
-        getparty.payment = request.POST.get('paymentType')
-        getparty.current_date = request.POST['currentdate']
-        getparty.additionalfield1 = request.POST['additionalfield1']
-        getparty.additionalfield2 = request.POST['additionalfield2']
-        getparty.additionalfield3 = request.POST['additionalfield3']
-
-        # Save the party changes
-        getparty.save()
-
-        # Check if a transaction with the same party_id exists
-        existing_transaction = Transactions_party.objects.filter(party_id=id).first()
-
-        # Update or create a new transaction
-        if existing_transaction:
-            existing_transaction.trans_type = 'Opening Balance'
-            existing_transaction.trans_number = getparty.trn_no
-            existing_transaction.trans_date = getparty.current_date
-            existing_transaction.total = getparty.openingbalance
-            existing_transaction.balance = getparty.openingbalance
-            existing_transaction.save()
-        else:
-            # Create and save a new transaction
-            trans = Transactions_party(
-                user=request.user,
-                trans_type='Opening Balance',
-                trans_number=getparty.trn_no,
-                trans_date=getparty.current_date,
-                total=getparty.openingbalance,
-                balance=getparty.openingbalance,
-                party=getparty,
-                company=company
-            )
-            tr_history = PartyTransactionHistory(party=getparty,
-                                                  Transactions_party=trans,
-                                                  action="UPDATED")
-            tr_history.save()
-
-        return redirect('view_party', id=getparty.id)
-
-    return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
-
-
-
-
-
-
-
-
-
-
-
-
-
+# from django.shortcuts import get_object_or_404
 # def edit_saveparty(request, id):
-#     if request.user.is_company:
-#         party_qs = Party.objects.filter(company=request.user.company)
-#     else:
-#         party_qs = Party.objects.filter(company=request.user.employee.company)
-
-#     getparty = Party.objects.get(id=id)
+#     company = request.user.company if request.user.is_company else request.user.employee.company
+#     party_qs = Party.objects.filter(company=company)
+#     getparty = get_object_or_404(Party, id=id, company=company)
 
 #     if request.method == 'POST':
 #         # Update party details
@@ -667,22 +596,94 @@ def edit_saveparty(request, id):
 #                 trans_date=getparty.current_date,
 #                 total=getparty.openingbalance,
 #                 balance=getparty.openingbalance,
-#                 party=getparty
-#             )
-#             tr_history = PartyTransactionHistory(party=getparty,
-#                                               Transactions_party=trans,      
-#                                               action="UPDATED",)
-#             tr_history.save()
-#             if request.user.is_company:
-#                 trans.company = request.user.company
-#             else:
-#                 trans.company = request.user.employee.company
-
+#                 party=getparty,
+#                 company=company)
 #             trans.save()
+#             tr_history = PartyTransactionHistory(party=getparty,
+#                                                   Transactions_party=trans,
+#                                                   action="UPDATED")
+#             tr_history.save()
 
 #         return redirect('view_party', id=getparty.id)
 
 #     return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
+
+
+
+
+
+
+
+
+
+
+
+
+
+def edit_saveparty(request, id):
+    if request.user.is_company:
+        party_qs = Party.objects.filter(company=request.user.company)
+    else:
+        party_qs = Party.objects.filter(company=request.user.employee.company)
+
+    getparty = Party.objects.get(id=id)
+
+    if request.method == 'POST':
+        # Update party details
+        getparty.party_name = request.POST.get('partyname','')
+        getparty.trn_no = request.POST.get('trn_no')
+        getparty.contact = request.POST['contact']
+        getparty.trn_type = request.POST['trn_type']
+        getparty.state = request.POST['state']
+        getparty.address = request.POST['address']
+        getparty.email = request.POST['email']
+        getparty.openingbalance = request.POST['balance']
+        getparty.payment = request.POST.get('paymentType')
+        getparty.current_date = request.POST['currentdate']
+        getparty.additionalfield1 = request.POST['additionalfield1']
+        getparty.additionalfield2 = request.POST['additionalfield2']
+        getparty.additionalfield3 = request.POST['additionalfield3']
+
+        # Save the party changes
+        getparty.save()
+
+        # Check if a transaction with the same party_id exists
+        existing_transaction = Transactions_party.objects.filter(party_id=id).first()
+
+        # Update or create a new transaction
+        if existing_transaction:
+            existing_transaction.trans_type = 'Opening Balance'
+            existing_transaction.trans_number = getparty.trn_no
+            existing_transaction.trans_date = getparty.current_date
+            existing_transaction.total = getparty.openingbalance
+            existing_transaction.balance = getparty.openingbalance
+            existing_transaction.save()
+        else:
+            # Create and save a new transaction
+            trans = Transactions_party(
+                user=request.user,
+                trans_type='Opening Balance',
+                trans_number=getparty.trn_no,
+                trans_date=getparty.current_date,
+                total=getparty.openingbalance,
+                balance=getparty.openingbalance,
+                party=getparty )
+            
+            if request.user.is_company:
+                trans.company = request.user.company
+            else:
+                trans.company = request.user.employee.company
+
+            trans.save()
+           
+            tr_history = PartyTransactionHistory(party=getparty,Transactions_party=trans,action="UPDATED")
+            print(tr_history,'000000000000000000')
+            tr_history.save()
+            
+
+        return redirect('view_party', id=getparty.id)
+
+    return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
 
 
 
@@ -706,12 +707,11 @@ def history_party(request,id):
       party = Party.objects.filter(company = request.user.employee.company)
   
   fparty = Party.objects.get(id=id)
-  ftrans = Transactions_party.objects.filter(party = fparty)
-  hst= PartyTransactionHistory.objects.filter(Transactions_party=id)
+  ftrans = Transactions_party.objects.get(party = fparty)
+  hst= PartyTransactionHistory.objects.filter(party=id)
 
   context = {'party':party,'hst':hst,'ftrans':ftrans,'usr':request.user, 'fparty':fparty}
   return render(request,'partyhistory.html',context)
-
 
 
 
