@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "billapp",
-    "django_social_share"
+    "billapp"
 ]
 
 MIDDLEWARE = [
@@ -80,7 +79,7 @@ WSGI_APPLICATION = "Multiusr_BillSoftware_Vat.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Multiusr_BillSoftware_Vat1',
+        'NAME': 'Multiusr_BillSoftware_Vat2',
         'USER':'root',
         'PASSWORD':'',
         'HOST':'localhost',

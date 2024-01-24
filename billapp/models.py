@@ -66,6 +66,13 @@ class Transactions(models.Model):
 
 
 
+
+
+
+
+
+
+
 class Party(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
@@ -105,6 +112,7 @@ class PartyTransactionHistory(models.Model):
     party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True)
     action = models.CharField(max_length=255)
     transactiondate = models.DateField(auto_now=True)
+   
 
 
 
