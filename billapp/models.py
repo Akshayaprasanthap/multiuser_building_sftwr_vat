@@ -92,6 +92,8 @@ class Party(models.Model):
     additionalfield2 = models.CharField(max_length=100,null=True,blank=True)
     additionalfield3 = models.CharField(max_length=100,null=True,blank=True)
 
+    def __str__(self):
+        return self.party_name
 
 class Transactions_party(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)

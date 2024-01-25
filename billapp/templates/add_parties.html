@@ -112,6 +112,7 @@
                     <input type="text" style="background-color: white;" class="form-control" id="trn_no" name="trn_no" placeholder="TRN NO" oninput="validateGSTIN(this)">
                     <span id="gstno-validation" style="position: absolute; right: 14px; top: 8px;"></span>
                     <label style="color: rgb(101, 3, 3);">* 32AAQFR1222B1ZS</label>
+                   
                 </div>
                 
                 <div class="col-md-4" style="position: relative;">
@@ -207,7 +208,16 @@
                 <input type="text" class="form-control" name="additionalfield3" id="additionalfield3" placeholder="Additional Field" style="background-color: white;">
             </div>
         </fieldset>
-
+        {% if error_message and "TRN number already exists" in error_message %}
+        <script>
+            alert("Error: TRN number already exists. Please enter a unique TRN number.");
+        </script>
+    {% elif error_message and "Email already exists" in error_message %}
+        <script>
+            alert("Error: Email already exists. Please enter a unique email address.");
+        </script>
+    {% endif %}
+    
        
         <div class="col-md-5 mt-4">
             <input type="submit" class="btn btn-primary save-button" name="save_and_new" value="Save&New">

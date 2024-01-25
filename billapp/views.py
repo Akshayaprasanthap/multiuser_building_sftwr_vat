@@ -398,16 +398,16 @@ def load_party_create(request):
   tod = timezone.now().date().strftime("%Y-%m-%d")
   return render(request,'add_parties.html',{'tod':tod, 'usr':request.user})
 
-
-
-
+from django.db import IntegrityError
+from django.shortcuts import render, redirect
 
 def addNewParty(request):
     if request.user.is_company:
         cmp = request.user.company
     else:
         cmp = request.user.employee.company
-        print(cmp)
+
+    error_message = None  # Initialize error message
 
     if request.method == 'POST':
         party_name = request.POST['partyname']
@@ -425,37 +425,112 @@ def addNewParty(request):
         additionalfield2 = request.POST['additionalfield2']
         additionalfield3 = request.POST['additionalfield3']
 
-        part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
-                     address=address, email=email, openingbalance=openingbalance, payment=payment,
-                     current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
-                     additionalfield2=additionalfield2, additionalfield3=additionalfield3)
+        try:
+            # Check if a party with the same trn_no already exists
+            if Party.objects.filter(trn_no=trn_no, company=cmp).exists():
+                error_message = 'An error occurred while processing your request. TRN number already exists. Please enter a unique TRN number.'
+            # Check if a party with the same email already exists
+            elif Party.objects.filter(email=email, company=cmp).exists():
+                error_message = 'An error occurred while processing your request. Email already exists. Please enter a unique email address.'
+            else:
+                part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
+                             address=address, email=email, openingbalance=openingbalance, payment=payment,
+                             current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
+                             additionalfield2=additionalfield2, additionalfield3=additionalfield3)
 
-        if request.user.is_company:
-            part.company = request.user.company
-        else:
-            part.company = request.user.employee.company
+                if request.user.is_company:
+                    part.company = request.user.company
+                else:
+                    part.company = request.user.employee.company
 
-        part.save()
+                part.save()
 
-        trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
-                                   trans_date=current_date, total=openingbalance, balance=openingbalance, party=part)
+                trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
+                                           trans_date=current_date, total=openingbalance, balance=openingbalance, party=part)
 
-        if request.user.is_company:
-            trans.company = request.user.company
-        else:
-            trans.company = request.user.employee.company
+                if request.user.is_company:
+                    trans.company = request.user.company
+                else:
+                    trans.company = request.user.employee.company
 
-        trans.save()
+                trans.save()
 
-        tr_history = PartyTransactionHistory(party=part,Transactions_party=trans, action="CREATED")
-        tr_history.save()
+                tr_history = PartyTransactionHistory(party=part, Transactions_party=trans, action="CREATED")
+                tr_history.save()
 
-        if request.POST.get('save_and_next'):
-            return redirect('load_party_create')
-        elif request.POST.get('save'):
-            return redirect('party_list')
+                if request.POST.get('save_and_next'):
+                    return redirect('load_party_create')
+                elif request.POST.get('save'):
+                    return redirect('party_list')
 
-    return render(request, 'your_template.html')
+        except IntegrityError:
+            # Specific error message for duplicate TRN number
+            error_message = 'An error occurred while processing your request. Please try again.'
+
+    return render(request, 'add_parties.html', {'error_message': error_message})
+
+
+
+
+
+
+
+
+
+# def addNewParty(request):
+#     if request.user.is_company:
+#         cmp = request.user.company
+#     else:
+#         cmp = request.user.employee.company
+#         print(cmp)
+
+#     if request.method == 'POST':
+#         party_name = request.POST['partyname']
+#         trn_no = request.POST['trn_no']
+#         contact = request.POST['contact']
+#         trn_type = request.POST['trn_type']
+#         state = request.POST.get('state')
+#         address = request.POST['address']
+#         email = request.POST['email']
+#         openingbalance = request.POST.get('balance', '')
+#         payment = request.POST.get('paymentType', '')
+#         current_date = request.POST['currentdate']
+#         End_date = request.POST.get('enddate', None)
+#         additionalfield1 = request.POST['additionalfield1']
+#         additionalfield2 = request.POST['additionalfield2']
+#         additionalfield3 = request.POST['additionalfield3']
+
+#         part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
+#                      address=address, email=email, openingbalance=openingbalance, payment=payment,
+#                      current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
+#                      additionalfield2=additionalfield2, additionalfield3=additionalfield3)
+
+#         if request.user.is_company:
+#             part.company = request.user.company
+#         else:
+#             part.company = request.user.employee.company
+
+#         part.save()
+
+#         trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
+#                                    trans_date=current_date, total=openingbalance, balance=openingbalance, party=part)
+
+#         if request.user.is_company:
+#             trans.company = request.user.company
+#         else:
+#             trans.company = request.user.employee.company
+
+#         trans.save()
+
+#         tr_history = PartyTransactionHistory(party=part,Transactions_party=trans, action="CREATED")
+#         tr_history.save()
+
+#         if request.POST.get('save_and_next'):
+#             return redirect('load_party_create')
+#         elif request.POST.get('save'):
+#             return redirect('party_list')
+
+#     return render(request, 'add_parties.html')
 
 
 
@@ -548,7 +623,7 @@ def edit_party(request,id):
 # from .models import Party, Transactions_party
 
 
-
+from datetime import datetime
 from django.shortcuts import get_object_or_404
 
 def edit_saveparty(request, id):
@@ -569,7 +644,8 @@ def edit_saveparty(request, id):
         getparty.email = request.POST['email']
         getparty.openingbalance = request.POST['balance']
         getparty.payment = request.POST.get('paymentType')
-        getparty.current_date = request.POST['currentdate']
+        # getparty.current_date = request.POST['currentdate']
+        getparty.current_date = datetime.now().strftime('%Y-%m-%d')
         getparty.additionalfield1 = request.POST['additionalfield1']
         getparty.additionalfield2 = request.POST['additionalfield2']
         getparty.additionalfield3 = request.POST['additionalfield3']
@@ -588,6 +664,15 @@ def edit_saveparty(request, id):
             existing_transaction.total = getparty.openingbalance
             existing_transaction.balance = getparty.openingbalance
             existing_transaction.save()
+
+            # Check and update the transaction history action to "UPDATED"
+            party_history_entry = PartyTransactionHistory.objects.filter(
+                party=getparty, Transactions_party=existing_transaction
+            ).first()
+            if party_history_entry:
+                party_history_entry.action = "UPDATED"
+                party_history_entry.save()
+
         else:
             # Create and save a new transaction
             trans = Transactions_party(
@@ -602,24 +687,17 @@ def edit_saveparty(request, id):
             )
             trans.save()
 
-        # Adjust the action based on whether it's a new transaction or an update
-        action = "CREATED" if not existing_transaction else "UPDATED"
-
-        tr_history = PartyTransactionHistory(
-            party=getparty,
-            Transactions_party=trans,
-            action=action
-        )
-
-        try:
+            # Save the transaction history entry with "CREATED" action
+            tr_history = PartyTransactionHistory(
+                party=getparty,
+                Transactions_party=trans,
+                action="UPDATED"
+            )
             tr_history.save()
-        except Exception as e:
-            print(f"Error saving PartyTransactionHistory: {e}")
 
         return redirect('view_party', id=getparty.id)
 
     return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
-
 
 
 

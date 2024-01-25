@@ -188,7 +188,7 @@
             </script> -->
         
             <div class="col-md-5 mt-4">
-                <input  type="date" class="form-control" id="current-date" name="currentdate" placeholder="Current Date"  value="{{getparty.current_date|date:'Y-m-d'}}" style="background-color: white;" >
+                <input  type="date" class="form-control" id="current-date" name="currentdate" placeholder="Current Date"  style="background-color: white;" >
             </div>
         
 
@@ -217,7 +217,15 @@
     </div>
     </form>
     </div>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the current date in 'YYYY-MM-DD' format
+            var currentDate = new Date().toISOString().split('T')[0];
+    
+            // Set the current date in the input field
+            document.getElementById('current-date').value = currentDate;
+        });
+    </script>
     <script>
         function toggleSection(sectionId) {
             // Get all the fieldsets

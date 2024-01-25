@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load social_share %}
 {% load static %}
 {% block content %}
 
@@ -294,38 +295,6 @@
             </div>
         </div>
     </div>
-
-    {% else %}
-    <div class="body-wrapper">
-        <br><br><br>
-        <div class="p-5 text-center" style="display: flex;justify-content: center;">
-            <div class="card "
-                style="background-color: #FFD6D7;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="rounded pt-3" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
-                            <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">MULTIUSER BILLING
-                                SOFTWARE</h1>
-                            <p class="card-text">Welcome to Multiuser Billing Software, We're committed to providing a
-                                seamless and secure online marketplace for buyers and sellers. Our platform offers a
-                                range
-                                of features.</p>
-                            <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">You can manage all
-                                you
-                                items here.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3"></div>
-                    <div class="col-sm-12 col-md-6 pb-3">
-                        <img src="{% static 'img/item-empty.jpg' %}" class="card-img" alt="no img">
-                        <a class="btn btn-lg" href="{% url 'load_party_create' %}" id="add_btn">Add Your First party</a>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
     <div class="modal fade" id="shareBillEmail">
         <div class="modal-dialog modal-xl">
             <div class="modal-content" style="background: #68020F; border-radius: 20px;">
@@ -360,6 +329,38 @@
         </div>
     </div>
 
+    {% else %}
+    <div class="body-wrapper">
+        <br><br><br>
+        <div class="p-5 text-center" style="display: flex;justify-content: center;">
+            <div class="card "
+                style="background-color: #FFD6D7;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="rounded pt-3" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                            <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">MULTIUSER BILLING
+                                SOFTWARE</h1>
+                            <p class="card-text">Welcome to Multiuser Billing Software, We're committed to providing a
+                                seamless and secure online marketplace for buyers and sellers. Our platform offers a
+                                range
+                                of features.</p>
+                            <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">You can manage all
+                                you
+                                items here.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-sm-12 col-md-6 pb-3">
+                        <img src="{% static 'img/item-empty.jpg' %}" class="card-img" alt="no img">
+                        <a class="btn btn-lg" href="{% url 'load_party_create' %}" id="add_btn">Add Your First party</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
     integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
