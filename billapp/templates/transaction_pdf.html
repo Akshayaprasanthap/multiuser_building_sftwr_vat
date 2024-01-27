@@ -37,6 +37,7 @@
         border-right: 1px solid black;
         /* background-color: rgb(255, 255, 255); */
     }
+   
     /* thead{
        background: #68020F; 
        color: white;
@@ -74,29 +75,27 @@
     }
 </style>
 
-<body>
+<body><div class="row ps-3 pe-3 m-0">
+    <div class="col-sm-12 col-lg-3  ps-2 pe-3 pb-2" style="height: 50rem;">
+        <div class="card bg-light bs" style="height:100%;">
+            <div class="row m-0">
 
     <div class="p-4" style="background-color: #ffffff; border-radius: 1vh;">
         <div class="d-flex justify-content-between">
             <h4 class="tb text-capitalize" style="color: black;">{{ fparty.party_name }}</h4>
-            <!-- <button class="btn btn-sm fs-2" data-bs-toggle="modal" data-bs-target="#myModal1"
-                data-bs-whatever="@getbootstrap" hx-get="" hx-trigger="click delay:0s"
-                hx-target="#item_get_details_for_modal_target"
-                style="background-color: #68020F; color: white;">
-                <span class="fa fa-sliders-h pe-1"></span> ADJUST STOCK
-            </button> -->
         </div>
         <p></p>
-        <div class="d-flex justify-content-between" style="color: black;">
-            <p class="tb fw-bolder fs-2">PHONE <span class="ps-2 tg" style="color: black;"> -
+        <div id="p5" class="d-flex justify-content-between" style="color: black;">
+            <p id="p1" class="tb fw-bolder fs-2">PHONE <span class="ps-2 tg" style="color: black;"> -
                     &nbsp;&nbsp; {{ fparty.contact }}</span></p>
-            <p class="tb fw-bolder fs-2">ADDRESS <span class="ps-2 tg" style="color: black;"> -
-                    &nbsp;&nbsp; {{ fparty.address }}</span></p>
-        </div>
-        <div class="d-flex justify-content-between">
-            <p class="tb fw-bolder fs-2">EMAIL <span class="ps-2 tg" style="color: black;"> -
+        
+            <p id="p1" class="tb fw-bolder fs-2">EMAIL <span class="ps-2 tg" style="color: black;"> -
                     &nbsp;&nbsp; {{ fparty.email }}</span></p>
-            <p class="tb fw-bolder fs-2">GSTIN <span class="ps-2 tg" style="color: black;"> -
+
+            <p id="p2" class="tb fw-bolder fs-2">ADDRESS <span class="ps-2 tg" style="color: black;"> -
+                    &nbsp;&nbsp; {{ fparty.address }}</span></p>
+   
+            <p id="p2" class="tb fw-bolder fs-2">TRN NO <span class="ps-2 tg" style="color: black;"> -
                     &nbsp;&nbsp; {{ fparty.trn_no }}</span></p>
         </div>
     </div>
@@ -137,6 +136,11 @@
         </table>
 
     </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    
 </body>
 
 </html>
