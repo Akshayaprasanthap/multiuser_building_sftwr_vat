@@ -143,8 +143,14 @@
     
                 <div class="dropdown-container" style="background-color: transparent; padding: 20px;justify-content: center; color: white;">
                   <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                    <i class="material-icons">receipt</i>
-                    <p class="mb-0 fs-3">Invoices</p>
+                    <i class="material-icons">receipt</i>Invoices 
+                
+                    <a href="{% url 'add_salesinvoice'  %}" class="sidebar-link  mt-2 plus-icon"
+                    style=" border-radius: 0px 10px 10px 0px; text-decoration: none; color: rgb(0, 0, 0);">
+                    <span>
+                      <b style="margin-right: 5px;"><i class="fa fa-plus"></i></b> </span></a>
+         
+                 
                   </a>
                   <hr>
                   <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">

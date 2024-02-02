@@ -888,48 +888,94 @@ def shareTransactionpartyToEmail(request,id):
   return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>') 
 
 
+from django.contrib.auth.decorators import login_required
+
+from django.core.exceptions import ObjectDoesNotExist
+
+@login_required
+def add_salesinvoice(request):
+    try:
+        if request.user.is_company:
+            company = request.user.company
+            party = Party.objects.filter(company=company)
+        else:
+            company = request.user.employee.company
+            party = Party.objects.filter(company=company)
+            
+        if party.exists():
+            # Assuming you want to get the first party in the queryset
+            fparty = party.first()
+        else:
+            fparty = None
+        
+        item = Item.objects.filter(company=company)
+        
+        if SalesInvoice.objects.filter(company=company).exists():
+            invoice_count = SalesInvoice.objects.filter(company=company).last().invoice_no
+            next_count = invoice_count + 1
+        else:
+            next_count = 1
+
+        return render(request, 'add_salesinvoice.html', {'party': party, 'usr': request.user, 'fparty': fparty, 'count': next_count, 'item': item})
+
+    except ObjectDoesNotExist:
+        # Handle the case where the Company or Party object is not found
+        return HttpResponse("Error: Company or Party not found.")
 
 
 
 
+# @login_required
+
+# def add_salesinvoice(request):
+#   if request.user.is_company:
+#     party = Party.objects.filter(company = request.user.company)
+#   else:
+#     party = Party.objects.filter(company = request.user.employee.company)
+    
+#     fparty=Party.objects.get(id=party)
+    
+    
+#     item = Item.objects.filter(company=fparty)
+#   if SalesInvoice.objects.filter(company=party).exists():
+#         invoice_count = SalesInvoice.objects.last().invoice_no
+#         next_count = invoice_count+1
+#   else:
+#         next_count=1
+
+#   return render(request, 'add_salesinvoice.html',{'party': party , 'usr': request.user, 'fparty': fparty, 'count':next_count,'item':item})
 
 
 
 
-
-
-
-
-
-
-
-
-
-# from django.http import Http404
-
-# def history_party(request, id):
+# def add_salesinvoice(request):
 #     if request.user.is_company:
 #         party = Party.objects.filter(company=request.user.company)
 #     else:
 #         party = Party.objects.filter(company=request.user.employee.company)
 
-#     try:
-#         fparty = Party.objects.get(id=id)
-#         ftrans = Transactions_party.objects.filter(party=fparty)
-        
-#         # Print debug information
-#         print("ID:", id)
-#         print("ftrans:", ftrans)
+#     # # Using get_object_or_404 to handle non-existent party
+#     # fparty = get_object_or_404(Party, id=id)
 
-#         # Retrieve the PartyTransactionHistory instance using filter
-#         hst = PartyTransactionHistory.objects.filter(id=id).first()
-        
-#         if hst is None:
-#             raise PartyTransactionHistory.DoesNotExist
+#     # ftrans = Transactions_party.objects.filter(party=fparty)
+    
+#     # # Assuming Item has a field 'company' related to the Company model
+#     # item = Item.objects.filter(company=fparty.company)
 
-#     except PartyTransactionHistory.DoesNotExist:
-#         raise Http404("PartyTransactionHistory does not exist")
+#     # # If SalesInvoice is related to Party, you can filter directly
+#     # if SalesInvoice.objects.filter(party=fparty).exists():
+#     #     invoice_count = SalesInvoice.objects.filter(party=fparty).last().invoice_no
+#     #     next_count = invoice_count + 1
+#     # else:
+#     #     next_count = 1
 
-#     # Rest of your code
-#     context = {'party': party, 'hst': hst, 'ftrans': ftrans, 'usr': request.user, 'fparty': fparty}
-#     return render(request, 'partyhistory.html', context)
+#     return render(request, 'add_salesinvoice.html', {'party': party })
+
+
+
+
+
+
+
+
+
