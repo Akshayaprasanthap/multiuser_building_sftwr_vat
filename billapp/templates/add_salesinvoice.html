@@ -169,7 +169,7 @@
                                     <td style="width:15%">
                                         <input type="text" id="intrataxval1" hidden>
                                         <input type="text" id="intertaxval1" hidden>
-                                        <input type="text" name='tax[]' id="tax1" class="form-control  tax" style="color: black; border-color: #68020F; background-color: white;" placeholder="GST RATE"  readonly />
+                                        <input type="text" name='tax[]' id="tax1" class="form-control  tax" style="color: black; border-color: #68020F; background-color: white;" placeholder="TRN RATE"  readonly />
                                     </td>
 
                                     <td style="width: 10%;">
@@ -319,11 +319,11 @@
 <div class="modal fade" id="customercreation">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: rgba(144, 211, 117, 0.098);">
-                <h3 class="m-3 text-secondary">ADD PARTY</h3>
+            <div class="modal-header" style="background-color: #FFD6D7;">
+                <h3 class="m-3 text-dark">ADD PARTY</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="background-color: rgba(144, 211, 117, 0.098);">
+            <div class="modal-body" style="background-color: #FFD6D7;">
                 <form method="POST" action="" class="p-5" enctype="multipart/form-data" novalidate id="forms">
                     {% csrf_token %}
                     <div class="bg-light bs p-4 rounded mb-5">
@@ -334,7 +334,7 @@
                                     <input type="text" class="form-control " id="partyname" name="partyname" style=" border-color: #68020F;color: black;" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="col-form-label" style="color: black;">GSTIN</label>
+                                    <label class="col-form-label" style="color: black;">Trn No</label>
                                     <input type="text" class="form-control " onchange="checkgst(this)" id="gstin" name="gstin" style="color: black; border-color: #68020F;" placeholder="29APPCK7465F1Z1">
                                     <div class="text-danger m-2" id="warngst"></div>
                                 </div>
@@ -348,23 +348,23 @@
                             <div>
                                 <p></p>
                                 <hr class="p-0 m-0">
-                                <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+                                <div style="background-color: #68020F;" class="p-3 pb-0 mb-0">
                                     <div class="">
                                         <div class="row pb-0 mb-0">
                                             <div id="gsthead" class="col text-center pb-2" >
-                                                <a class="fw-bolder fs-4" style="color: gray; cursor: pointer;" >GST & ADDRESS</a>
+                                                <a class="fw-bolder fs-4" style="color: rgb(255, 255, 255); cursor: pointer;" >GST & ADDRESS</a>
                                             </div>
                                             <div id="credithead" class="col text-center pb-2" >
-                                                <a class="fw-bolder fs-4" style="color: gray; cursor: pointer;" >CREDIT & BALANCES</a>
+                                                <a class="fw-bolder fs-4" style="color: rgb(255, 255, 255); cursor: pointer;" >CREDIT & BALANCES</a>
                                             </div>
                                             <div id="fieldhead" class="col text-center pb-2" >
-                                                <a class="fw-bolder fs-4" style="color: gray; cursor: pointer;" >ADDITIONAL FIELD</a>
+                                                <a class="fw-bolder fs-4" style="color: rgb(255, 255, 255); cursor: pointer;" >ADDITIONAL FIELD</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div id="gsttemp" style="background-color: rgba(144, 211, 117, 0.098);">
+                                <div id="gsttemp" style="background-color: rgba(255, 255, 255, 0.098);">
                                     <div class="row">
                                         <div class="col-sm-12  col-md-1"></div>
                                         <div class="col-sm-12 col-md-10 pb-4">
@@ -435,7 +435,7 @@
                                             </div>
 
                                             <div class="text-start mt-5">
-                                                <button id="gstnxt" class="btn btn-primary bg-gradient" type="button">NEXT</button>
+                                                <button style="background-color: #68020F; color: white;" id="gstnxt" class="btn bg-gradient" type="button">NEXT</button>
                                             </div>
                                         </div>
                                     </div>
@@ -468,8 +468,8 @@
                                             </div>
 
                                             <div class="text-start mt-5">
-                                                <button id="creditnxt" class="btn btn-primary bg-gradient me-3" type="button">NEXT</button>
-                                                <button id="creditprev" class="btn btn-primary bg-gradient" type="button">PREVIOUS</button>
+                                                <button style="background-color: #68020F; color: white;" id="creditprev" class="btn bg-gradient" type="button">PREVIOUS</button>
+                                                <button style="background-color: #68020F; color: white;" id="creditnxt" class="btn bg-gradient me-3" type="button">NEXT</button>
                                             </div>
                                         </div>
                                     </div>
@@ -494,8 +494,8 @@
                                                 </div>
                                             </div>
                                             <div class="text-start mt-5">
-                                                <button id="fieldprev" class="btn btn-primary bg-gradient  me-3" type="button">PREVIOUS</button>
-                                                <input type="submit" class="btn btn-primary bg-gradient " name="save" value="Save">
+                                                <button style="background-color: #68020F; color: white;" id="fieldprev" class="btn bg-gradient  me-3" type="button">PREVIOUS</button>
+                                                <input style="background-color: #68020F; color: white;" type="submit" class="btn bg-gradient " name="save" value="Save">
                                             </div>
                                         </div>
                                     </div>
@@ -515,11 +515,11 @@
 <div class="modal fade" id="newitem">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: rgba(144, 211, 117, 0.098);">
-                <h3 class="text-secondary ms-3">ADD ITEM</h3>
+            <div class="modal-header" style="background-color: #FFD6D7;">
+                <h3 class="text-dark ms-3">ADD ITEM</h3>
                 <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="background-color: rgba(144, 211, 117, 0.098);" >
+            <div class="modal-body" style="background-color: #FFD6D7;" >
                 <form method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem">
                     {% csrf_token %}
                     <div class="bg-light bs p-4 rounded mb-5">
@@ -554,14 +554,14 @@
                             <div>
                                 <p></p>
                                 <hr class="p-0 m-0">
-                                <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+                                <div style="background-color: #68020F;" class="p-3 pb-0 mb-0">
                                     <div class="">
                                         <div class="row pb-0 mb-0">
                                             <div id="prc_" class="col text-center pb-2" >
-                                                <a class="fw-bolder fs-4" style="color: gray; cursor: pointer;" >PRICING</a>
+                                                <a class="fw-bolder fs-4" style="color: rgb(255, 255, 255); cursor: pointer;" >PRICING</a>
                                             </div>
                                             <div id="stk_" class="col text-center pb-2" >
-                                                <a class="fw-bolder fs-4" style="color: gray; cursor: pointer;" >STOCKS</a>
+                                                <a class="fw-bolder fs-4" style="color: rgb(255, 255, 255); cursor: pointer;" >STOCKS</a>
                                             </div>
                                         </div>
                                     </div>
@@ -617,7 +617,7 @@
                                                 </div>
                                             </div>
                                             <div class="text-start mt-5">
-                                                <button id="next_btn" class="btn btn-primary bg-gradient" type="button">Next</button>
+                                                <button style="background-color: #68020F; color: white;" id="next_btn" class="btn bg-gradient" type="button">Next</button>
                                             </div>
                                         </div>
                                     </div>
@@ -650,8 +650,8 @@
                                                 </div>
                                             </div>
                                             <div class="text-start mt-5">
-                                                <button id="prev_btn" class="btn btn-primary bg-gradient  me-3" type="button">PREVIOUS</button>
-                                                <button class="btn btn-primary bg-gradient" type="button" id="itemsave">SAVE</button>
+                                                <button style="background-color: #68020F; color: white;" id="prev_btn" class="btn bg-gradient  me-3" type="button">PREVIOUS</button>
+                                                <button style="background-color: #68020F; color: white;" class="btn bg-gradient" type="button" id="itemsave">SAVE</button>
                                             </div>
                                         </div>
                                     </div>
@@ -1423,7 +1423,7 @@ $(document).on("input", "#advance", function(){
                                 {% endfor %}
                             </select>&nbsp;&nbsp;&nbsp;
 
-                            <button type="button" class="btn btn-sm text-white btn "  id="modal_closing" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo" style="height: 30px;margin-top: 5px; background-color: lightskyblue;"><i class="fa-solid  fa fa-plus rounded"></i></button>
+                            <button type="button" class="btn btn-sm text-white btn "  id="modal_closing" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo" style="height: 30px;margin-top: 5px; background-color:#68020F;"><i class="fa-solid  fa fa-plus rounded"></i></button>
                         </div>
                     </td>
 
