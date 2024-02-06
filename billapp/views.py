@@ -889,26 +889,28 @@ def shareTransactionpartyToEmail(request,id):
 
 
 from django.contrib.auth.decorators import login_required
-
+from django.shortcuts import render
+from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from .models import Party, Item, SalesInvoice
 
 @login_required
 def add_salesinvoice(request):
     try:
         if request.user.is_company:
             company = request.user.company
-            party = Party.objects.filter(company=company)
+            parties = Party.objects.filter(company=company)
         else:
             company = request.user.employee.company
-            party = Party.objects.filter(company=company)
+            parties = Party.objects.filter(company=company)
             
-        if party.exists():
+        if parties.exists():
             # Assuming you want to get the first party in the queryset
-            fparty = party.first()
+            fparty = parties.first()
         else:
             fparty = None
         
-        item = Item.objects.filter(company=company)
+        items = Item.objects.filter(company=company)
         
         if SalesInvoice.objects.filter(company=company).exists():
             invoice_count = SalesInvoice.objects.filter(company=company).last().invoice_no
@@ -916,12 +918,11 @@ def add_salesinvoice(request):
         else:
             next_count = 1
 
-        return render(request, 'add_salesinvoice.html', {'party': party, 'usr': request.user, 'fparty': fparty, 'count': next_count, 'item': item})
+        return render(request, 'add_salesinvoice.html', {'parties': parties, 'usr': request.user, 'fparty': fparty, 'count': next_count, 'items': items})
 
     except ObjectDoesNotExist:
         # Handle the case where the Company or Party object is not found
         return HttpResponse("Error: Company or Party not found.")
-
 
 
 
@@ -976,6 +977,18 @@ def add_salesinvoice(request):
 
 
 
+def party_details(request, party_name):
+    try:
+        party = Party.objects.get(party_name=party_name)
+        data = {
+            'contact': party.contact,
+            'address': party.address,
+            'openingbalance': party.openingbalance,
+            'payment': party.payment,
+        }
+        return JsonResponse(data)
+    except Party.DoesNotExist:
+        return JsonResponse({'error': 'Party not found'},status=404)
 
 
 

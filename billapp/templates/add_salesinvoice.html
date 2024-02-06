@@ -59,7 +59,7 @@
                 <div class="d-flex mt-2">
                     <select style="color: black; border-color: #68020F; width: 21.5vw;" class="form-control  me-2"  id="partySelect" name="partyname"  required >
                         <option value="" selected hidden>Select</option>
-                        {% for i in Party %}
+                        {% for i in parties %}
                             <option value="{{ i.party_name|upper }}">{{ i.party_name|upper }}</option>
                         {% endfor %}
                     </select>
