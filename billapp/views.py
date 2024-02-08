@@ -912,65 +912,24 @@ def add_salesinvoice(request):
         
         items = Item.objects.filter(company=company)
         
-        if SalesInvoice.objects.filter(company=company).exists():
-            invoice_count = SalesInvoice.objects.filter(company=company).last().invoice_no
+        # if SalesInvoice.objects.filter(company=company).exists():
+        #     invoice_count = SalesInvoice.objects.filter(company=company).last().invoice_no
+        #     next_count = invoice_count + 1
+        # else:
+        #     next_count = 1
+        sales_invoices = SalesInvoice.objects.filter(company=company)
+        if sales_invoices.exists():
+            invoice_count = sales_invoices.last().invoice_no
             next_count = invoice_count + 1
         else:
             next_count = 1
+
 
         return render(request, 'add_salesinvoice.html', {'parties': parties, 'usr': request.user, 'fparty': fparty, 'count': next_count, 'items': items})
 
     except ObjectDoesNotExist:
         # Handle the case where the Company or Party object is not found
         return HttpResponse("Error: Company or Party not found.")
-
-
-
-# @login_required
-
-# def add_salesinvoice(request):
-#   if request.user.is_company:
-#     party = Party.objects.filter(company = request.user.company)
-#   else:
-#     party = Party.objects.filter(company = request.user.employee.company)
-    
-#     fparty=Party.objects.get(id=party)
-    
-    
-#     item = Item.objects.filter(company=fparty)
-#   if SalesInvoice.objects.filter(company=party).exists():
-#         invoice_count = SalesInvoice.objects.last().invoice_no
-#         next_count = invoice_count+1
-#   else:
-#         next_count=1
-
-#   return render(request, 'add_salesinvoice.html',{'party': party , 'usr': request.user, 'fparty': fparty, 'count':next_count,'item':item})
-
-
-
-
-# def add_salesinvoice(request):
-#     if request.user.is_company:
-#         party = Party.objects.filter(company=request.user.company)
-#     else:
-#         party = Party.objects.filter(company=request.user.employee.company)
-
-#     # # Using get_object_or_404 to handle non-existent party
-#     # fparty = get_object_or_404(Party, id=id)
-
-#     # ftrans = Transactions_party.objects.filter(party=fparty)
-    
-#     # # Assuming Item has a field 'company' related to the Company model
-#     # item = Item.objects.filter(company=fparty.company)
-
-#     # # If SalesInvoice is related to Party, you can filter directly
-#     # if SalesInvoice.objects.filter(party=fparty).exists():
-#     #     invoice_count = SalesInvoice.objects.filter(party=fparty).last().invoice_no
-#     #     next_count = invoice_count + 1
-#     # else:
-#     #     next_count = 1
-
-#     return render(request, 'add_salesinvoice.html', {'party': party })
 
 
 
