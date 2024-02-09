@@ -888,6 +888,24 @@ def shareTransactionpartyToEmail(request,id):
   return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>') 
 
 
+
+
+
+
+
+
+def itemdetailinvoice(request):
+  itmid = request.GET['id']
+  itm = Item.objects.get(id=itmid)
+  hsn = itm.itm_hsn
+  price = itm.itm_sale_price
+  return JsonResponse({'hsn':hsn, 'price':price}) 
+
+
+
+
+
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -904,11 +922,11 @@ def add_salesinvoice(request):
             company = request.user.employee.company
             parties = Party.objects.filter(company=company)
             
-        if parties.exists():
-            # Assuming you want to get the first party in the queryset
-            fparty = parties.first()
-        else:
-            fparty = None
+        # if parties.exists():
+        #     # Assuming you want to get the first party in the queryset
+        #     fparty = parties.first()
+        # else:
+        #     fparty = None
         
         items = Item.objects.filter(company=company)
         
@@ -925,7 +943,7 @@ def add_salesinvoice(request):
             next_count = 1
 
 
-        return render(request, 'add_salesinvoice.html', {'parties': parties, 'usr': request.user, 'fparty': fparty, 'count': next_count, 'items': items})
+        return render(request, 'add_salesinvoice.html', {'parties': parties, 'usr': request.user, 'count': next_count, 'items': items})
 
     except ObjectDoesNotExist:
         # Handle the case where the Company or Party object is not found
