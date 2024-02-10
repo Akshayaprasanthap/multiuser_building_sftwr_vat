@@ -922,19 +922,11 @@ def add_salesinvoice(request):
             company = request.user.employee.company
             parties = Party.objects.filter(company=company)
             
-        # if parties.exists():
-        #     # Assuming you want to get the first party in the queryset
-        #     fparty = parties.first()
-        # else:
-        #     fparty = None
+     
         
         items = Item.objects.filter(company=company)
         
-        # if SalesInvoice.objects.filter(company=company).exists():
-        #     invoice_count = SalesInvoice.objects.filter(company=company).last().invoice_no
-        #     next_count = invoice_count + 1
-        # else:
-        #     next_count = 1
+        
         sales_invoices = SalesInvoice.objects.filter(company=company)
         if sales_invoices.exists():
             invoice_count = sales_invoices.last().invoice_no
@@ -966,6 +958,4 @@ def party_details(request, party_name):
         return JsonResponse(data)
     except Party.DoesNotExist:
         return JsonResponse({'error': 'Party not found'},status=404)
-
-
 

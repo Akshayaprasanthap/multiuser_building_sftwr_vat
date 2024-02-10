@@ -669,7 +669,7 @@
 
 </body>
 
-<script>
+<!-- <script>
     $(document).ready(function () {
         // Initialize selectize
         var $select = $('#partySelect').selectize({
@@ -700,8 +700,20 @@
 
     
 </script>
+ -->
 
+ <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Call updatePartyDetails initially to populate fields based on the default selected party
+    updatePartyDetails();
 
+    // Add event listener for the party selection dropdown
+    document.getElementById('partySelect').addEventListener('change', function() {
+        updatePartyDetails(); // Call the function when the party selection changes
+    });
+});
+
+ </script>
 
 <script>
 
@@ -762,6 +774,10 @@
 
 
 </script>
+
+
+
+
 
 
 
