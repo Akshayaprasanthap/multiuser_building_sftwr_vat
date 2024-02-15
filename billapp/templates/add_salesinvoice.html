@@ -144,9 +144,9 @@
                                         <div class="d-flex">
                                             <select name='product[]' id="product1" class="form-control product"  onchange="changeprd(this.id,this.value)" style="color: black; border-color: #68020F; background-color: white;">
                                                 <option value="" selected hidden>Select Item</option>
-                                                {% for i in item %}
+                                                {% for i in items %}
                                                    
-                                                        <option value="{{ i.id }}" >{{ i.item_name  }} </option>
+                                                        <option value="{{ i.id }}" >{{ i.itm_name  }} </option>
                                                  
                                                 {% endfor %}
                                             </select> &nbsp;&nbsp;&nbsp;
@@ -155,15 +155,15 @@
                                     </td>
 
                                     <td style="width:12%">
-                                        <input type="text" name='hsn[]' id="hsn1" class="form-control  HSNCODE" style="color: black; border-color: #68020F; background-color: white;" readonly />
+                                        <input type="text" name='itm_hsn' id="hsn1" class="form-control  HSNCODE" style="color: black; border-color: #68020F; background-color: white;" readonly />
                                     </td>
 
                                     <td style="width:13%">
-                                        <input type="number" name='qty[]' id="qty1"  class="form-control  qty mb-1" step=0 min=0 style="color: black; border-color: #68020F; background-color: white;" value=0 />
+                                        <input type="number" name='itm_qty' id="qty1"  class="form-control  qty mb-1" step=0 min=0 style="color: black; border-color: #68020F; background-color: white;" value=0 />
                                     </td>
                                 
                                     <td style="width:12%">
-                                        <input type="number" name='price[]' id="unit1" class="form-control price" step="0.00" min="0" style="color: black; border-color: #68020F; background-color: white;" value=0 readonly />
+                                        <input type="number" name='itm_at_price' id="unit1" class="form-control price" step="0.00" min="0" style="color: black; border-color: #68020F; background-color: white;" value=0 readonly />
                                     </td>
                                 
                                     <td style="width:15%">
@@ -1432,7 +1432,7 @@ $(document).on("input", "#advance", function(){
                         <div class="d-flex">
                             <select name='product[]' id="product${roinc}" class="form-control product"  onchange="changeprd(this.id,this.value)" style=" border-color: #68020F;color: black; background-color: white;">
                                 <option value="" selected hidden>Select Item</option>
-                                {% for i in item %}
+                                {% for i in items %}
                                  
                                         <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
                                 
@@ -1444,7 +1444,7 @@ $(document).on("input", "#advance", function(){
                     </td>
 
                     <td tyle="width:12%">
-                        <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control" style="color: black; background-color: white; border-color: #68020F;" readonly />
+                        <input type="text" name='itm_hsn' id="hsn${roinc}" class="form-control" style="color: black; background-color: white; border-color: #68020F;" readonly />
                     </td>
 
                     <td style="width:13%">
