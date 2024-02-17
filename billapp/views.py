@@ -894,12 +894,42 @@ def shareTransactionpartyToEmail(request,id):
 
 
 
+# def itemdetailinvoice(request):
+#   if request.user.is_company:
+#       company = request.user.company
+#       parties = Party.objects.filter(company=company)
+#   else:
+#       company = request.user.employee.company
+#       parties = Party.objects.filter(company=company)
+#   itmid = request.GET['id']
+#   itm = Item.objects.get(id=itmid)
+#   hsn = itm.itm_hsn
+#   price = itm.itm_sale_price
+#   return JsonResponse({'hsn':hsn, 'price':price}) 
+
+from django.http import JsonResponse
+
 def itemdetailinvoice(request):
-  itmid = request.GET['id']
-  itm = Item.objects.get(id=itmid)
-  hsn = itm.itm_hsn
-  price = itm.itm_sale_price
-  return JsonResponse({'hsn':hsn, 'price':price}) 
+    try:
+        if request.user.is_company:
+            company = request.user.company
+            parties = Party.objects.filter(company=company)
+        else:
+            company = request.user.employee.company
+            parties = Party.objects.filter(company=company)
+
+        itmid = request.GET.get('id')  # Using get to avoid KeyError
+        itm = Item.objects.get(id=itmid)
+
+        hsn = itm.itm_hsn
+        price = itm.itm_sale_price
+
+        return JsonResponse({'hsn': hsn, 'price': price,'parties':parties})
+    except Item.DoesNotExist:
+        return JsonResponse({'error': 'Item not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 
 
@@ -959,3 +989,17 @@ def party_details(request, party_name):
     except Party.DoesNotExist:
         return JsonResponse({'error': 'Party not found'},status=404)
 
+
+    
+
+def itemdata_salesinvoiceedit(request):
+  itmid = request.GET['id']
+  print(itmid)
+  itm = Item.objects.get(id=itmid)
+  print(itm)
+  hsn = itm.itm_hsn
+  gst = itm.itm_gst
+  igst = itm.itm_igst
+  price = itm.item_sale_price
+  qty = itm.item_current_stock
+  return JsonResponse({'hsn':hsn, 'gst':gst, 'igst':igst, 'price':price, 'qty':qty})
