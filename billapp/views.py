@@ -992,14 +992,37 @@ def party_details(request, party_name):
 
     
 
+# def itemdata_salesinvoiceedit(request):
+#   itmid = request.GET['id']
+#   print(itmid)
+#   itm = Item.objects.get(id=itmid)
+#   print(itm)
+#   hsn = itm.itm_hsn
+#   # gst = itm.itm_gst
+#   # igst = itm.itm_igst
+#   price = itm.itm_sale_price
+#   qty = itm.itm_at_price
+#   return JsonResponse({'hsn':hsn, 'price':price, 'qty':qty})
+    
+
+
+
+
+
+
+
+
+from django.http import Http404
+
 def itemdata_salesinvoiceedit(request):
-  itmid = request.GET['id']
-  print(itmid)
-  itm = Item.objects.get(id=itmid)
-  print(itm)
-  hsn = itm.itm_hsn
-  gst = itm.itm_gst
-  igst = itm.itm_igst
-  price = itm.item_sale_price
-  qty = itm.item_current_stock
-  return JsonResponse({'hsn':hsn, 'gst':gst, 'igst':igst, 'price':price, 'qty':qty})
+    try:
+        itmid = request.GET['id']
+        itm = Item.objects.get(id=itmid)
+        hsn = itm.itm_hsn
+        # gst = itm.itm_gst
+        # igst = itm.itm_igst
+        price = itm.itm_sale_price
+        qty = itm.itm_at_price
+        return JsonResponse({'hsn': hsn, 'price': price, 'qty': qty})
+    except Item.DoesNotExist:
+        raise Http404("Item not found")
