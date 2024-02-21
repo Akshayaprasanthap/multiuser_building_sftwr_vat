@@ -83,13 +83,13 @@
 
                     <input style="color: black; border-color: #68020F; width: 21.5vw;" class="form-control  bg-light ms-2 " type="date"
                         placeholder="Date" autocomplete="off" name="date" id="current-date" >
-                    <select style="color: black;  width: 21.5vw;" class="form-control  bg-light me-2 ms-2 " id="stateOfSupply"
+                    <!-- <select style="color: black;  width: 21.5vw;" class="form-control  bg-light me-2 ms-2 " id="stateOfSupply"
                         name="state_of_supply"  onselect="calculateTaxAmount()">
                         <option value="">State of supply</option>
                         <option value="state">State</option>
                         <option value="other_state">Other State</option>
 
-                    </select>
+                    </select> -->
                 </div>
 
                 <div class="d-flex mt-4">
@@ -159,7 +159,7 @@
                                     </td>
 
                                     <td style="width:13%">
-                                        <input type="number" name='itm_qty' id="qty1"  class="form-control  qty mb-1" step=0 min=0 style="color: black; border-color: #68020F; background-color: white;" value=0 />
+                                        <input type="number" name='qty[]' id="qty1"  class="form-control  qty mb-1" step=0 min=0 style="color: black; border-color: #68020F; background-color: white;" value=0 />
                                     </td>
                                 
                                     <td style="width:12%">
@@ -167,9 +167,8 @@
                                     </td>
                                 
                                     <td style="width:15%">
-                                        <input type="text" id="intrataxval1" hidden>
-                                        <input type="text" id="intertaxval1" hidden>
-                                        <input type="text" name='tax[]' id="tax1" class="form-control  tax" style="color: black; border-color: #68020F; background-color: white;" placeholder="TRN RATE"  readonly />
+                                        
+                                        <input type="text" name='vat[]' id="vat1" class="form-control  vat" style="color: black; border-color: #68020F; background-color: white;" placeholder="TRN RATE"  readonly />
                                     </td>
 
                                     <td style="width: 10%;">
@@ -218,10 +217,10 @@
                             </div>
 
                             <div class="row container-fluid p-2 m-0" id="igstdiv">
-                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">IGST</label></div>
+                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">Vat</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                    <input type="number" name='igst' step="any" id="igst" value=0.00 readonly style=" border-color: #68020F; color: black; background-color: white;" class="form-control"/>
+                                    <input type="number" name='vat' step="any" id="igst" value=0.00 readonly style=" border-color: #68020F; color: black; background-color: white;" class="form-control"/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
@@ -989,7 +988,7 @@
 
     function reloadItem() {
         $.ajax({
-            url: "{% url 'itemdata_salesinvoiceedit' %}",
+            url: "{% url 'item_invoicedropdown' %}",
             type: "GET",
             dataType: "json",
             data: $(this).serialize(),
@@ -1018,47 +1017,34 @@
 </script>
 <script>
     
-
-     function changeprd(id,value){
-        var n = id.slice(7);
-        $.ajax({
-            url: "#",
-            type : 'GET',
-            data:{
-                id : value,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
+    function changeprd(id, value) {
+    var n = id.slice(7);
+    $.ajax({
+        url: "{% url 'itemdata_salesinvoiceedit' %}",
+        type: 'GET',
+        data: {
+            id: value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+            var data = response.hsn;
+            var data2 = response.qty;
+            var data3 = response.price;
             
-            success: function(response) {
-                data = response.hsn
-                data2 = response.qty
-                data3 = response.price
-                // data4 = response.gst
-                // data5 = response.igst
-                var bc = document.getElementById("stateOfSupply").value;
-                if (bc == 'state') {
-                    // document.getElementById('intrataxval'+n).value = data4;
-                    // document.getElementById('intertaxval'+n).value = data5;
-                    document.getElementById('hsn'+n).value = data;
-                    document.getElementById('unit'+n).value = data3;
-                    // document.getElementById('tax'+n).value = data4;
-                    calc()
-                } else if (bc == 'other_state') {
-                    // document.getElementById('intrataxval'+n).value = data4;
-                    // document.getElementById('intertaxval'+n).value = data5;
-                    document.getElementById('hsn'+n).value = data;
-                    document.getElementById('unit'+n).value = data3;
-                    // document.getElementById('tax'+n).value = data5;
-                    calc()
-                }else{
-                    alert('Please Select Place of Supply')
-                    var $select = $(document.getElementById('product'+n));
-                    var selectize = $select[0].selectize;
-                    selectize.setValue("");
-                }
-            },
-        });
-    }
+            var data4 = response.vat;
+            // var data5 = response.igst;
+
+            // Uncomment and include the following lines based on your requirements
+            document.getElementById('vat' + n).value = data4;
+            // document.getElementById('intertaxval' + n).value = data5;
+            document.getElementById('hsn' + n).value = data;
+            document.getElementById('unit' + n).value = data3;
+
+            calc(); // Assuming calc() is a function you've defined elsewhere
+        },
+    });
+}
+
 
     $(document).ready(function () {
         $('.product').selectize({
@@ -1162,7 +1148,7 @@
     {% comment %} $(document).on('change', '.product',function(){ 
         var n = $(this).attr("id").slice(7);
         $.ajax({
-            url: "#",
+            url: "{% url 'itemdata_salesinvoiceedit' %}",
             type : 'GET',
             data:{
                 id : $(this).val(),
@@ -1212,38 +1198,82 @@
 
    
 
-    $(document).ready(function(){
-        $('#items-table-body').on('keyup change', function () {
-            calc();
-        });
+    // $(document).ready(function(){
+    //     $('#items-table-body').on('keyup change', function () {
+    //         calc();
+    //     });
 
-        $('#tax').on('keyup change', function () {
-            calc_total();
-        });
+    //     $('#tax').on('keyup change', function () {
+    //         calc_total();
+    //     });
+    // });
+
+    // function calc() {
+    //     $('#tab_logic tbody tr').each(function () {
+    //         var html = $(this).html();
+    //         if (html != '') {
+    //             var qty = $(this).find('.qty').val();
+    //             var price = $(this).find('.price').val();
+    //             var dis = $(this).find('.disc').val();
+    //             var bc = $("#stateOfSupply").val();
+    //             if(bc=='state'){
+    //                 taxval = $(this).find('.tax').val().slice(3);
+    //                 var tax = parseInt(taxval.match(/\d+/)[0], 10);
+    //             }
+    //             else{
+    //                 taxval = $(this).find('.tax').val().slice(4);
+    //                 var tax = parseInt(taxval.match(/\d+/)[0], 10);
+    //             }
+    //             $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
+    //             $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+    //             calc_total();
+    //         }
+    //     });
+    // }
+
+
+
+
+
+
+    $(document).ready(function () {
+    $('#items-table-body').on('keyup change', function () {
+        calc();
     });
 
-    function calc() {
-        $('#tab_logic tbody tr').each(function () {
-            var html = $(this).html();
-            if (html != '') {
-                var qty = $(this).find('.qty').val();
-                var price = $(this).find('.price').val();
-                var dis = $(this).find('.disc').val();
-                var bc = $("#stateOfSupply").val();
-                if(bc=='state'){
-                    taxval = $(this).find('.tax').val().slice(3);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                else{
-                    taxval = $(this).find('.tax').val().slice(4);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
-                $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
-                calc_total();
-            }
-        });
-    }
+    $('#tax').on('keyup change', function () {
+        calc_total();
+    });
+});
+
+function calc() {
+    $('#tab_logic tbody tr').each(function () {
+        var html = $(this).html();
+        if (html != '') {
+            var qty = $(this).find('.qty').val();
+            var price = $(this).find('.price').val();
+            var dis = $(this).find('.disc').val();
+
+            // Remove the code related to 'stateOfSupply'
+
+            $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
+            $(this).find('.taxamount').val(((qty * price) - dis));
+            calc_total();
+        }
+    });
+}
+
+function calc_total() {
+    // Add your calc_total logic here if needed
+    // You might want to consider the 'taxamount' values from each row to calculate the total tax.
+}
+
+
+
+
+
+
+
 
 
 $(document).on("input", "#adj", function(){
@@ -1264,8 +1294,8 @@ function calc_total() {
     $('.taxamount').each(function () {
         taxamount += parseFloat($(this).val());
     });
-    $('#sub_total').val(total.toFixed(2));
-    $('#tax_amount').val(taxamount.toFixed(2));
+    $('#sub_total').val(vat.toFixed(2));
+    $('#vat').val(taxamount.toFixed(2));
     adj_val = parseFloat($('#adj').val());
     gtot = taxamount + total + adj_val;
     $('#grandtotal').val(gtot.toFixed(2));
@@ -1434,7 +1464,7 @@ $(document).on("input", "#advance", function(){
                                 <option value="" selected hidden>Select Item</option>
                                 {% for i in items %}
                                  
-                                        <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
+                                        <option  value="{{ i.id  }}">{{ i.itm_name  }} </option>
                                 
                                 {% endfor %}
                             </select>&nbsp;&nbsp;&nbsp;

@@ -1015,14 +1015,76 @@ def party_details(request, party_name):
 from django.http import Http404
 
 def itemdata_salesinvoiceedit(request):
-    try:
+  if request.user.is_company:
+            company = request.user.company
+            parties = Party.objects.filter(company=company)
+  else:
+            company = request.user.employee.company
+            parties = Party.objects.filter(company=company)
+  try:
+        
         itmid = request.GET['id']
         itm = Item.objects.get(id=itmid)
         hsn = itm.itm_hsn
+        vat = itm.itm_vat
         # gst = itm.itm_gst
         # igst = itm.itm_igst
         price = itm.itm_sale_price
         qty = itm.itm_at_price
-        return JsonResponse({'hsn': hsn, 'price': price, 'qty': qty})
-    except Item.DoesNotExist:
+        return JsonResponse({'hsn': hsn, 'price': price, 'qty': qty, 'vat':vat})
+  except Item.DoesNotExist:
         raise Http404("Item not found")
+
+
+
+def item_save_invoice(request):
+  if request.user.is_company:
+            company = request.user.company
+            parties = Party.objects.filter(company=company)
+  else:
+            company = request.user.employee.company
+            parties = Party.objects.filter(company=company)
+
+  name = request.POST['name']
+  unit = request.POST['unit']
+  hsn = request.POST['hsn']
+  taxref = request.POST['taxref']
+  sell_price = request.POST['sell_price']
+  cost_price = request.POST['cost_price']
+  intra_st = request.POST['intra_st']
+  inter_st = request.POST['inter_st']
+
+  if taxref != 'Taxable':
+    intra_st = 'GST0[0%]'
+    inter_st = 'IGST0[0%]'
+
+  itmdate = request.POST.get('itmdate')
+  stock = request.POST.get('stock')
+  itmprice = request.POST.get('itmprice')
+  minstock = request.POST.get('minstock')
+
+  if not hsn:
+    hsn = None
+
+  itm = ItemModel(item_name=name, item_hsn=hsn,item_unit=unit,item_taxable=taxref, item_gst=intra_st,item_igst=inter_st, item_sale_price=sell_price, 
+                item_purchase_price=cost_price,item_opening_stock=stock,item_current_stock=stock,item_at_price=itmprice,item_date=itmdate,
+                item_min_stock_maintain=minstock,company=cmp,user=cmp.user)
+  itm.save() 
+  return JsonResponse({'success': True})
+
+
+
+
+def item_invoicedropdown(request):
+  if request.user.is_company:
+    company = request.user.company
+    parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+  options = {}
+  option_objects = Item.objects.filter(company=company)
+  for option in option_objects:
+      options[option.id] = [option.itm_name]
+  return JsonResponse(options)
+  

@@ -49,6 +49,8 @@ urlpatterns = [
     path('add_salesinvoice/',views.add_salesinvoice,name='add_salesinvoice'),
     path('api/party-details/<str:party_name>/',views.party_details,name='party_details'),
     path('itemdetailinvoice',views.itemdetailinvoice,name='itemdetailinvoice'),
+    path('item_invoicedropdown',views.item_invoicedropdown,name='item_invoicedropdown'),
+    path('itemdata_salesinvoiceedit',views.itemdata_salesinvoiceedit,name='itemdata_salesinvoiceedit'),
 
    
 
