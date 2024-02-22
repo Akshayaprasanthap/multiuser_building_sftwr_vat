@@ -275,7 +275,7 @@
 
 
 
-                <div class="row ">
+                <!-- <div class="row ">
                     <div class="col-sm-5 d-flex flex-column mt-2">
 
                     </div>
@@ -297,7 +297,7 @@
                             <div class="col-sm-4 m-0 p-0"></div>
                         </div>
                     </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -1143,58 +1143,110 @@
     });
 
     
+    {% comment %} 
+$(document).on('change', '.product', function () {
+    var n = $(this).attr("id").slice(7);
+    $.ajax({
+        url: "{% url 'itemdata_salesinvoiceedit' %}",
+        type: 'GET',
+        data: {
+            id: $(this).val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+            data = response.hsn;
+            data2 = response.qty;
+            data3 = response.price;
+            data4 = response.vat;
+            // data5 = response.igst
+
+            document.getElementById('hsn' + n).value = data;
+            document.getElementById('unit' + n).value = data3;
+            document.getElementById('vat' + n).value = data4;
+            // document.getElementById('intertaxval' + n).value = data5;
+            document.getElementById('select_tax' + n).style.display = 'none';
+
+            // Toggle classes for tax elements based on conditions
+            var taxes = document.getElementsByClassName('seltax');
+
+            // For tax1
+            $(`#tax2${n}`).removeClass('d-flex');
+            $(`#tax2${n}`).addClass('d-none');
+            $(`#tax1${n}`).removeClass('d-none');
+            $(`#tax1${n}`).addClass('d-flex');
+            if (data4 != ' ') {
+                document.getElementById('tax1' + n).value = data4;
+            } else {
+                document.getElementById('tax1' + n).value = ' ';
+            }
+
+            // For tax2
+            $(`#tax1${n}`).removeClass('d-flex');
+            $(`#tax1${n}`).addClass('d-none');
+            $(`#tax2${n}`).removeClass('d-none');
+            $(`#tax2${n}`).addClass('d-flex');
+            // Check and set value for data5 (igst) if needed
+            // if (data5 != ' ') {
+            //     document.getElementById('tax2' + n).value = data5;
+            // } else {
+            //     document.getElementById('tax2' + n).value = ' ';
+            // }
+        },
+    });
+});
+{% endcomment %}
 
 
-    {% comment %} $(document).on('change', '.product',function(){ 
-        var n = $(this).attr("id").slice(7);
-        $.ajax({
-            url: "{% url 'itemdata_salesinvoiceedit' %}",
-            type : 'GET',
-            data:{
-                id : $(this).val(),
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
+    // {% comment %} $(document).on('change', '.product',function(){ 
+    //     var n = $(this).attr("id").slice(7);
+    //     $.ajax({
+    //         url: "{% url 'itemdata_salesinvoiceedit' %}",
+    //         type : 'GET',
+    //         data:{
+    //             id : $(this).val(),
+    //             csrfmiddlewaretoken: '{{ csrf_token }}'
+    //             },
             
-            success: function(response) {
-                data = response.hsn
-                data2 = response.qty
-                data3 = response.price
-                data4 = response.gst
-                data5 = response.igst
+    //         success: function(response) {
+    //             data = response.hsn
+    //             data2 = response.qty
+    //             data3 = response.price
+    //             data4 = response.vat
+    //             // data5 = response.igst
 
-                document.getElementById('hsn'+n).value = data;
-                document.getElementById('unit'+n).value = data3;
-                document.getElementById('intrataxval'+n).value = data4;
-                document.getElementById('intertaxval'+n).value = data5;
-                document.getElementById('select_tax'+n).style.display = 'none';
-                var bc = document.getElementById("stateOfSupply").value;
-                if (bc == 'state' ) {
-                    var taxes = document.getElementsByClassName('seltax');
-                    $(`#tax2${n}`).removeClass('d-flex');
-                    $(`#tax2${n}`).addClass('d-none');
-                    $(`#tax1${n}`).removeClass('d-none');
-                    $(`#tax1${n}`).addClass('d-flex');
-                    if (data4 != ' '){
-                        document.getElementById('tax1'+n).value = data4;
-                    }else{
-                        document.getElementById('tax1'+n).value = ' ';
-                    }
+    //             document.getElementById('hsn'+n).value = data;
+    //             document.getElementById('unit'+n).value = data3;
+    //             document.getElementById('vat'+n).value = data4;
+    //             // document.getElementById('intertaxval'+n).value = data5;
+    //             document.getElementById('select_tax'+n).style.display = 'none';
+    //             // var bc = document.getElementById("stateOfSupply").value;
+    //             // if (bc == 'state' ) {
+    //                 var taxes = document.getElementsByClassName('seltax');
+    //                 $(`#tax2${n}`).removeClass('d-flex');
+    //                 $(`#tax2${n}`).addClass('d-none');
+    //                 $(`#tax1${n}`).removeClass('d-none');
+    //                 $(`#tax1${n}`).addClass('d-flex');
+    //                 if (data4 != ' '){
+    //                     document.getElementById('tax1'+n).value = data4;
+    //                 }else{
+    //                     document.getElementById('tax1'+n).value = ' ';
+    //                 }
                             
-                } else {
-                    var taxes = document.getElementsByClassName('seltax');
-                    $(`#tax1${n}`).removeClass('d-flex');
-                    $(`#tax1${n}`).addClass('d-none');
-                    $(`#tax2${n}`).removeClass('d-none');
-                    $(`#tax2${n}`).addClass('d-flex');
-                    if(data5 != ' '){
-                        document.getElementById('tax2'+n).value = data5;
-                    }else{
-                        document.getElementById('tax2'+n).value = ' ';
-                    }
-                }
-            },
-        });
-    }); {% endcomment %}
+    //             // } else {
+    //                 var taxes = document.getElementsByClassName('seltax');
+    //                 $(`#tax1${n}`).removeClass('d-flex');
+    //                 $(`#tax1${n}`).addClass('d-none');
+    //                 $(`#tax2${n}`).removeClass('d-none');
+    //                 $(`#tax2${n}`).addClass('d-flex');
+    //                 if(data5 != ' '){
+    //                     document.getElementById('tax2'+n).value = data5;
+    //                 }else{
+    //                     document.getElementById('tax2'+n).value = ' ';
+    //                 }
+    //             }
+    //         },
+    //     });
+    // }); {% endcomment %}
 
    
 
@@ -1294,7 +1346,7 @@ function calc_total() {
     $('.taxamount').each(function () {
         taxamount += parseFloat($(this).val());
     });
-    $('#sub_total').val(vat.toFixed(2));
+    $('#sub_total').val(taxamount.toFixed(2));
     $('#vat').val(taxamount.toFixed(2));
     adj_val = parseFloat($('#adj').val());
     gtot = taxamount + total + adj_val;
@@ -1347,11 +1399,11 @@ function calc_total() {
 
     $(document).on("change", "#adj", function(){
         var subtot = $('#sub_total').val();
-        var tax = $('#tax_amount').val();
+        var vat = $('#vat').val();
         var adj = $("#adj").val();
         var adv = $("#advance").val();
-        $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(adj)).toFixed(2));
-        $('#balance').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(adj)-parseFloat(adv)).toFixed(2));
+        $('#grandtotal').val((parseFloat(subtot)+parseFloat(vat)+parseFloat(adj)).toFixed(2));
+        $('#balance').val((parseFloat(subtot)+parseFloat(vat)+parseFloat(adj)-parseFloat(adv)).toFixed(2));
     });
 
   
@@ -1487,9 +1539,9 @@ $(document).on("input", "#advance", function(){
 
                     <td style='width:15%;'>
                    
-                            <input type="text" id="intrataxval${roinc}" hidden>
-                            <input type="text" id="intertaxval${roinc}" hidden>
-                            <input type="text" name='tax[]' id="tax${roinc}"  class="form-control tax" style="color: black; background-color: white; border-color: #68020F;" placeholder="GST" readonly/>
+                            // <input type="text" id="intrataxval${roinc}" hidden>
+                            // <input type="text" id="intertaxval${roinc}" hidden>
+                            <input type="text" name='vat[]' id="vat${roinc}"  class="form-control vat" style="color: black; background-color: white; border-color: #68020F;" placeholder="GST" readonly/>
                        
                     </td>  
 
