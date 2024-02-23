@@ -220,38 +220,12 @@
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Vat</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                    <input type="number" name='vat' step="any" id="igst" value=0.00 readonly style=" border-color: #68020F; color: black; background-color: white;" class="form-control"/>
+                                    <input type="number" name='vat' step="any" id="vat" value=0.00 readonly style=" border-color: #68020F; color: black; background-color: white;" class="form-control"/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
                         
-                            <div class="row container-fluid p-2 m-0" style="display: none;" id="cgstdiv">
-                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">CGST</label></div>
-                                <div class="col-sm-1 mt-2">:</div>
-                                <div class="col-sm-7">
-                                    <input type="number" name='cgst' step="any" id="cgst" value=0.00 readonly style="border-color: #68020F; color: black; background-color: white;" class="form-control"/>
-                                </div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-
-                            <div class="row container-fluid p-2 m-0" style="display: none;" id="sgstdiv">
-                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">SGST</label></div>
-                                <div class="col-sm-1 mt-2">:</div>
-                                <div class="col-sm-7">
-                                <input type="number" name='sgst' step="any" id="sgst" value=0.00 readonly style="border-color: #68020F; color: black; background-color: white;" class="form-control"/>
-                                </div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-
-                            <div class="row container-fluid p-2 m-0">
-                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
-                                <div class="col-sm-1 mt-2">:</div>
-                                <div class="col-sm-7">
-                                <input type="number" step="any" name='taxamount' id="tax_amount" value=0.00 readonly style="color: black; background-color: white; border-color: #68020F;" class="form-control"/>
-                                </div>
-                                <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
-
+                 
                             <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
@@ -1075,73 +1049,6 @@
         });
     }  
 
-    {% comment %} $(document).on("change", "#stateOfSupply", function(){
-        var taxes = document.getElementsByClassName('seltax');
-        for (var i = 0; i < taxes.length; i++) {
-            taxes[i].style.display = 'none';
-        }
-        var table = document.getElementById("items-table-body");
-        var numberOfRows = table.rows.length;
-        var bc = document.getElementById("stateOfSupply").value;
-        if (bc == 'state' ) {
-            document.getElementById('cgstdiv').style.display = 'flex';
-            document.getElementById('sgstdiv').style.display = 'flex';
-            document.getElementById('igstdiv').style.display = 'none'; 
-            $(".inter_tax").removeClass('d-flex');
-            $(".inter_tax").addClass('d-none');
-            $(".intra_tax").removeClass('d-none');
-            $(".intra_tax").addClass('d-flex');
-            for (var l = 1; l <= numberOfRows; l++){
-                val = document.getElementById('intrataxval'+l).value;
-                if(document.getElementById('tax2'+l).value != ' '){
-                    document.getElementById('tax1'+l).value = val
-                }
-            }
-
-        } else {
-            document.getElementById('cgstdiv').style.display = 'none';
-            document.getElementById('sgstdiv').style.display = 'none';
-            document.getElementById('igstdiv').style.display = 'flex';
-            $(".intra_tax").removeClass('d-flex');
-            $(".intra_tax").addClass('d-none');
-            $(".inter_tax").removeClass('d-none');
-            $(".inter_tax").addClass('d-flex');
-            for (var l = 1; l <= numberOfRows; l++){
-                val = document.getElementById('intertaxval'+l).value;
-                if(document.getElementById('tax1'+l).value != ' '){
-                    document.getElementById('tax2'+l).value = val
-                }
-            }
-        }
-        calc()
-    }); {% endcomment %}
-
-
-    $(document).on("change", "#stateOfSupply", function(){
-    
-        var table = document.getElementById("items-table-body");
-        var numberOfRows = table.rows.length;
-        var bc = document.getElementById("stateOfSupply").value;
-        if (bc == 'state' ) {
-            document.getElementById('cgstdiv').style.display = 'flex';
-            document.getElementById('sgstdiv').style.display = 'flex';
-            document.getElementById('igstdiv').style.display = 'none'; 
-            for (var l = 1; l <= numberOfRows; l++){
-                val = document.getElementById('intrataxval'+l).value;
-                document.getElementById('tax'+l).value = val
-            }
-        } else {
-            document.getElementById('cgstdiv').style.display = 'none';
-            document.getElementById('sgstdiv').style.display = 'none';
-            document.getElementById('igstdiv').style.display = 'flex';
-            for (var l = 1; l <= numberOfRows; l++){
-                val = document.getElementById('intertaxval'+l).value;
-                document.getElementById('tax'+l).value = val
-            }
-        }
-        calc()
-    });
-
     
     {% comment %} 
 $(document).on('change', '.product', function () {
@@ -1310,6 +1217,7 @@ function calc() {
 
             $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
             $(this).find('.taxamount').val(((qty * price) - dis));
+            // $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
             calc_total();
         }
     });
@@ -1336,43 +1244,153 @@ $(document).on("input", "#advance", function(){
     calc_total();  
 });
 
+
+// function calc_total() {
+//     var total = 0;
+//     var vatAmount = 0;
+
+//     $('.total').each(function () {
+//         total += parseFloat($(this).val());
+//     });
+
+//     $('.taxamount').each(function () {
+//         // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
+//         var itemVatRate = parseFloat($(this).attr('data-vat-rate'));
+
+//         // Use the default VAT rate if the retrieved rate is not a valid number
+//         if (isNaN(itemVatRate)) {
+//             itemVatRate = 0;
+//         }
+
+//         vatAmount += parseFloat($(this).val()) * itemVatRate;
+//     });
+
+//     // Display total
+//     $('#sub_total').val(total.toFixed(2));
+
+//     // Display the correct VAT amount based on the total VAT amount
+//     $('#vat').val(vatAmount.toFixed(2));
+
+//     // Calculate grand total
+//     var adj_val = parseFloat($('#adj').val());
+//     var gtot = total + vatAmount + adj_val;
+
+//     // Update grand total and other related fields
+//     $('#grandtotal').val(gtot.toFixed(2));
+//     $('#baldue').val(gtot.toFixed(2));
+
+//     var adv_val = parseFloat($('#advance').val());
+//     adv_val = gtot - adv_val;
+//     $('#balance').val(adv_val.toFixed(2));
+
+//     // Call taxfun for additional calculations
+//     taxfun();
+// }
+
+
+
+
 function calc_total() {
-   
-    total = 0;
+    var total = 0;
     $('.total').each(function () {
         total += parseFloat($(this).val());
     });
-    taxamount = 0;
+
+    var vatRate = 0.05; // Default VAT rate, assuming 5% initially
+    var vatAmount = 0;
+
     $('.taxamount').each(function () {
-        taxamount += parseFloat($(this).val());
+        // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
+        var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || vatRate;
+        
+        vatAmount += parseFloat($(this).val()) * itemVatRate;
     });
-    $('#sub_total').val(taxamount.toFixed(2));
-    $('#vat').val(taxamount.toFixed(2));
-    adj_val = parseFloat($('#adj').val());
-    gtot = taxamount + total + adj_val;
+
+    $('#sub_total').val(total.toFixed(2));
+    $('#vat').val(vatAmount.toFixed(2));
+
+    var adj_val = parseFloat($('#adj').val());
+    var gtot = total + vatAmount + adj_val;
+
     $('#grandtotal').val(gtot.toFixed(2));
     $('#baldue').val(gtot.toFixed(2));
-    adv_val = parseFloat($('#advance').val());
+
+    var adv_val = parseFloat($('#advance').val());
     adv_val = gtot - adv_val;
     $('#balance').val(adv_val.toFixed(2));
+
     taxfun();
 }
 
 
-    function taxfun(){
-        var bc = $("#stateOfSupply").val();
-        d=0
-        if (bc == 'state'  ) {
-            gst = taxamount/2
-            $('#cgst').val(parseFloat(gst.toFixed(2)));
-            $('#sgst').val(parseFloat(gst.toFixed(2)));
-            $('#igst').val(parseFloat(d.toFixed(2)));
-        } else {
-            $('#igst').val(taxamount.toFixed(2));
-            $('#cgst').val(d.toFixed(2));
-            $('#sgst').val(d.toFixed(2));
-        }
-    } 
+
+
+
+
+
+
+
+
+
+
+
+// function calc_total() {
+   
+//     total = 0;
+//     $('.total').each(function () {
+//         total += parseFloat($(this).val());
+//     });
+//     taxamount = 0;
+//     $('.taxamount').each(function () {
+//         taxamount += parseFloat($(this).val());
+//     });
+//     $('#sub_total').val(taxamount.toFixed(2));
+//     $('#vat').val(taxamount.toFixed(2));
+//     adj_val = parseFloat($('#adj').val());
+//     gtot = taxamount + total + adj_val;
+//     $('#grandtotal').val(gtot.toFixed(2));
+//     $('#baldue').val(gtot.toFixed(2));
+//     adv_val = parseFloat($('#advance').val());
+//     adv_val = gtot - adv_val;
+//     $('#balance').val(adv_val.toFixed(2));
+//     taxfun();
+// }
+
+
+    // function taxfun(){
+    //     var bc = $("#stateOfSupply").val();
+    //     d=0
+    //     if (bc == 'state'  ) {
+    //         gst = taxamount/2
+    //         $('#cgst').val(parseFloat(gst.toFixed(2)));
+    //         $('#sgst').val(parseFloat(gst.toFixed(2)));
+    //         $('#igst').val(parseFloat(d.toFixed(2)));
+    //     } else {
+    //         $('#igst').val(taxamount.toFixed(2));
+    //         $('#cgst').val(d.toFixed(2));
+    //         $('#sgst').val(d.toFixed(2));
+    //     }
+    // } 
+
+
+    function taxfun() {
+    var d = 0;  // Initializing a variable 'd' to 0
+    var gst;
+
+    // Assuming taxamount is defined somewhere in your code
+    if (taxamount !== undefined && !isNaN(taxamount)) {
+        // Assume IGST and set CGST and SGST to 0
+        $('#igst').val(parseFloat(taxamount.toFixed(2)));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    } else {
+        // If taxamount is not defined or not a valid number, set all values to 0
+        $('#igst').val(d.toFixed(2));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    }
+}
+
 
     var checkbox1 = document.getElementById('inclusive');
     checkbox1.addEventListener('click', function () {
@@ -1539,9 +1557,8 @@ $(document).on("input", "#advance", function(){
 
                     <td style='width:15%;'>
                    
-                            // <input type="text" id="intrataxval${roinc}" hidden>
-                            // <input type="text" id="intertaxval${roinc}" hidden>
-                            <input type="text" name='vat[]' id="vat${roinc}"  class="form-control vat" style="color: black; background-color: white; border-color: #68020F;" placeholder="GST" readonly/>
+                          
+                            <input type="text" name='vat[]' id="vat${roinc}"  class="form-control vat" style="color: black; background-color: white; border-color: #68020F;" placeholder="Tax Rate" readonly/>
                        
                     </td>  
 
