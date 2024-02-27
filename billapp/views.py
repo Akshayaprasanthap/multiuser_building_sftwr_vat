@@ -1036,41 +1036,51 @@ def itemdata_salesinvoiceedit(request):
         raise Http404("Item not found")
 
 
-
 def item_save_invoice(request):
-  if request.user.is_company:
-            company = request.user.company
-            parties = Party.objects.filter(company=company)
-  else:
-            company = request.user.employee.company
-            parties = Party.objects.filter(company=company)
+    if request.method == 'POST':
+        itm_type = request.POST.get('itm_type')
+        if itm_type:
+            item_type = 'Service'
+        else:
+            item_type = 'Goods'
 
-  name = request.POST['name']
-  unit = request.POST['unit']
-  hsn = request.POST['hsn']
-  taxref = request.POST['taxref']
-  sell_price = request.POST['sell_price']
-  cost_price = request.POST['cost_price']
-  intra_st = request.POST['intra_st']
-  inter_st = request.POST['inter_st']
+        itm_name = request.POST.get('name')
+        itm_hsn = request.POST.get('hsn')
+        itm_unit = request.POST.get('unit')
+        itm_vat = request.POST.get('vat')
+        taxable_result = request.POST.get('taxable_result')
+        itm_sale_price = request.POST.get('sale_price')
+        itm_purchase_price = request.POST.get('purchase_price')
+        stock_in_hand = request.POST.get('stock_in_hand') or 0
+        itm_at_price = request.POST.get('at_price') or 0
+        itm_date = request.POST.get('itm_date')
+        
 
-  if taxref != 'Taxable':
-    intra_st = 'GST0[0%]'
-    inter_st = 'IGST0[0%]'
 
-  itmdate = request.POST.get('itmdate')
-  stock = request.POST.get('stock')
-  itmprice = request.POST.get('itmprice')
-  minstock = request.POST.get('minstock')
+        item = Item(
+            user=request.user,
+            itm_type=item_type,
+            itm_name=itm_name,
+            itm_hsn=itm_hsn,
+            itm_unit=itm_unit,
+            itm_vat=itm_vat,
+            itm_taxable=taxable_result,
+            itm_sale_price=itm_sale_price,
+            itm_purchase_price=itm_purchase_price,
+            itm_stock_in_hand=stock_in_hand,
+            itm_at_price=itm_at_price,
+            itm_date=itm_date
+        )
 
-  if not hsn:
-    hsn = None
+        if request.user.is_company:
+            item.company = request.user.company
+        else:
+            item.company = request.user.employee.company
 
-  itm = ItemModel(item_name=name, item_hsn=hsn,item_unit=unit,item_taxable=taxref, item_gst=intra_st,item_igst=inter_st, item_sale_price=sell_price, 
-                item_purchase_price=cost_price,item_opening_stock=stock,item_current_stock=stock,item_at_price=itmprice,item_date=itmdate,
-                item_min_stock_maintain=minstock,company=cmp,user=cmp.user)
-  itm.save() 
-  return JsonResponse({'success': True})
+        item.save()
+
+        return JsonResponse({'success': True})
+
 
 
 
@@ -1082,6 +1092,7 @@ def item_invoicedropdown(request):
   else:
     company = request.user.employee.company
     parties = Party.objects.filter(company=company)
+  print(parties)
   options = {}
   option_objects = Item.objects.filter(company=company)
   for option in option_objects:

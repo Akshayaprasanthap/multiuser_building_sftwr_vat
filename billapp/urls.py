@@ -51,6 +51,7 @@ urlpatterns = [
     path('itemdetailinvoice',views.itemdetailinvoice,name='itemdetailinvoice'),
     path('item_invoicedropdown',views.item_invoicedropdown,name='item_invoicedropdown'),
     path('itemdata_salesinvoiceedit',views.itemdata_salesinvoiceedit,name='itemdata_salesinvoiceedit'),
+    path('item_save_invoice',views.item_save_invoice,name='item_save_invoice'),
 
    
 
