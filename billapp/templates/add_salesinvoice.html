@@ -224,6 +224,14 @@
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
+                            <div class="row container-fluid p-2 m-0">
+                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
+                                <div class="col-sm-1 mt-2">:</div>
+                                <div class="col-sm-7">
+                                <input type="number" step="any" name='taxamount' id="tax_amount" value=0.00 readonly style="border-color: #68020F;  color: black; background-color: white;" class="form-control "/>
+                                </div>
+                                <div class="col-sm-4 m-0 p-0"></div>
+                            </div>
                         
                  
                             <div class="row container-fluid p-2 m-0">
@@ -1270,9 +1278,100 @@ function calc() {
     });
 }
 
-function calc_total() {
-    // Add your calc_total logic here if needed
-    // You might want to consider the 'taxamount' values from each row to calculate the total tax.
+
+    $(document).ready(function () {
+        // Attach event handler to the Adjustment input
+        $(document).on("change", "#adj", function () {
+            calc_total();
+        });
+
+        // Attach event handler to the item selection input (assuming it has the ID 'selectedItem')
+        $(document).on("change", "#selectedItem", function () {
+            updateValues(this);
+        });
+    });
+
+    function calc_total() {
+    var total = 0;
+    $('.total').each(function () {
+        total += parseFloat($(this).val());
+    });
+
+    var vatRate = 0.05; // Default VAT rate, assuming 5% initially
+    var vatAmount = 0;
+
+    $('.taxamount').each(function () {
+        // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
+        var itemVatRate = parseFloat($(this).attr('vat')) || vatRate;
+        
+        vatAmount += parseFloat($(this).val()) * itemVatRate;
+    });
+
+    $('#sub_total').val(total.toFixed(2));
+    $('#vat').val(vatAmount.toFixed(2));
+
+    var adj_val = parseFloat($('#adj').val());
+    var gtot = total + vatAmount + adj_val;
+
+    $('#grandtotal').val(gtot.toFixed(2));
+    $('#baldue').val(gtot.toFixed(2));
+
+    var adv_val = parseFloat($('#advance').val());
+    adv_val = gtot - adv_val;
+    $('#balance').val(adv_val.toFixed(2));
+
+    taxfun();
+}
+
+
+    function updateValues(selectedItem) {
+        // Assuming selectedItem has VAT information (e.g., data-vat-rate attribute)
+        var vatRate = parseFloat($(selectedItem).attr('data-vat-rate')) || 0;
+        var itemTotal = parseFloat($(selectedItem).val()) || 0;
+
+        // Calculate VAT based on the selected item's VAT rate
+        var vatAmount = 0;
+        if(vatRate!==0){
+            vatAmount=itemTotal * (vatRate / 100);
+
+        }
+        
+        // Update VAT field with the calculated value
+        $('#vat').val(vatAmount.toFixed(2));
+
+        // Update Subtotal field with the total of the selected item
+        $('#sub_total').val(itemTotal.toFixed(2));
+
+        // Calculate tax amount based on VAT and Subtotal
+        var taxAmount = vatAmount * itemTotal;
+
+        // Update Grand Total field with Subtotal + VAT + Tax Amount
+        var grandTotal = itemTotal + vatAmount + taxAmount;
+        $('#grandtotal').val(grandTotal.toFixed(2));
+    }
+
+    function taxfun() {
+    var vat_0_percent = 0.00;
+    var vat_5_percent = 0.00;
+
+    $('.taxamount').each(function () {
+        var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || 0;
+        var itemTaxAmount = parseFloat($(this).val()) || 0;
+
+        if (itemVatRate === 0) {
+            vat_0_percent += itemTaxAmount;
+        } else if (itemVatRate === 5) {
+            vat_5_percent += itemTaxAmount;
+        }
+    });
+
+    // Update the respective VAT elements with the calculated values
+    $('#vat_0_percent').val(vat_0_percent.toFixed(2));
+    $('#vat_5_percent').val(vat_5_percent.toFixed(2));
+
+    // Display the VAT of the selected item
+    var selectedVAT = ($('#selectedItem').attr('data-vat-rate') === '0') ? vat_0_percent : vat_5_percent;
+    $('#vat').val(selectedVAT.toFixed(2));
 }
 
 
@@ -1283,13 +1382,15 @@ function calc_total() {
 
 
 
-$(document).on("input", "#adj", function(){
-    calc_total();  
-});
 
-$(document).on("input", "#advance", function(){
-    calc_total();  
-});
+
+// $(document).on("input", "#adj", function(){
+//     calc_total();  
+// });
+
+// $(document).on("input", "#advance", function(){
+//     calc_total();  
+// });
 
 
 // function calc_total() {
@@ -1337,40 +1438,43 @@ $(document).on("input", "#advance", function(){
 
 
 
-function calc_total() {
-    var total = 0;
-    $('.total').each(function () {
-        total += parseFloat($(this).val());
-    });
 
-    var vatRate = 0.05; // Default VAT rate, assuming 5% initially
-    var vatAmount = 0;
 
-    $('.taxamount').each(function () {
-        // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
-        var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || vatRate;
+///////////////////////////////////////////////////////////////////
+// function calc_total() {
+//     var total = 0;
+//     $('.total').each(function () {
+//         total += parseFloat($(this).val());
+//     });
+
+//     var vatRate = 0.05; // Default VAT rate, assuming 5% initially
+//     var vatAmount = 0;
+
+//     $('.taxamount').each(function () {
+//         // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
+//         var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || vatRate;
         
-        vatAmount += parseFloat($(this).val()) * itemVatRate;
-    });
+//         vatAmount += parseFloat($(this).val()) * itemVatRate;
+//     });
 
-    $('#sub_total').val(total.toFixed(2));
-    $('#vat').val(vatAmount.toFixed(2));
+//     $('#sub_total').val(total.toFixed(2));
+//     $('#vat').val(vatAmount.toFixed(2));
 
-    var adj_val = parseFloat($('#adj').val());
-    var gtot = total + vatAmount + adj_val;
+//     var adj_val = parseFloat($('#adj').val());
+//     var gtot = total + vatAmount + adj_val;
 
-    $('#grandtotal').val(gtot.toFixed(2));
-    $('#baldue').val(gtot.toFixed(2));
+//     $('#grandtotal').val(gtot.toFixed(2));
+//     $('#baldue').val(gtot.toFixed(2));
 
-    var adv_val = parseFloat($('#advance').val());
-    adv_val = gtot - adv_val;
-    $('#balance').val(adv_val.toFixed(2));
+//     var adv_val = parseFloat($('#advance').val());
+//     adv_val = gtot - adv_val;
+//     $('#balance').val(adv_val.toFixed(2));
 
-    taxfun();
-}
+//     taxfun();
+// }
 
 
-
+/////////////////////////////////////////////
 
 
 
@@ -1419,24 +1523,28 @@ function calc_total() {
     //     }
     // } 
 
+////////////////////////////////////////////////
+//     function taxfun() {
+//     var d = 0;  // Initializing a variable 'd' to 0
+//     var gst;
 
-    function taxfun() {
-    var d = 0;  // Initializing a variable 'd' to 0
-    var gst;
+//     // Assuming taxamount is defined somewhere in your code
+//     if (taxamount !== undefined && !isNaN(taxamount)) {
+//         // Assume IGST and set CGST and SGST to 0
+//         $('#vat').val(parseFloat(taxamount.toFixed(2)));
+//         // $('#cgst').val(d.toFixed(2));
+//         // $('#sgst').val(d.toFixed(2));
+//     } else {
+//         // If taxamount is not defined or not a valid number, set all values to 0
+//         $('#vat').val(d.toFixed(2));
+//         // $('#cgst').val(d.toFixed(2));
+//         // $('#sgst').val(d.toFixed(2));
+//     }
+// }
+/////////////////////////////////////////////////
 
-    // Assuming taxamount is defined somewhere in your code
-    if (taxamount !== undefined && !isNaN(taxamount)) {
-        // Assume IGST and set CGST and SGST to 0
-        $('#igst').val(parseFloat(taxamount.toFixed(2)));
-        // $('#cgst').val(d.toFixed(2));
-        // $('#sgst').val(d.toFixed(2));
-    } else {
-        // If taxamount is not defined or not a valid number, set all values to 0
-        $('#igst').val(d.toFixed(2));
-        // $('#cgst').val(d.toFixed(2));
-        // $('#sgst').val(d.toFixed(2));
-    }
-}
+
+
 
 
     var checkbox1 = document.getElementById('inclusive');
@@ -1686,6 +1794,8 @@ $(document).on("input", "#advance", function(){
 
 
  </script>
+
+
 
 
 {% endblock %}

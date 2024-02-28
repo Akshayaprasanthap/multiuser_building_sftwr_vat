@@ -1036,6 +1036,86 @@ def itemdata_salesinvoiceedit(request):
         raise Http404("Item not found")
 
 
+def save_sales_invoice(request):
+
+    if request.user.is_company:
+            company = request.user.company
+            parties = Party.objects.filter(company=company)
+    else:
+            company = request.user.employee.company
+            parties = Party.objects.filter(company=company)
+
+    party_name = request.POST.get('partyname')
+    contact = request.POST.get('contact')
+    address = request.POST.get('address')
+    invoice_no = request.POST.get('invoiceno')
+    vat=request.POST.get('vat')
+    date = request.POST.get('date')
+    product = tuple(request.POST.getlist("product[]"))
+    hsn =  tuple(request.POST.getlist("hsn[]"))
+    qty =  tuple(request.POST.getlist("qty[]"))
+    rate =  tuple(request.POST.getlist("price[]"))
+    discount =  tuple(request.POST.getlist("discount[]"))
+    tax =  tuple(request.POST.getlist("tax[]"))
+    total =  tuple(request.POST.getlist("total[]"))
+    description = request.POST.get('description')
+    subtotal = float(request.POST.get('subtotal'))
+    adjust = request.POST.get("adj")
+    taxamount = request.POST.get("taxamount")
+    grandtotal=request.POST.get('grandtotal')
+
+    party_instance=Party.objects.get(party_name=party_name)
+    
+  
+    sales_invoice = SalesInvoice(
+        parties=parties,
+        company=company,
+        party=party_instance,
+        party_name=party_name,
+        contact=contact,
+        address=address,
+        invoice_no=invoice_no,
+        date=date,
+        description=description,
+        subtotal=subtotal,
+        vat=vat,
+        total_taxamount=taxamount,
+        adjustment=adjust,
+        grandtotal=grandtotal,
+        
+    )
+
+    sales_invoice.save()
+
+    tr_history = SalesInvoiceTransactionHistory(company=company,
+                                          parties=parties,      
+                                          salesinvoice=sales_invoice,
+                                          action="CREATED",
+                                          done_by_name=parties.name,
+                                          )
+    tr_history.save()
+
+    invoice = SalesInvoice.objects.get(id=sales_invoice.id)
+    mapped = []  # Initialize mapped
+    if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(tax)==len(total):
+      mapped=zip(product, hsn, qty, rate, discount, tax, total)
+      mapped=list(mapped)
+    for ele in mapped: 
+      itm = Item.objects.get(id=ele[0])
+      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], tax=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
+
+
+        
+
+      if 'save_and_new' in request.POST:
+          return render(request, 'add_salesinvoice.html')
+      else:
+          return redirect('view_salesinvoice')
+
+    return render(request, 'add_salesinvoice.html')
+
+
+
 def item_save_invoice(request):
     if request.method == 'POST':
         itm_type = request.POST.get('itm_type')

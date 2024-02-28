@@ -161,3 +161,13 @@ class SalesInvoiceItem(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00,null=True,blank=True)
     tax =  models.CharField(max_length=255,null=True,blank=True)
     totalamount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00,null=True,blank=True)
+
+
+
+class SalesInvoiceTransactionHistory(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
+    salesinvoice = models.ForeignKey(SalesInvoice,on_delete=models.CASCADE,blank=True,null=True)
+    date = models.DateField(auto_now_add=True,null=True)
+    action = models.CharField(max_length=255)
+    done_by_name = models.CharField(max_length=255)
