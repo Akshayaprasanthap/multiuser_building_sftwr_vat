@@ -7,6 +7,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <style>
     .form-control {
@@ -42,7 +52,7 @@
 
 
 <body style="background-color: #FFD6D7;">
-    <form method="POST" action="" class="p-5" enctype="multipart/form-data" novalidate
+    <form method="POST" action="{% url 'salesinvoice_billtemplate' id=id %}" class="p-5" enctype="multipart/form-data" novalidate
         id="forms">
         {% csrf_token %}
         <div class="body-wrapper">
@@ -224,14 +234,14 @@
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
-                            <div class="row container-fluid p-2 m-0">
+                            <!-- <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
                                 <input type="number" step="any" name='taxamount' id="tax_amount" value=0.00 readonly style="border-color: #68020F;  color: black; background-color: white;" class="form-control "/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
+                            </div> -->
                         
                  
                             <div class="row container-fluid p-2 m-0">
@@ -990,12 +1000,12 @@
         }else{
             $.ajax({
                 type : 'POST',
-                url:"{% url 'item_create' %}",
+                url:"{% url 'item_save_invoice' %}",
                 data:{
                     name : $("#item_name").val(),
                     unit : $("#unit").val(),
                     hsn : $("#hsn").val(),
-                    vat : vat,
+                    vat : $("#vat").val(),
                     sell_price : $("#saleprice").val(),
                     cost_price : $("#purprice").val(),
                     itmdate : $("#itmdate").val(),
@@ -1342,37 +1352,58 @@ function calc() {
         // Update Subtotal field with the total of the selected item
         $('#sub_total').val(itemTotal.toFixed(2));
 
-        // Calculate tax amount based on VAT and Subtotal
-        var taxAmount = vatAmount * itemTotal;
+        // // Calculate tax amount based on VAT and Subtotal
+        // var taxAmount = vatAmount * itemTotal;
+        // $('#taxamount').val(taxAmount.toFixed(2));
 
         // Update Grand Total field with Subtotal + VAT + Tax Amount
         var grandTotal = itemTotal + vatAmount + taxAmount;
         $('#grandtotal').val(grandTotal.toFixed(2));
     }
 
+
+
     function taxfun() {
-    var vat_0_percent = 0.00;
-    var vat_5_percent = 0.00;
+    var d = 0;  // Initializing a variable 'd' to 0
+    var gst;
 
-    $('.taxamount').each(function () {
-        var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || 0;
-        var itemTaxAmount = parseFloat($(this).val()) || 0;
-
-        if (itemVatRate === 0) {
-            vat_0_percent += itemTaxAmount;
-        } else if (itemVatRate === 5) {
-            vat_5_percent += itemTaxAmount;
-        }
-    });
-
-    // Update the respective VAT elements with the calculated values
-    $('#vat_0_percent').val(vat_0_percent.toFixed(2));
-    $('#vat_5_percent').val(vat_5_percent.toFixed(2));
-
-    // Display the VAT of the selected item
-    var selectedVAT = ($('#selectedItem').attr('data-vat-rate') === '0') ? vat_0_percent : vat_5_percent;
-    $('#vat').val(selectedVAT.toFixed(2));
+    // Assuming taxamount is defined somewhere in your code
+    if (taxamount !== undefined && !isNaN(taxamount)) {
+        // Assume IGST and set CGST and SGST to 0
+        $('#vat').val(parseFloat(taxamount.toFixed(2)));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    } else {
+        // If taxamount is not defined or not a valid number, set all values to 0
+        $('#vat').val(d.toFixed(2));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    }
 }
+
+//     function taxfun() {
+//     var vat_0_percent = 0.00;
+//     var vat_5_percent = 0.00;
+
+//     $('.taxamount').each(function () {
+//         var itemVatRate = parseFloat($(this).attr('data-vat-rate')) || 0;
+//         var itemTaxAmount = parseFloat($(this).val()) || 0;
+
+//         if (itemVatRate === 0) {
+//             vat_0_percent += itemTaxAmount;
+//         } else if (itemVatRate === 5) {
+//             vat_5_percent += itemTaxAmount;
+//         }
+//     });
+
+//     // Update the respective VAT elements with the calculated values
+//     $('#vat_0_percent').val(vat_0_percent.toFixed(2));
+//     $('#vat_5_percent').val(vat_5_percent.toFixed(2));
+
+//     // Display the VAT of the selected item
+//     var selectedVAT = ($('#selectedItem').attr('data-vat-rate') === '0') ? vat_0_percent : vat_5_percent;
+//     $('#vat').val(selectedVAT.toFixed(2));
+// }
 
 
 
@@ -1524,23 +1555,7 @@ function calc() {
     // } 
 
 ////////////////////////////////////////////////
-//     function taxfun() {
-//     var d = 0;  // Initializing a variable 'd' to 0
-//     var gst;
 
-//     // Assuming taxamount is defined somewhere in your code
-//     if (taxamount !== undefined && !isNaN(taxamount)) {
-//         // Assume IGST and set CGST and SGST to 0
-//         $('#vat').val(parseFloat(taxamount.toFixed(2)));
-//         // $('#cgst').val(d.toFixed(2));
-//         // $('#sgst').val(d.toFixed(2));
-//     } else {
-//         // If taxamount is not defined or not a valid number, set all values to 0
-//         $('#vat').val(d.toFixed(2));
-//         // $('#cgst').val(d.toFixed(2));
-//         // $('#sgst').val(d.toFixed(2));
-//     }
-// }
 /////////////////////////////////////////////////
 
 

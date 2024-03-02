@@ -143,6 +143,7 @@ class SalesInvoice(models.Model):
     vat = models.CharField(max_length=100,default=0, null=True)
     adjustment = models.CharField(max_length=100,default=0)
     grandtotal = models.FloatField(default=0, null=True)
+    total_taxamount = models.CharField(max_length=100,default=0)
     
 
 

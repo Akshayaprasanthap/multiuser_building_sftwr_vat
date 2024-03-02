@@ -53,6 +53,7 @@ urlpatterns = [
     path('itemdata_salesinvoiceedit',views.itemdata_salesinvoiceedit,name='itemdata_salesinvoiceedit'),
     path('item_save_invoice',views.item_save_invoice,name='item_save_invoice'),
     path('save_sales_invoice',views.save_sales_invoice,name='save_sales_invoice'),
+    path('salesinvoice_billtemplate/<int:id>',views.salesinvoice_billtemplate,name='salesinvoice_billtemplate'),
 
    
 

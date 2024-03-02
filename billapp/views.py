@@ -1061,56 +1061,64 @@ def save_sales_invoice(request):
     description = request.POST.get('description')
     subtotal = float(request.POST.get('subtotal'))
     adjust = request.POST.get("adj")
-    taxamount = request.POST.get("taxamount")
     grandtotal=request.POST.get('grandtotal')
-
+    taxamount = request.POST.get("taxamount")
     party_instance=Party.objects.get(party_name=party_name)
-    
-  
-    sales_invoice = SalesInvoice(
-        parties=parties,
-        company=company,
-        party=party_instance,
-        party_name=party_name,
-        contact=contact,
-        address=address,
-        invoice_no=invoice_no,
-        date=date,
-        description=description,
-        subtotal=subtotal,
-        vat=vat,
-        total_taxamount=taxamount,
-        adjustment=adjust,
-        grandtotal=grandtotal,
+    sales_invoice = None  # Initialize the variable outside the if condition
+
+    if taxamount is not None and taxamount != "":
+        sales_invoice = SalesInvoice(
+            company=company,
+            party=party_instance,
+            party_name=party_name,
+            contact=contact,
+            address=address,
+            invoice_no=invoice_no,
+            date=date,
+            description=description,
+            subtotal=subtotal,
+            vat=vat,
+            total_taxamount=taxamount,
+            adjustment=adjust,
+            grandtotal=grandtotal,
+        )
+        sales_invoice.save()
+
+    if sales_invoice is not None:
+            tr_history = SalesInvoiceTransactionHistory(
+                company=company,
+                parties=parties,
+                salesinvoice=sales_invoice,
+                action="CREATED",
+                done_by_name=parties.name,
+            )
+            tr_history.save()
+
+            invoice = SalesInvoice.objects.get(id=sales_invoice.id)
+            mapped = []  # Initialize mapped
+            if len(product) == len(hsn) == len(qty) == len(rate) == len(discount) == len(tax) == len(total):
+                mapped = zip(product, hsn, qty, rate, discount, tax, total)
+                mapped = list(mapped)
+            for ele in mapped:
+                itm = Item.objects.get(id=ele[0])
+                SalesInvoiceItem.objects.create(
+                    item=itm,
+                    hsn=ele[1],
+                    quantity=ele[2],
+                    rate=ele[3],
+                    discount=ele[4],
+                    tax=ele[5],
+                    totalamount=ele[6],
+                    salesinvoice=invoice,
+                    company=company,
+                )
+
         
-    )
 
-    sales_invoice.save()
-
-    tr_history = SalesInvoiceTransactionHistory(company=company,
-                                          parties=parties,      
-                                          salesinvoice=sales_invoice,
-                                          action="CREATED",
-                                          done_by_name=parties.name,
-                                          )
-    tr_history.save()
-
-    invoice = SalesInvoice.objects.get(id=sales_invoice.id)
-    mapped = []  # Initialize mapped
-    if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(tax)==len(total):
-      mapped=zip(product, hsn, qty, rate, discount, tax, total)
-      mapped=list(mapped)
-    for ele in mapped: 
-      itm = Item.objects.get(id=ele[0])
-      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], tax=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
-
-
-        
-
-      if 'save_and_new' in request.POST:
+    if 'save_and_new' in request.POST:
           return render(request, 'add_salesinvoice.html')
-      else:
-          return redirect('view_salesinvoice')
+    else:
+          return render(request,'salesinvoice_billtemplate.html')
 
     return render(request, 'add_salesinvoice.html')
 
@@ -1179,3 +1187,24 @@ def item_invoicedropdown(request):
       options[option.id] = [option.itm_name]
   return JsonResponse(options)
   
+
+
+
+
+def salesinvoice_billtemplate(request,id):
+  if request.user.is_company:
+    company = request.user.company
+    parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+  print(parties)
+  
+  history= SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
+  salesinvoice = SalesInvoice.objects.get(id=id)
+  salesinvoiceitem = SalesInvoiceItem.objects.filter(salesinvoice=salesinvoice)
+  dis = 0
+  for itm in salesinvoiceitem:
+    dis += int(itm.discount)
+  itm_len = len(salesinvoiceitem)
+  return render(request, 'salesinvoice_billtemplate.html',{'parties':parties,'company':company,'history':history,'salesinvoice':salesinvoice,'salesinvoiceitem':salesinvoiceitem,'dis':dis,'itm_len':itm_len})
