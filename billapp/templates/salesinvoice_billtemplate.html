@@ -237,12 +237,12 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="ml-auto position-relative">
+                                <div class="ml-auto position-relative">
                                     <a class="btn" onclick="printfun()">
                                         <img width="30px" src="{% static 'images/printer.png' %}" alt="no img">
                                         <br>Print
                                     </a>
-                                    <a class="btn ml-4" id="pdflink">
+                                    <!-- <a class="btn ml-4" id="pdflink">
                                         <img width="20px" src="{% static 'images/PDF_icon.png' %}" alt="no img"><br>Pdf
                                     </a>
                                     <a class="btn ml-4" onclick="toggleDropdown()">
@@ -252,11 +252,11 @@
                                         <ul style="margin-bottom: -1px;">
                                         </ul>
                                         <ul style="margin-bottom: -1px;"></ul>
-                                    </div>
+                                    </div> -->
                                     <a class="ml-5" href="#" style="text-align: right; font-size: x-large; color: black;">
                                         <i class="fa fa-times mt-2" aria-hidden="true"></i>
                                     </a>
-                                </div> -->
+                                </div>
                             </div>
 
                         </div>
@@ -293,8 +293,8 @@
                                                             <div class="col-7">
                                                                 <p><b>FROM</b>,</p>
                                                                 <h5 class="" style='margin-left: 4vh;'>
-                                                                    {{salesinvoice.staff.first_name }}
-                                                                    {{salesinvoice.staff.last_name }}</h5>
+                                                                    {{salesinvoice.party.first_name }}
+                                                                    </h5>
                                                                 <p class="address"
                                                                     style="margin-top: -1vh; margin-left: 4vh;">
                                                                     {{salesinvoice.company.company_name }}<br>
@@ -336,13 +336,13 @@
                                                         {% for i in salesinvoiceitem %}
                                                         <tr>
                                                             <td style="color:black; text-align: center;">
-                                                                {{i.item.item_name}}</td>
-                                                            <td style="color:black">{{i.item.item_hsn}}</td>
-                                                            <td style="color:black">{{i.item.item_sale_price}}</td>
-                                                            <td style="color:black">{{i.quantity}}</td>
-                                                            <td style="color:black">{{i.tax}}</td>
-                                                            <td style="color:black">{{i.discount}} </td>
-                                                            <td style="color:black">{{i.totalamount}}</td>
+                                                                {{i.item.itm_name}}</td>
+                                                            <td style="color:black">{{i.item.itm_hsn}}</td>
+                                                            <td style="color:black">{{i.item.itm_sale_price}}</td>
+                                                            <td style="color:black">{{i.itmquantity}}</td>
+                                                            <td style="color:black">{{i.itm.vat}}</td>
+                                                            <td style="color:black">{{i.itm.discount}} </td>
+                                                            <td style="color:black">{{i.itm.totalamount}}</td>
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>

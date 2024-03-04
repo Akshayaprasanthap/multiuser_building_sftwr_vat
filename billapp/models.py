@@ -132,7 +132,7 @@ class SalesInvoice(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)
     company = models.ForeignKey(Company,on_delete= models.CASCADE,null=True,blank=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE,null=True,blank=True)
-    party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True)
+    party = models.OneToOneField(Party,on_delete=models.CASCADE,null=True,blank=True,unique=True)
     party_name = models.CharField(max_length=100,null=True,blank=True)
     contact = models.CharField(max_length=255,null=True,blank=True)
     address = models.CharField(max_length=255,null=True,blank=True)

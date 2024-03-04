@@ -52,7 +52,7 @@
 
 
 <body style="background-color: #FFD6D7;">
-    <form method="POST" action="{% url 'salesinvoice_billtemplate' id=id %}" class="p-5" enctype="multipart/form-data" novalidate
+    <form method="POST" action="{% url 'save_sales_invoice' %}" class="p-5" enctype="multipart/form-data" novalidate
         id="forms">
         {% csrf_token %}
         <div class="body-wrapper">
@@ -1071,6 +1071,7 @@
             var data3 = response.price;
             
             var data4 = response.vat;
+            console.log(data4);
             // var data5 = response.igst;
 
             // Uncomment and include the following lines based on your requirements
@@ -1130,6 +1131,7 @@ $(document).on('change', '.product', function () {
             data2 = response.qty;
             data3 = response.price;
             data4 = response.vat;
+            console.log(data4);
             // data5 = response.igst
 
             document.getElementById('hsn' + n).value = data;
@@ -1277,12 +1279,18 @@ function calc() {
             var qty = $(this).find('.qty').val();
             var price = $(this).find('.price').val();
             var dis = $(this).find('.disc').val();
+            var tx = $(this).find('.vat').val();
+            if ( tx == 'VAT 5%'){
+                var tax = 5
+            }else{
+                var tax = 0
+            }
 
             // Remove the code related to 'stateOfSupply'
 
             $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
-            $(this).find('.taxamount').val(((qty * price) - dis));
-            // $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+            // $(this).find('.taxamount').val(((qty * price) - dis));
+            $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
             calc_total();
         }
     });
@@ -1303,6 +1311,7 @@ function calc() {
 
     function calc_total() {
     var total = 0;
+    var vatTot = 0; 
     $('.total').each(function () {
         total += parseFloat($(this).val());
     });
@@ -1312,16 +1321,18 @@ function calc() {
 
     $('.taxamount').each(function () {
         // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
-        var itemVatRate = parseFloat($(this).attr('vat')) || vatRate;
+        // var itemVatRate = parseFloat($(this).attr('vat')) || vatRate;
         
-        vatAmount += parseFloat($(this).val()) * itemVatRate;
+        // vatAmount += parseFloat($(this).val()) * itemVatRate;
+
+        vatTot += parseFloat($(this).val());
     });
 
     $('#sub_total').val(total.toFixed(2));
-    $('#vat').val(vatAmount.toFixed(2));
+    $('#vat').val(vatTot.toFixed(2));
 
     var adj_val = parseFloat($('#adj').val());
-    var gtot = total + vatAmount + adj_val;
+    var gtot = total + vatTot + adj_val;
 
     $('#grandtotal').val(gtot.toFixed(2));
     $('#baldue').val(gtot.toFixed(2));
@@ -1330,7 +1341,7 @@ function calc() {
     adv_val = gtot - adv_val;
     $('#balance').val(adv_val.toFixed(2));
 
-    taxfun();
+    taxfun(vatTot);
 }
 
 
@@ -1363,7 +1374,7 @@ function calc() {
 
 
 
-    function taxfun() {
+    function taxfun(taxamount) {
     var d = 0;  // Initializing a variable 'd' to 0
     var gst;
 

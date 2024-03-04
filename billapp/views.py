@@ -1037,91 +1037,163 @@ def itemdata_salesinvoiceedit(request):
 
 
 def save_sales_invoice(request):
-
-    if request.user.is_company:
-            company = request.user.company
-            parties = Party.objects.filter(company=company)
-    else:
-            company = request.user.employee.company
-            parties = Party.objects.filter(company=company)
-
+  if request.user.is_company:
+      company = request.user.company
+      parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+  
+  
+  
+  
+  if request.method == 'POST':      
     party_name = request.POST.get('partyname')
     contact = request.POST.get('contact')
     address = request.POST.get('address')
     invoice_no = request.POST.get('invoiceno')
-    vat=request.POST.get('vat')
+    tax=request.POST.get('tax')
     date = request.POST.get('date')
     product = tuple(request.POST.getlist("product[]"))
     hsn =  tuple(request.POST.getlist("hsn[]"))
     qty =  tuple(request.POST.getlist("qty[]"))
     rate =  tuple(request.POST.getlist("price[]"))
     discount =  tuple(request.POST.getlist("discount[]"))
-    tax =  tuple(request.POST.getlist("tax[]"))
+    vat =  tuple(request.POST.getlist("vat[]"))
     total =  tuple(request.POST.getlist("total[]"))
     description = request.POST.get('description')
     subtotal = float(request.POST.get('subtotal'))
     adjust = request.POST.get("adj")
     grandtotal=request.POST.get('grandtotal')
     taxamount = request.POST.get("taxamount")
-    party_instance=Party.objects.get(party_name=party_name)
-    sales_invoice = None  # Initialize the variable outside the if condition
+    party=Party.objects.get(party_name=party_name)
 
-    if taxamount is not None and taxamount != "":
-        sales_invoice = SalesInvoice(
-            company=company,
-            party=party_instance,
-            party_name=party_name,
-            contact=contact,
-            address=address,
-            invoice_no=invoice_no,
-            date=date,
-            description=description,
-            subtotal=subtotal,
-            vat=vat,
-            total_taxamount=taxamount,
-            adjustment=adjust,
-            grandtotal=grandtotal,
-        )
-        sales_invoice.save()
+        
+      
+    sales_invoice = SalesInvoice(
+        company=company,
+        party_name=party_name,
+        contact=contact,
+        address=address,
+        invoice_no=invoice_no,
+        date=date,
+        description=description,
+        subtotal=subtotal,
+        vat=vat,
+        total_taxamount=taxamount if taxamount is not None else 0,  # Provide a default value if taxamount is None
+        adjustment=adjust,
+        grandtotal=grandtotal,
+        
+    )
 
-    if sales_invoice is not None:
-            tr_history = SalesInvoiceTransactionHistory(
-                company=company,
-                parties=parties,
-                salesinvoice=sales_invoice,
-                action="CREATED",
-                done_by_name=parties.name,
-            )
-            tr_history.save()
+    sales_invoice.save()
 
-            invoice = SalesInvoice.objects.get(id=sales_invoice.id)
-            mapped = []  # Initialize mapped
-            if len(product) == len(hsn) == len(qty) == len(rate) == len(discount) == len(tax) == len(total):
-                mapped = zip(product, hsn, qty, rate, discount, tax, total)
-                mapped = list(mapped)
-            for ele in mapped:
-                itm = Item.objects.get(id=ele[0])
-                SalesInvoiceItem.objects.create(
-                    item=itm,
-                    hsn=ele[1],
-                    quantity=ele[2],
-                    rate=ele[3],
-                    discount=ele[4],
-                    tax=ele[5],
-                    totalamount=ele[6],
-                    salesinvoice=invoice,
-                    company=company,
-                )
+    tr_history = SalesInvoiceTransactionHistory(company=company,
+                                                 
+                                          salesinvoice=sales_invoice,
+                                          action="CREATED",
+                                          done_by_name=party.party_name,
+                                          )
+    tr_history.save()
+
+    invoice = SalesInvoice.objects.get(id=sales_invoice.id)
+    mapped = []  # Initialize mapped
+    if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(vat)==len(total):
+      mapped=zip(product, hsn, qty, rate, discount, vat, total)
+      mapped=list(mapped)
+      for ele in mapped: 
+          itm = Item.objects.get(id=ele[0])
+          SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], vat=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
+
+    if 'save_and_new' in request.POST:
+      return redirect(add_salesinvoice)
+    else:
+      return redirect('salesinvoice_billtemplate', sales_invoice.id)
+
+  
+  return HttpResponse("Default response")
+        # if 'save_and_new' in request.POST:
+        #   return redirect(add_salesinvoice)
+        # else:
+        #   return redirect('salesinvoice_billtemplate',sales_invoice.id)
+    # return render(request, 'add_salesinvoice.html')
+
+  
+
+    #     if taxamount is not None and taxamount != "":
+    #         sales_invoice = SalesInvoice(
+    #             company=company,
+    #             # party=party_instance,
+    #             parties=parties,
+    #             party_name=party_name,
+    #             contact=contact,
+    #             address=address,
+    #             invoice_no=invoice_no,
+    #             date=date,
+    #             description=description,
+    #             subtotal=subtotal,
+    #             vat=vat,
+    #             total_taxamount=taxamount,
+    #             adjustment=adjust,
+    #             grandtotal=grandtotal,
+    #         )
+    #         sales_invoice.save()
+
+
+    
+    #         if sales_invoice is not None:
+    #             tr_history = SalesInvoiceTransactionHistory(
+    #                 company=company,
+    #                 parties=parties,
+    #                 salesinvoice=sales_invoice,
+    #                 action="CREATED",
+    #                 done_by_name=parties.name,
+    #             )
+    #             tr_history.save()
+
+    #         try:
+    #             # Attempt to fetch the SalesInvoice object again
+    #             invoice = SalesInvoice.objects.get(id=sales_invoice.id)
+    #             mapped = []  # Initialize mapped
+    #             if len(product) == len(hsn) == len(qty) == len(rate) == len(discount) == len(tax) == len(total):
+    #                 mapped = zip(product, hsn, qty, rate, discount, tax, total)
+    #                 mapped = list(mapped)
+    #                 for ele in mapped:
+    #                     itm = Item.objects.get(id=ele[0])
+    #                     SalesInvoiceItem.objects.create(
+    #                         item=itm,
+    #                         hsn=ele[1],
+    #                         quantity=ele[2],
+    #                         rate=ele[3],
+    #                         discount=ele[4],
+    #                         tax=ele[5],
+    #                         totalamount=ele[6],
+    #                         salesinvoice=invoice,
+    #                         company=company,
+    #                     )
+    #         except SalesInvoice.DoesNotExist:
+    #             # Handle the case where SalesInvoice.DoesNotExist exception is raised
+    #             return HttpResponse("Error: Sales Invoice not found", status=500)
+    #         except Exception as e:
+    #             # Handle other exceptions that might occur during the fetch
+    #             return HttpResponse(f"Error: {e}", status=500)
+    #     else:
+    #         # Handle the case where sales_invoice was not saved successfully
+    #         return HttpResponse("Error: Sales Invoice not saved successfully", status=500)
+
+
 
         
 
-    if 'save_and_new' in request.POST:
-          return render(request, 'add_salesinvoice.html')
-    else:
-          return render(request,'salesinvoice_billtemplate.html')
+    # if 'save_and_new' in request.POST:
+    #     return redirect(add_salesinvoice)
+    # else:
+    #     if sales_invoice:
+    #         return redirect('salesinvoice_billtemplate', sales_invoice.id)
+    #     else:
+    #         return HttpResponse("Error: Sales Invoice not saved successfully", status=500)
 
-    return render(request, 'add_salesinvoice.html')
-
+from django.urls import reverse
 
 
 def item_save_invoice(request):
