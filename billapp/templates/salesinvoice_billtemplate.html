@@ -292,9 +292,9 @@
                                                         <div class="row  pb-3">
                                                             <div class="col-7">
                                                                 <p><b>FROM</b>,</p>
-                                                                <h5 class="" style='margin-left: 4vh;'>
-                                                                    {{salesinvoice.party.first_name }}
-                                                                    </h5>
+                                                                <!-- <h5 class="" style='margin-left: 4vh;'>
+                                                                    {{salesinvoice.party_name }}
+                                                                    </h5> -->
                                                                 <p class="address"
                                                                     style="margin-top: -1vh; margin-left: 4vh;">
                                                                     {{salesinvoice.company.company_name }}<br>
@@ -307,9 +307,9 @@
                                                             <div class="col-5">
                                                                 <p><b>TO</b>,</p>
                                                                 <h5 class="" style='margin-left: 4vh;'>
-                                                                    {{salesinvoice.party.party_name}}</h5>
+                                                                    {{salesinvoice.party_name}}</h5>
                                                                 <p class="address col-9"
-                                                                    style="margin-top: -1vh; margin-left: 4vh;"> {{salesinvoice.party.address}} </p>
+                                                                    style="margin-top: -1vh; margin-left: 4vh;">{{salesinvoice.address}}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -335,14 +335,13 @@
                                                     <tbody>
                                                         {% for i in salesinvoiceitem %}
                                                         <tr>
-                                                            <td style="color:black; text-align: center;">
-                                                                {{i.item.itm_name}}</td>
-                                                            <td style="color:black">{{i.item.itm_hsn}}</td>
-                                                            <td style="color:black">{{i.item.itm_sale_price}}</td>
-                                                            <td style="color:black">{{i.itmquantity}}</td>
-                                                            <td style="color:black">{{i.itm.vat}}</td>
-                                                            <td style="color:black">{{i.itm.discount}} </td>
-                                                            <td style="color:black">{{i.itm.totalamount}}</td>
+                                                            <td style="color:black; text-align: center;">{{ i.item.itm_name }}</td>
+                                                            <td style="color:black">{{ i.hsn }}</td>
+                                                            <td style="color:black">{{ i.rate }}</td>
+                                                            <td style="color:black">{{ i.quantity }}</td>
+                                                            <td style="color:black">{{ i.tax }}</td>
+                                                            <td style="color:black">{{ i.discount }}</td>
+                                                            <td style="color:black">{{ i.totalamount }}</td>
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>
