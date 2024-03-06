@@ -1262,21 +1262,150 @@ def item_invoicedropdown(request):
 
 
 
+def salesinvoice_billtemplate(request, id):
+    if request.user.is_company:
+        company = request.user.company
+        parties = Party.objects.filter(company=company)
+    else:
+        company = request.user.employee.company
+        parties = Party.objects.filter(company=company)
 
-def salesinvoice_billtemplate(request,id):
+    print(parties)
+  
+    history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
+    salesinvoice = SalesInvoice.objects.get(id=id)
+
+    # Assuming SalesInvoiceItem has a ForeignKey relationship with SalesInvoice
+    salesinvoiceitems = SalesInvoiceItem.objects.filter(salesinvoice=salesinvoice)
+
+    dis = 0
+    for itm in salesinvoiceitems:
+        dis += int(itm.discount)
+
+    itm_len = len(salesinvoiceitems)
+
+    return render(request, 'salesinvoice_billtemplate.html', {
+        'parties': parties,
+        'company': company,
+        'history': history,
+        'salesinvoice': salesinvoice,
+        'salesinvoiceitems': salesinvoiceitems,
+        'dis': dis,
+        'itm_len': itm_len,
+    })
+
+
+
+def view_salesinvoice(request):
+    if request.user.is_company:
+        company = request.user.company
+        parties = Party.objects.filter(company=company)
+    else:
+        company = request.user.employee.company
+        parties = Party.objects.filter(company=company)
+
+    print(parties)
+    
+    
+    party = Party.objects.filter(company=company)
+    item = Item.objects.filter(company=company)
+    
+    salesinvoice = SalesInvoice.objects.filter(company=company)
+    for i in salesinvoice:
+        last_transaction = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=i).last()
+        if last_transaction:
+            i.action = last_transaction.action
+            i.done_by_name = last_transaction.done_by_name
+        else:
+            i.action = None
+            i.done_by_name = None
+
+    return render(request, 'view_salesinvoice.html', {'parties':parties,'party': party, 'item': item, 'salesinvoice': salesinvoice,'company':company})
+
+
+def deletesalesinvoice(request,id):
+    salesinvoice=SalesInvoice.objects.get(id=id)
+    salesinvoiceitem = SalesInvoiceItem.objects.filter(salesinvoice=salesinvoice)
+    salesinvoice.delete()
+    salesinvoiceitem.delete()
+    return redirect('view_salesinvoice')
+
+
+
+
+
+
+def edit_salesinvoice(request,id):
   if request.user.is_company:
     company = request.user.company
     parties = Party.objects.filter(company=company)
   else:
     company = request.user.employee.company
     parties = Party.objects.filter(company=company)
+
   print(parties)
+    
+ 
+  getinoice=SalesInvoice.objects.get(id=id)
+  getitem=SalesInvoiceItem.objects.filter(salesinvoice=id)
+  party=Party.objects.filter(company=company)
+  item=Item.objects.filter(company=company)
   
-  history= SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
-  salesinvoice = SalesInvoice.objects.get(id=id)
-  salesinvoiceitem = SalesInvoiceItem.objects.filter(salesinvoice=salesinvoice)
-  dis = 0
-  for itm in salesinvoiceitem:
-    dis += int(itm.discount)
-  itm_len = len(salesinvoiceitem)
-  return render(request, 'salesinvoice_billtemplate.html',{'parties':parties,'company':company,'history':history,'salesinvoice':salesinvoice,'salesinvoiceitem':salesinvoiceitem,'dis':dis,'itm_len':itm_len})
+
+
+  return render(request, 'edit_salesinvoice.html',{'parties':parties,'getinoice':getinoice,'getitem':getitem,'party':party,'item':item,'bank':bank,'allmodules':allmodules})
+
+
+def editsave_salesinvoice(request,id):
+
+  if request.user.is_company:
+    company = request.user.company
+    parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+
+
+    sales_invoice=SalesInvoice.objects.get(id=id,company=company,parties=parties)
+    
+    sales_invoice.party_name = request.POST.get('partyname')
+    sales_invoice.contact = request.POST.get('contact')
+    sales_invoice.address = request.POST.get('address')
+    sales_invoice.invoice_no = request.POST.get('invoiceno')
+    sales_invoice.date = request.POST.get('date')
+   
+    sales_invoice.description = request.POST.get('description')
+    sales_invoice.subtotal =float(request.POST.get('subtotal'))
+    sales_invoice.vat = request.POST.get('vat')
+    sales_invoice.total_taxamount = request.POST.get('taxamount')
+    sales_invoice.adjustment = request.POST.get('adj')
+    sales_invoice.grandtotal = request.POST.get('grandtotal')
+    
+    sales_invoice.save()
+
+    product = tuple(request.POST.getlist("product[]"))
+    qty = tuple(request.POST.getlist("qty[]"))
+    vat =tuple( request.POST.getlist("vat[]"))
+    discount = tuple(request.POST.getlist("discount[]"))
+    total = tuple(request.POST.getlist("total[]"))
+    SalesInvoiceItem.objects.filter(salesinvoice=sales_invoice,company=company).delete()
+    if len(product)==len(qty)==len(qty)==len(vat):
+      mapped=zip(product,qty,vat,discount,total)
+      mapped=list(mapped)
+      for ele in mapped:
+        itm = Item.objects.get(id=ele[0])
+        SalesInvoiceItem.objects.create(item =itm,quantity=ele[1], tax=ele[2],discount=ele[3],totalamount=ele[4],salesinvoice=sales_invoice,company=company)
+
+    tr_history = SalesInvoiceTransactionHistory(company=company,
+                                              
+                                          salesinvoice=sales_invoice,
+                                          action="UPDATED",
+                                          done_by_name=parties.name,
+                                          )
+    tr_history.save()
+
+    
+    return redirect('view_salesinvoice')
+
+  return render(request, 'edit_salesinvoice.html')
+
