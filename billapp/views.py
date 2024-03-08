@@ -1101,9 +1101,9 @@ def save_sales_invoice(request):
     if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(vat)==len(total):
       mapped=zip(product, hsn, qty, rate, discount, vat, total)
       mapped=list(mapped)
-      for ele in mapped: 
-          itm = Item.objects.get(id=ele[0])
-          SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], vat=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
+    for ele in mapped: 
+      itm = Item.objects.get(id=ele[0])
+      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], vat=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
 
     if 'save_and_new' in request.POST:
       return redirect(add_salesinvoice)
@@ -1407,3 +1407,85 @@ def editsave_salesinvoice(request,id):
 
   return render(request, 'edit_salesinvoice.html')
 
+
+
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Party, Employee, SalesInvoiceTransactionHistory
+
+def salesinvoicehistory(request, id):
+    if request.user.is_company:
+        company = request.user.company
+        employee = None  # Initialize employee variable
+    else:
+        # Use get_object_or_404 to handle DoesNotExist exception
+        employee = get_object_or_404(Employee, user=request.user)
+        company = employee.company
+
+    parties = Party.objects.filter(company=company)
+    emp = employee  # Use the retrieved employee object directly
+
+    history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
+
+    return render(request, 'salesinvoicehistory.html', {
+        'parties': parties,
+        'history': history,
+        'company': company,
+        'emp': emp,
+    })
+
+
+
+
+from django.http import JsonResponse
+
+from django.db.models import Sum
+
+def profit_loss_data(request):
+    
+  if request.user.is_company:
+    company = request.user.company
+    parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+    # staff = staff_details.objects.get(id=staff_id)
+    # company_instance = company.objects.get(id=staff.company.id)
+    labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+
+
+    sales_data = (
+        SalesInvoice.objects.filter(date__year=2023,company=company)
+        .values('date__month')
+        .annotate(grandtotal_sum=Sum('grandtotal'))
+    )
+
+    # Create a dictionary with monthly sales data
+    sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
+
+    # Fill in sales values for each month
+    sales = [sales_dict.get(month, 0) for month in range(1, 13)]
+
+    data = {'labels': labels, 'sales': sales}
+    return JsonResponse(data)
+
+def graph_salesinvoice(request):
+  
+  if request.user.is_company:
+    company = request.user.company
+    parties = Party.objects.filter(company=company)
+  else:
+    company = request.user.employee.company
+    parties = Party.objects.filter(company=company)
+  party = party.objects.get(id=parties)
+  # company_instance = staff.company
+  cmp = Company.objects.get(id=party.company.id)
+  user = Company.user
+  
+    
+  salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
+
+
+
+  return render(request, 'graph_salesinvoice.html',{'salesinvoice':salesinvoice,'user':user})

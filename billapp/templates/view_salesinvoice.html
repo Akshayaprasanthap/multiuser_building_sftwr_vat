@@ -199,7 +199,7 @@
                             <input type="date" id="toDate" class="date-input">
                         </div>
                         <div class="ml-auto  " style="padding-left: 20vw;" >
-                            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="window.location.href='#'">
+                            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="window.location.href='{% url 'graph_salesinvoice' %}'">
                                 <span>
                                    <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
                                    <br><span style="color: black; font-size: small; ">Graph</span>
@@ -506,7 +506,7 @@
                                                   </li>
 
                                                   <li>
-                                                    <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_h"> <span class="fa fa-history pe-2 th mt-2"></span>  History</a></li> 
+                                                    <a href="{% url 'salesinvoicehistory' s.id  %}" style="color: black; padding-left: 10px;" class="hide_table_text_h"> <span class="fa fa-history pe-2 th mt-2"></span>  History</a></li> 
                                               </li>
                                                         </ul>
                                                     </div> 

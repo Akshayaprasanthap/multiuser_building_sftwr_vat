@@ -58,6 +58,9 @@ urlpatterns = [
     path('salesinvoice_billtemplate/<int:id>',views.salesinvoice_billtemplate,name='salesinvoice_billtemplate'),
     path('edit_salesinvoice/<int:id>',views.edit_salesinvoice,name='edit_salesinvoice'),
     path('editsave_salesinvoice/<int:id>',views.editsave_salesinvoice,name='editsave_salesinvoice'),
+    path('salesinvoicehistory/<int:id>',views.salesinvoicehistory,name='salesinvoicehistory'),
+    path('graph_salesinvoice',views.graph_salesinvoice,name='graph_salesinvoice'),
+    path('api/profit_loss_data/', views.profit_loss_data, name='profit_loss_data'),
 
    
 
