@@ -1344,8 +1344,7 @@ def edit_salesinvoice(request,id):
     parties = Party.objects.filter(company=company)
 
   print(parties)
-    
- 
+  
   getinoice=SalesInvoice.objects.get(id=id)
   getitem=SalesInvoiceItem.objects.filter(salesinvoice=id)
   party=Party.objects.filter(company=company)
@@ -1353,7 +1352,7 @@ def edit_salesinvoice(request,id):
   
 
 
-  return render(request, 'edit_salesinvoice.html',{'parties':parties,'getinoice':getinoice,'getitem':getitem,'party':party,'item':item,'bank':bank,'allmodules':allmodules})
+  return render(request, 'edit_salesinvoice.html',{'parties':parties,'getinoice':getinoice,'getitem':getitem,'party':party,'item':item})
 
 
 def editsave_salesinvoice(request,id):
@@ -1373,7 +1372,6 @@ def editsave_salesinvoice(request,id):
     sales_invoice.address = request.POST.get('address')
     sales_invoice.invoice_no = request.POST.get('invoiceno')
     sales_invoice.date = request.POST.get('date')
-   
     sales_invoice.description = request.POST.get('description')
     sales_invoice.subtotal =float(request.POST.get('subtotal'))
     sales_invoice.vat = request.POST.get('vat')

@@ -56,7 +56,7 @@ urlpatterns = [
     path('view_salesinvoice',views.view_salesinvoice,name='view_salesinvoice'),
     path('deletesalesinvoice/<int:id>',views.deletesalesinvoice,name='deletesalesinvoice'),
     path('salesinvoice_billtemplate/<int:id>',views.salesinvoice_billtemplate,name='salesinvoice_billtemplate'),
-    path('edit_salesinvoice',views.edit_salesinvoice,name='edit_salesinvoice'),
+    path('edit_salesinvoice/<int:id>',views.edit_salesinvoice,name='edit_salesinvoice'),
     path('editsave_salesinvoice/<int:id>',views.editsave_salesinvoice,name='editsave_salesinvoice'),
 
    

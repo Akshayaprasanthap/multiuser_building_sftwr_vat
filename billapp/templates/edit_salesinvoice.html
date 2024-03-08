@@ -57,7 +57,7 @@
                 <div class="d-flex mt-2">
                     <select style="color: black;" class="form-control border-secondary me-2" id="partySelect" name="partyname" required>
                         <option value="{{getinoice.party.party_name}}" selected hidden>{{getinoice.party.party_name}}</option>
-                        {% for i in Party %}
+                        {% for i in party %}
                             <option value="{{ i.party_name|upper }}">{{ i.party_name|upper }}</option>
                         {% endfor %}
                     </select>
@@ -80,37 +80,6 @@
 
                     <input style="color: black;" class="form-control  bg-light ms-2 " type="date"
                         placeholder="Date" autocomplete="off" name="date"  value="{{getinoice.date|date:'Y-m-d'}}" required>
-                    <select style="color: black;" class="form-control  bg-light me-2 ms-2" id="stateOfSupply"
-                        name="state_of_supply"  required onselect="calculateTaxAmount()">
-                        <option value="{{getinoice.state_of_supply}}">{{getinoice.state_of_supply}}</option>
-                        <option value="state">State</option>
-                        <option value="other_state">Other State</option>
-
-                    </select>
-                </div>
-
-                <div class="d-flex mt-4">
-                    <select style="color: black; width: 275px;" class="form-control bg-light me-2" id="bank" name="bank" onchange="updateBankDetails()" required>
-                        <option value="{{getinoice.paymenttype}}">{{getinoice.paymenttype}}</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Cheque">Cheque</option>
-                        <option value="UPI">UPI</option>
-                        {% for i in bank %}
-                            <option value="{{ i.bank_name|upper }}">{{ i.bank_name|upper }}</option>
-                        {% endfor %}
-                    </select>
-                    
-                    <div id="chequeNumberBox" style="display: none; width: 21.5vw;">
-                        <input type="text" id="chequeNumber" name="chequeNumber" value="{{getinoice.cheque}}" class="form-control bg-light me-2" placeholder=" Cheque Number">
-                    </div>
-                    
-                    <div id="upiNumberBox" style="display: none; width: 21.5vw;">
-                        <input type="text" id="upiNumber" name="upiNumber" value="{{getinoice.upi}}" class="form-control bg-light me-2" placeholder=" UPI Number">
-                    </div>
-                    
-                    <div id="bankAccountBox" style="display: none; width: 21.5vw;">
-                        <input type="text" id="accountNumber" name="accountNumber" value="{{getinoice.accountno}}" class="form-control bg-light me-2" placeholder=" Account Number" readonly>
-                    </div>
                     
                 </div>
 
@@ -145,9 +114,9 @@
                                         <div class="d-flex">
                                             <select name='product[]' id="product{{forloop.counter}}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
                                               
-                                                <option value="{{i.item.id}}" selected hidden>{{i.item.item_name}}</option>
+                                                <option value="{{i.item.id}}" selected hidden>{{i.item.itm_name}}</option>
                                                 {% for i in item %}
-                                                <option value="{{i.id}}">{{ i.item_name }} </option>
+                                                <option value="{{i.id}}">{{ i.itm_name }} </option>
                                                 {% endfor %}
                                             </select> &nbsp;&nbsp;&nbsp;
                                             <button type="button" class="btn btn-sm text-white btn "  id="modal_closing" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo" style="height: 30px;margin-top: 5px; background-color: lightskyblue;"><i class="fa-solid  fa fa-plus rounded"></i></button>
@@ -155,7 +124,7 @@
                                     </td>
 
                                     <td style="width:12%">
-                                        <input type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.item.item_hsn}}" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
+                                        <input type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.itm_hsn}}" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
                                     </td>
 
                                     <td style="width:13%">
@@ -163,10 +132,16 @@
                                     </td>
                                 
                                     <td style="width:12%">
-                                        <input type="number" name='price[]' id="unit{{forloop.counter}}" value="{{i.item.item_sale_price}}" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" value=0 readonly />
+                                        <input type="number" name='price[]' id="unit{{forloop.counter}}" value="{{i.item.itm_sale_price}}" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" value=0 readonly />
                                     </td>
 
-                                    <td style="width: 15%;">
+
+
+                                    <td style="width:15%">
+                                        <input type="text" name='vat[]' id="vat{{forloop.counter}}" value="{{i.item.itm_vat}}" class="form-control border-secondary tax" style="color: black; border-color: #68020F; background-color: white;"  readonly />
+                                        <!-- <input type="text" name='vat[]' id="vat{{forloop.counter}}" value="{{i.item.itm_vat}}" class="form-control  vat" style="color: black; border-color: #68020F; background-color: white;" placeholder="TRN RATE"  readonly /> -->
+                                    </td>
+                                    <!-- <td style="width: 15%;">
 
                                         <input type="text" id="intrataxval{{ forloop.counter }}" value="{{i.item.item_gst}}" hidden>
                                         <input type="text" id="intertaxval{{ forloop.counter }}" value="{{i.item.item_igst}}" hidden>
@@ -175,7 +150,7 @@
                                         {% else %}
                                             <input type="text" name='tax[]' id="tax1" class="form-control border-secondary tax" style="color: black; background-color: white;" value="{{i.item.item_igst}}"  readonly />
                                         {% endif %}
-                                    </td>
+                                    </td> -->
 
                                     <td style="width: 10%;">
                                         <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc{{forloop.counter}}"  value="{{i.discount}}" class="form-control border-secondary disc" step=0 min=0 style="  color: black; background-color: white;"  />
@@ -224,6 +199,16 @@
                             </div>
 
 
+                            <div class="row container-fluid p-2 m-0" id="igstdiv">
+                                <div class="col-sm-4 mt-2"><label for="a" class="text-center">Vat</label></div>
+                                <div class="col-sm-1 mt-2">:</div>
+                                <div class="col-sm-7">
+                                    <input type="number" name='vat' step="any" value="{{getinoice.vat}}" id="vat" readonly style=" border-color: #68020F; color: black; background-color: white;" class="form-control"/>
+                                </div>
+                                <div class="col-sm-4 m-0 p-0"></div>
+                            </div>
+
+<!-- 
                             {% if getinoice.state_of_supply  == 'state' %}
                             <div class="row container-fluid p-2 m-0" id="cgstdiv">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">CGST</label></div>
@@ -274,7 +259,7 @@
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
-                        {% endif %}
+                        {% endif %} -->
 
                             <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
@@ -308,29 +293,7 @@
 
 
 
-                <div class="row ">
-                    <div class="col-sm-5 d-flex flex-column mt-2">
-
-                    </div>
-                    <div class="col-sm-6 mt-4" id="tab_logic_total" style="color: black; border: 1px solid rgba(128, 128, 128, 0.6); margin-left: 2vh; background-color:white">
-                        <div class="row container-fluid p-2 m-0">
-                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">Paid Off</label></div>
-                            <div class="col-sm-1 mt-2">:</div>
-                            <div class="col-sm-7">
-                                <input type="number" step="any" name='advance' id="advance"  value="{{getinoice.paidoff}}" class="form-control border-secondary" style="color: black; background-color: white;"/>
-                            </div>
-                            <div class="col-sm-4 m-0 p-0"></div>
-                        </div>
-                        <div class="row container-fluid p-2 m-0">
-                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance</label></div>
-                            <div class="col-sm-1 mt-2">:</div>
-                            <div class="col-sm-7">
-                                <input type="number" name='balance' id="balance" value="{{getinoice.totalbalance}}" readonly style="color: black; background-color: white;"  class="form-control border-secondary" readonly />
-                            </div>
-                            <div class="col-sm-4 m-0 p-0"></div>
-                        </div>
-                    </div>
-                    </div>
+              
                 </div>
             </div>
 
@@ -356,7 +319,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="background-color: rgba(144, 211, 117, 0.098);">
-                <form method="POST" action="{% url 'salesinvoice_save_parties' %}" class="p-5" enctype="multipart/form-data" novalidate id="forms">
+                <form method="POST" action="#" class="p-5" enctype="multipart/form-data" novalidate id="forms">
                     {% csrf_token %}
                     <div class="bg-light bs p-4 rounded mb-5">
                         <div id="main_form_div">
@@ -739,64 +702,73 @@
 
 
 <script>
-
-$(document).ready(function () {
-        $('#partySelect').select2({
-            width: '100%', // Set the width to 100% to match the original width
-            placeholder: 'Type to search...', // Add a placeholder
-            
-        });
-
-        // Attach an event listener to handle changes in the Select2 dropdown
-        $('#partySelect').on('select2:select', function (e) {
-            updatePartyDetails(e.params.data.id);
-        });
-    });
-
-    // Call updatePartyDetails when the document is ready
-document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener('DOMContentLoaded', function() {
+    // Call updatePartyDetails initially to populate fields based on the default selected party
     updatePartyDetails();
+
+    // Add event listener for the party selection dropdown
+    document.getElementById('partySelect').addEventListener('change', function() {
+        updatePartyDetails(); // Call the function when the party selection changes
+    });
 });
 
-function updatePartyDetails() {
-    // Get the selected party name
-    var selectedParty = document.getElementById('partySelect').value;
+ </script>
 
-    // Assume you have an endpoint to fetch party details, replace 'your-api-endpoint' with the actual endpoint
-    var endpoint = '/api/party-details/' + selectedParty; // Update the endpoint accordingly
+<script>
 
-    // Fetch party details
-    fetch(endpoint)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Update the input fields with the fetched details
-            document.getElementById('partyPhone').value = data.contact;
-            document.getElementById('partyAddress').value = data.address;
-
-            // Update the opening balance with color based on payment status
-            var openingBalanceElement = document.getElementById('partyBalance');
-            openingBalanceElement.innerHTML = 'Balance Amount: <span class="amount">' + data.openingbalance + '</span>';
-
-            // Get the amount element within the partyBalance element
-            var openingBalanceAmountElement = openingBalanceElement.querySelector('.amount');
-
-            var paymentStatus = data.payment;
-
-            if (paymentStatus === 'To Pay') {
-                openingBalanceAmountElement.style.color = 'red';
-            } else if (paymentStatus === 'To Receive') {
-                openingBalanceAmountElement.style.color = 'green';
-            } else {
-                openingBalanceAmountElement.style.color = 'black';
-            }
-        })
-        .catch(error => console.error('Error fetching party details:', error));
-}
+    function updatePartyDetails() {
+        // Get the selected party name
+        var selectedParty = document.getElementById('partySelect').value;
+    
+        // Assume you have an endpoint to fetch party details, replace 'your-api-endpoint' with the actual endpoint
+        var endpoint = '/api/party-details/' + selectedParty; // Update the endpoint accordingly
+    
+        // Fetch party details
+        fetch(endpoint)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update the input fields with the fetched details
+                if (data) {
+                    // Check if data fields have values
+                    if (data.contact) {
+                        document.getElementById('partyPhone').value = data.contact;
+                        document.getElementById('partyPhone').style.display = 'block'; // Show the input box
+                    } else {
+                        document.getElementById('partyPhone').style.display = 'none'; // Hide the input box
+                    }
+    
+                    if (data.address) {
+                        document.getElementById('partyAddress').value = data.address;
+                        document.getElementById('partyAddress').style.display = 'block'; // Show the input box
+                    } else {
+                        document.getElementById('partyAddress').style.display = 'none'; // Hide the input box
+                    }
+    
+                    // Update the opening balance with color based on payment status
+                    var openingBalanceElement = document.getElementById('partyBalance');
+                    openingBalanceElement.innerHTML = 'Balance Amount: <span class="amount">' + data.openingbalance + '</span>';
+    
+                    // Get the amount element within the partyBalance element
+                    var openingBalanceAmountElement = openingBalanceElement.querySelector('.amount');
+    
+                    var paymentStatus = data.payment;
+    
+                    if (paymentStatus === 'To Pay') {
+                        openingBalanceAmountElement.style.color = 'red';
+                    } else if (paymentStatus === 'To Receive') {
+                        openingBalanceAmountElement.style.color = 'green';
+                    } else {
+                        openingBalanceAmountElement.style.color = 'black';
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching party details:', error));
+    }
     
 
 
@@ -1096,47 +1068,34 @@ function productsearch(roinc){
 }
 </script>
 <script>
-    function changeprd(id,value){
-        var n = id.slice(7);
-        $.ajax({
-            url: "{% url 'itemdata_salesinvoiceedit' %}",
-            type : 'GET',
-            data:{
-                id : value,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
+     function changeprd(id, value) {
+    var n = id.slice(7);
+    $.ajax({
+        url: "{% url 'itemdata_salesinvoiceedit' %}",
+        type: 'GET',
+        data: {
+            id: value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+            var data = response.hsn;
+            var data2 = response.qty;
+            var data3 = response.price;
             
-            success: function(response) {
-                data = response.hsn
-                data2 = response.qty
-                data3 = response.price
-                data4 = response.gst
-                data5 = response.igst
-                var bc = document.getElementById("stateOfSupply").value;
-                if (bc == 'state') {
-                    document.getElementById('intrataxval'+n).value = data4;
-                    document.getElementById('intertaxval'+n).value = data5;
-                    document.getElementById('hsn'+n).value = data;
-                    document.getElementById('unit'+n).value = data3;
-                    document.getElementById('tax'+n).value = data4;
-                    calc()
-                } else if (bc == 'other_state') {
-                    document.getElementById('intrataxval'+n).value = data4;
-                    document.getElementById('intertaxval'+n).value = data5;
-                    document.getElementById('hsn'+n).value = data;
-                    document.getElementById('unit'+n).value = data3;
-                    document.getElementById('tax'+n).value = data5;
-                    calc()
-                }else{
-                    alert('Please Select Place of Supply')
-                    var $select = $(document.getElementById('product'+n));
-                    var selectize = $select[0].selectize;
-                    selectize.setValue("");
-                }
-            },
-        });
-    }
+            var data4 = response.vat;
+            console.log(data4);
+            // var data5 = response.igst;
 
+            // Uncomment and include the following lines based on your requirements
+            document.getElementById('vat' + n).value = data4;
+            // document.getElementById('intertaxval' + n).value = data5;
+            document.getElementById('hsn' + n).value = data;
+            document.getElementById('unit' + n).value = data3;
+
+            calc(); // Assuming calc() is a function you've defined elsewhere
+        },
+    });
+}
     {% comment %} $(document).on("change", "#stateOfSupply", function(){
         var taxes = document.getElementsByClassName('seltax');
         for (var i = 0; i < taxes.length; i++) {
@@ -1206,163 +1165,190 @@ function productsearch(roinc){
     });
 
 
+    {% comment %} 
+$(document).on('change', '.product', function () {
+    var n = $(this).attr("id").slice(7);
+    $.ajax({
+        url: "{% url 'itemdata_salesinvoiceedit' %}",
+        type: 'GET',
+        data: {
+            id: $(this).val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+            data = response.hsn;
+            data2 = response.qty;
+            data3 = response.price;
+            data4 = response.vat;
+            console.log(data4);
+            // data5 = response.igst
 
-    {% comment %} $(document).on('change', '.product',function(){ 
-        var n = $(this).attr("id").slice(7);
-        $.ajax({
-            url: "{% url 'itemdata_salesinvoiceedit' %}",
-            type : 'GET',
-            data:{
-                id : $(this).val(),
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-            
-            success: function(response) {
-                data = response.hsn
-                data2 = response.qty
-                data3 = response.price
-                data4 = response.gst
-                data5 = response.igst
+            document.getElementById('hsn' + n).value = data;
+            document.getElementById('unit' + n).value = data3;
+            document.getElementById('vat' + n).value = data4;
+            // document.getElementById('intertaxval' + n).value = data5;
+            document.getElementById('select_tax' + n).style.display = 'none';
 
-                document.getElementById('hsn'+n).value = data;
-                document.getElementById('unit'+n).value = data3;
-                document.getElementById('intrataxval'+n).value = data4;
-                document.getElementById('intertaxval'+n).value = data5;
-                document.getElementById('select_tax'+n).style.display = 'none';
-                var bc = document.getElementById("stateOfSupply").value;
-                if (bc == 'state' ) {
-                    var taxes = document.getElementsByClassName('seltax');
-                    $(`#tax2${n}`).removeClass('d-flex');
-                    $(`#tax2${n}`).addClass('d-none');
-                    $(`#tax1${n}`).removeClass('d-none');
-                    $(`#tax1${n}`).addClass('d-flex');
-                    if (data4 != ' '){
-                        document.getElementById('tax1'+n).value = data4;
-                    }else{
-                        document.getElementById('tax1'+n).value = ' ';
-                    }
-                            
-                } else {
-                    var taxes = document.getElementsByClassName('seltax');
-                    $(`#tax1${n}`).removeClass('d-flex');
-                    $(`#tax1${n}`).addClass('d-none');
-                    $(`#tax2${n}`).removeClass('d-none');
-                    $(`#tax2${n}`).addClass('d-flex');
-                    if(data5 != ' '){
-                        document.getElementById('tax2'+n).value = data5;
-                    }else{
-                        document.getElementById('tax2'+n).value = ' ';
-                    }
-                }
-            },
-        });
-    }); {% endcomment %}
+            // Toggle classes for tax elements based on conditions
+            var taxes = document.getElementsByClassName('seltax');
 
-   
+            // For tax1
+            $(`#tax2${n}`).removeClass('d-flex');
+            $(`#tax2${n}`).addClass('d-none');
+            $(`#tax1${n}`).removeClass('d-none');
+            $(`#tax1${n}`).addClass('d-flex');
+            if (data4 != ' ') {
+                document.getElementById('tax1' + n).value = data4;
+            } else {
+                document.getElementById('tax1' + n).value = ' ';
+            }
 
-    $(document).ready(function(){
-        $('#items-table-body').on('keyup change', function () {
-            calc();
-        });
+            // For tax2
+            $(`#tax1${n}`).removeClass('d-flex');
+            $(`#tax1${n}`).addClass('d-none');
+            $(`#tax2${n}`).removeClass('d-none');
+            $(`#tax2${n}`).addClass('d-flex');
+            // Check and set value for data5 (igst) if needed
+            // if (data5 != ' ') {
+            //     document.getElementById('tax2' + n).value = data5;
+            // } else {
+            //     document.getElementById('tax2' + n).value = ' ';
+            // }
+        },
+    });
+});
+{% endcomment %}
 
-        $('#tax').on('keyup change', function () {
+  
+$(document).ready(function () {
+    $('#items-table-body').on('keyup change', function () {
+        calc();
+    });
+
+    $('#tax').on('keyup change', function () {
+        calc_total();
+    });
+});
+
+function calc() {
+    $('#tab_logic tbody tr').each(function () {
+        var html = $(this).html();
+        if (html != '') {
+            var qty = $(this).find('.qty').val();
+            var price = $(this).find('.price').val();
+            var dis = $(this).find('.disc').val();
+            var tx = $(this).find('.vat').val();
+            if ( tx == 'VAT 5%'){
+                var tax = 5
+            }else{
+                var tax = 0
+            }
+
+            // Remove the code related to 'stateOfSupply'
+
+            $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
+            // $(this).find('.taxamount').val(((qty * price) - dis));
+            $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+            calc_total();
+        }
+    });
+}
+
+
+    $(document).ready(function () {
+        // Attach event handler to the Adjustment input
+        $(document).on("change", "#adj", function () {
             calc_total();
         });
-    });
 
-    {% comment %} function calc() {
-        $('#tab_logic tbody tr').each(function () {
-            var html = $(this).html();
-            if (html != '') {
-                var qty = $(this).find('.qty').val();
-                var price = $(this).find('.price').val();
-                var dis = $(this).find('.disc').val();
-                var bc = $("#stateOfSupply").val();
-                if(bc=='state'){
-                    taxval = $(this).find('.intra_tax').val().slice(3);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                else{
-                    taxval = $(this).find('.inter_tax').val().slice(4);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
-                $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
-                calc_total();
-            }
+        // Attach event handler to the item selection input (assuming it has the ID 'selectedItem')
+        $(document).on("change", "#selectedItem", function () {
+            updateValues(this);
         });
-    } {% endcomment %}
-
-    function calc() {
-        $('#tab_logic tbody tr').each(function () {
-            var html = $(this).html();
-            if (html != '') {
-                var qty = $(this).find('.qty').val();
-                var price = $(this).find('.price').val();
-                var dis = $(this).find('.disc').val();
-                var bc = $("#stateOfSupply").val();
-                if(bc=='state'){
-                    taxval = $(this).find('.tax').val().slice(3);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                else{
-                    taxval = $(this).find('.tax').val().slice(4);
-                    var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                }
-                $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
-                $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
-                calc_total();
-            }
-        });
-    }
-
-    $(document).on("input", "#adj", function(){
-        calc_total();  
     });
-    
-    $(document).on("input", "#advance", function(){
-        calc_total();  
-    });
-    
+
     function calc_total() {
-       
-        total = 0;
-        $('.total').each(function () {
-            total += parseFloat($(this).val());
-        });
-        taxamount = 0;
-        $('.taxamount').each(function () {
-            taxamount += parseFloat($(this).val());
-        });
-        $('#sub_total').val(total.toFixed(2));
-        $('#tax_amount').val(taxamount.toFixed(2));
-        adj_val = parseFloat($('#adj').val());
-        gtot = taxamount + total + adj_val;
-        $('#grandtotal').val(gtot.toFixed(2));
-        $('#baldue').val(gtot.toFixed(2));
-        adv_val = parseFloat($('#advance').val());
-        adv_val = gtot - adv_val;
-        $('#balance').val(adv_val.toFixed(2));
-        taxfun();
-    }
-    
+    var total = 0;
+    var vatTot = 0; 
+    $('.total').each(function () {
+        total += parseFloat($(this).val());
+    });
+
+    var vatRate = 0.05; // Default VAT rate, assuming 5% initially
+    var vatAmount = 0;
+
+    $('.taxamount').each(function () {
+        // Assuming there's an attribute (data-vat-rate) indicating the VAT rate for each item
+        // var itemVatRate = parseFloat($(this).attr('vat')) || vatRate;
+        
+        // vatAmount += parseFloat($(this).val()) * itemVatRate;
+
+        vatTot += parseFloat($(this).val());
+    });
+
+    $('#sub_total').val(total.toFixed(2));
+    $('#vat').val(vatTot.toFixed(2));
+
+    var adj_val = parseFloat($('#adj').val());
+    var gtot = total + vatTot + adj_val;
+
+    $('#grandtotal').val(gtot.toFixed(2));
+    $('#baldue').val(gtot.toFixed(2));
+
+    var adv_val = parseFloat($('#advance').val());
+    adv_val = gtot - adv_val;
+    $('#balance').val(adv_val.toFixed(2));
+
+    taxfun(vatTot);
+}
 
 
-    function taxfun(){
-        var bc = $("#stateOfSupply").val();
-        d=0
-        if (bc == 'state'  ) {
-            gst = taxamount/2
-            $('#cgst').val(parseFloat(gst.toFixed(2)));
-            $('#sgst').val(parseFloat(gst.toFixed(2)));
-            $('#igst').val(parseFloat(d.toFixed(2)));
-        } else {
-            $('#igst').val(taxamount.toFixed(2));
-            $('#cgst').val(d.toFixed(2));
-            $('#sgst').val(d.toFixed(2));
+    function updateValues(selectedItem) {
+        // Assuming selectedItem has VAT information (e.g., data-vat-rate attribute)
+        var vatRate = parseFloat($(selectedItem).attr('data-vat-rate')) || 0;
+        var itemTotal = parseFloat($(selectedItem).val()) || 0;
+
+        // Calculate VAT based on the selected item's VAT rate
+        var vatAmount = 0;
+        if(vatRate!==0){
+            vatAmount=itemTotal * (vatRate / 100);
+
         }
-    } 
+        
+        // Update VAT field with the calculated value
+        $('#vat').val(vatAmount.toFixed(2));
 
+        // Update Subtotal field with the total of the selected item
+        $('#sub_total').val(itemTotal.toFixed(2));
+
+        // // Calculate tax amount based on VAT and Subtotal
+        // var taxAmount = vatAmount * itemTotal;
+        // $('#taxamount').val(taxAmount.toFixed(2));
+
+        // Update Grand Total field with Subtotal + VAT + Tax Amount
+        var grandTotal = itemTotal + vatAmount + taxAmount;
+        $('#grandtotal').val(grandTotal.toFixed(2));
+    }
+
+
+
+    function taxfun(taxamount) {
+    var d = 0;  // Initializing a variable 'd' to 0
+    var gst;
+
+    // Assuming taxamount is defined somewhere in your code
+    if (taxamount !== undefined && !isNaN(taxamount)) {
+        // Assume IGST and set CGST and SGST to 0
+        $('#vat').val(parseFloat(taxamount.toFixed(2)));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    } else {
+        // If taxamount is not defined or not a valid number, set all values to 0
+        $('#vat').val(d.toFixed(2));
+        // $('#cgst').val(d.toFixed(2));
+        // $('#sgst').val(d.toFixed(2));
+    }
+}
     var checkbox1 = document.getElementById('inclusive');
     checkbox1.addEventListener('click', function () {
         if (checkbox1.checked) {
@@ -1503,7 +1489,7 @@ function productsearch(roinc){
                                 <option value="" selected hidden>Select Product</option>
                                 {% for i in item %}
                                   
-                                        <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
+                                        <option  value="{{ i.id  }}">{{ i.itm_name  }} </option>
                                   
                                 {% endfor %}
                             </select>&nbsp;&nbsp;&nbsp;
@@ -1525,9 +1511,8 @@ function productsearch(roinc){
                     </td>
 
                     <td style='width:15%;'>
-                        <input type="text" id="intrataxval${roinc}" hidden>
-                        <input type="text" id="intertaxval${roinc}" hidden>
-                        <input type="text" name='tax[]' id="tax${roinc}"  class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST" readonly/>
+                     
+                        <input type="text" name='vat[]' id="tax${roinc}"  class="form-control border-secondary vat" style="color: black; background-color: white;" placeholder="vat" readonly/>
                     </td>  
 
                     <td tyle="width:10%">
