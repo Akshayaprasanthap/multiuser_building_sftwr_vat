@@ -259,13 +259,22 @@
                                         {% for i in ftrans %}
                                         <tr>
                                             <td>{{ forloop.counter}}</td>
-                                            <td class="name" style="color: black;">{{i.trans_type}}</td>
+                                            <!-- <td class="name" style="color: black;">{{i.trans_type}}</td> -->
+                                            <td class="name" style="color: black;">
+                                                {% if i.opening_balance_status == 'To Pay' %}
+                                                    Payable Opening Balance
+                                                {% elif i.opening_balance_status == 'To Receive' %}
+                                                    Receivable Opening Balance
+                                                {% else %}
+                                                    {{ i.trans_type }}
+                                                {% endif %}
+                                            </td>
                                             <td class="number name" style="color: black;">{{ i.trans_number }}</td>
                                             <td class="date name" style="color: black;">{{ i.trans_date | date:'d-m-Y' }}</td>
                                             <td class="number" style="color: black;">{{ i.total }}</td>
                                             <td class="number" style="color: black;">{{ i.balance }}</td>
 
-                                            <!-- <td class="p-0 pt-1 m-0">
+                                            <td class="p-0 pt-1 m-0">
                                                 <div class="btn-group mb-1">
                                                     <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
@@ -279,7 +288,7 @@
                                                     <li><button type="button" onclick="delete_transaction()" class="dropdown-item fw-bold tb hide_table_text_d" href=""><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</button></li>
                                                     </ul>
                                                 </div>
-                                            </td> -->
+                                            </td>
 
 
     

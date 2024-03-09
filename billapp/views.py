@@ -417,6 +417,8 @@ def addNewParty(request):
         state = request.POST.get('state')
         address = request.POST['address']
         email = request.POST['email']
+        opening_stock=request.POST['opening_stock']
+        at_price=request.POST['at_price']
         openingbalance = request.POST.get('balance', '')
         payment = request.POST.get('paymentType', '')
         current_date = request.POST['currentdate']
@@ -434,7 +436,7 @@ def addNewParty(request):
                 error_message = 'An error occurred while processing your request. Email already exists. Please enter a unique email address.'
             else:
                 part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
-                             address=address, email=email, openingbalance=openingbalance, payment=payment,
+                             address=address, email=email, openingbalance=openingbalance,opening_stock=opening_stock,at_price=at_price ,payment=payment,
                              current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
                              additionalfield2=additionalfield2, additionalfield3=additionalfield3)
 
@@ -1456,7 +1458,7 @@ def profit_loss_data(request):
 
 
     sales_data = (
-        SalesInvoice.objects.filter(date__year=2023,company=company)
+        SalesInvoice.objects.filter(date__year=2024,company=company)
         .values('date__month')
         .annotate(grandtotal_sum=Sum('grandtotal'))
     )
@@ -1467,25 +1469,32 @@ def profit_loss_data(request):
     # Fill in sales values for each month
     sales = [sales_dict.get(month, 0) for month in range(1, 13)]
 
-    data = {'labels': labels, 'sales': sales}
+    data = {'labels': labels, 'sales': sales, 'parties':parties}
+
+
+
+
     return JsonResponse(data)
-
 def graph_salesinvoice(request):
-  
-  if request.user.is_company:
-    company = request.user.company
-    parties = Party.objects.filter(company=company)
-  else:
-    company = request.user.employee.company
-    parties = Party.objects.filter(company=company)
-  party = party.objects.get(id=parties)
-  # company_instance = staff.company
-  cmp = Company.objects.get(id=party.company.id)
-  user = Company.user
-  
-    
-  salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
+    if request.user.is_company:
+        company = request.user.company
+        parties = Party.objects.filter(company=company)
+    else:
+        company = request.user.employee.company
+        parties = Party.objects.filter(company=company)
 
+    # Assuming parties is a queryset, you might want to get a specific party from it
+    # For example, you could get the first party in the queryset
+    party = parties.first()
 
+    # Check if a party exists before proceeding
+    if party:
+        cmp = Company.objects.get(id=party.company.id)
+        user = cmp.user  # Access user attribute of the Company model
+        salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
 
-  return render(request, 'graph_salesinvoice.html',{'salesinvoice':salesinvoice,'user':user})
+        return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
+
+    # Handle the case where no party is found
+    # For example, return an error response or redirect to another page
+    return HttpResponse("No party found.")
