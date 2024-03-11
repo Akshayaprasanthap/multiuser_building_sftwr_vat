@@ -237,22 +237,22 @@
                                     </div>
                                 </div>
 
-                                <div class="ml-auto position-relative">
+                                <div class="ml-auto position-relative" style="margin-left: 500px;">
                                     <a class="btn" onclick="printfun()">
-                                        <img width="30px" src="{% static 'images/printer.png' %}" alt="no img">
+                                        <img width="30px" src="{% static 'img/printer.png' %}" alt="no img">
                                         <br>Print
                                     </a>
-                                    <!-- <a class="btn ml-4" id="pdflink">
-                                        <img width="20px" src="{% static 'images/PDF_icon.png' %}" alt="no img"><br>Pdf
+                                    <a class="btn ml-4" id="pdflink">
+                                        <img width="20px" src="{% static 'img/PDF.png' %}" alt="no img"><br>Pdf
                                     </a>
-                                    <a class="btn ml-4" onclick="toggleDropdown()">
+                                    <!-- <a class="btn ml-4" onclick="toggleDropdown()">
                                         <img width="30px" src="{% static 'images/share.png' %}" alt="no img"><br>Share
                                     </a>
                                     <div class="dropdown-content" style="left: -50%; " id="myDropdown">
                                         <ul style="margin-bottom: -1px;">
                                         </ul>
-                                        <ul style="margin-bottom: -1px;"></ul>
-                                    </div> -->
+                                        <ul style="margin-bottom: -1px;"></ul> -->
+                                    </div>
                                     <a class="ml-5" href="#" style="text-align: right; font-size: x-large; color: black;">
                                         <i class="fa fa-times mt-2" aria-hidden="true"></i>
                                     </a>
@@ -339,7 +339,7 @@
                                                         
                                                         <tr>
                                                             <td style="color:black; text-align: center;">{{ i.item.itm_name }}</td>
-                                                            <td style="color:black">{{ i.itm_hsn }}</td>
+                                                            <td style="color:black">{{ i.hsn }}</td>
                                                             <td style="color:black">{{ i.rate }}</td>
                                                             <td style="color:black">{{ i.quantity }}</td>
                                                             <td style="color:black">{{ i.tax }}</td>
@@ -488,7 +488,7 @@
                                                     {% for i in salesinvoiceitems %}
                                                         <tr>
                                                             <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.item_hsn}}</td>
+                                                            <td class="text-center" style="color:black">{{i.item.itm_hsn}}</td>
                                                             <td class="text-center" style="color:black">{{i.quantity}}</td>
                                                             <td class="text-center" style="color:black">{{i.item.item_sale_price}}</td>
                                                             <td class="text-center" style="color:black">{{i.tax}}</td>
@@ -630,8 +630,8 @@
                                                     <tbody>
                                                         {% for i in salesinvoiceitem %}
                                                         <tr>
-                                                            <td class="text-center" style="color:black">{{i.item.item_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.item_hsn}}</td>
+                                                            <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
+                                                            <td class="text-center" style="color:black">{{i.item.itm_hsn}}</td>
                                                             <td class="text-center" style="color:black">{{i.quantity}}</td>
                                                             <td class="text-center" style="color:black">{{i.item.item_sale_price}}</td>
                                                             <td class="text-center" style="color:black">{{i.tax}}</td>
@@ -1052,7 +1052,7 @@
             var opt =
             {
                 margin: 1,
-                filename: 'PurchaseBill' + '.pdf',
+                filename: 'SalesinvoiceBill' + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }

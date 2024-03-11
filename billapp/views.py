@@ -1,5 +1,5 @@
 
-from django.http import JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
@@ -617,6 +617,22 @@ def edit_party(request,id):
   ftrans = Transactions_party.objects.filter(party = getparty)
   return render(request, 'edit_party.html',{'usr':request.user,'party':party,'getparty':getparty,'parties':parties,'ftrans':ftrans})
 
+# from django.shortcuts import get_object_or_404
+
+# def edit_party(request, id):
+#   if request.user.is_company:
+#       party = Party.objects.filter(company=request.user.company)
+#   else:
+#       party = Party.objects.filter(company=request.user.employee.company)
+
+#   try:
+#       getparty = get_object_or_404(Party, id=id)
+#       ftrans = Transactions_party.objects.filter(party=getparty)
+#       parties = Party.objects.filter(user=request.user)
+#       return render(request, 'edit_party.html', {'usr': request.user, 'party': party, 'getparty': getparty, 'parties': parties, 'ftrans': ftrans})
+#   except Party.DoesNotExist:
+#         # Handle the case when the party with the specified ID does not exist
+#       return HttpResponseNotFound("Party does not exist")
 
 
 
@@ -842,55 +858,151 @@ def deleteparty(request,id):
 
 
 
+# def shareTransactionpartyToEmail(request, id):
+#   if request.user.is_company:
+#     party = Party.objects.filter(company=request.user.company)
+#   else:
+#     party = Party.objects.filter(company=request.user.employee.company)
+
+#     if request.method == "POST":
+#         try:
+#             fparty = Party.objects.get(id=id)
+#             ftrans = Transactions_party.objects.filter(party=fparty)
+#             context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
+
+#             email_message = request.POST.get('email_message')
+#             my_subject = "Transaction REPORT"
+#             emails_string = request.POST.get('email_ids')
+#             emails_list = [email.strip() for email in emails_string.split(',')]
+
+#             html_message = render_to_string('transaction_pdf.html', context)
+#             plain_message = strip_tags(html_message)
+
+#             pdf_content = BytesIO()
+#             pisa.CreatePDF(html_message.encode("UTF-8"), dest=pdf_content)
+#             pdf_content.seek(0)
+
+#             filename = f'transaction.pdf'
+#             message = EmailMultiAlternatives(
+#                 subject=my_subject,
+#                 body=f"Hi,\nPlease find the attached Transaction Report - \n{email_message}\n--\nRegards,\n",
+#                 from_email='altostechnologies6@gmail.com',  # Update with your email
+#                 to=emails_list,
+#             )
+
+#             message.attach(filename, pdf_content.read(), 'application/pdf')
+#             message.send()
+
+#             return HttpResponse('<script>alert("Report has been shared successfully!");window.location="/party_list"</script>')
+#         except Exception as e:
+#                 # Handle the exception, log the error, or provide an error message
+#             return HttpResponse('<script>alert("Failed to send email!");window.location="/party_list"</script>')
+
+#     return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>')
 
 
 
-def shareTransactionpartyToEmail(request,id):
-  if request.user.is_company:
-      party = Party.objects.filter(company = request.user.company)
+from django.contrib import messages
 
-  else:
-      party = Party.objects.filter(company = request.user.employee.company)
-  if request.method == "POST":
-        fparty=Party.objects.get(id=id)
-        
-        ftrans =Transactions_party.objects.filter(party=fparty)
-        context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
-       
-        
-        email_message = request.POST['email_message']
-        my_subject = "Transaction REPORT"
-        emails_string = request.POST['email_ids']
-        emails_list = [email.strip() for email in emails_string.split(',')]
-        # recipient_email = request.POST.get('email_ids')
-        html_message = render_to_string('transaction_pdf.html',context)#add ur html
-        # vyaparapp\templates\index.html
-        # vyaparapp\templates\company\gstr3B_pdf.html
-        plain_message = strip_tags(html_message)
-        pdf_content = BytesIO()
-        pisa_document = pisa.CreatePDF(html_message.encode("UTF-8"), pdf_content) 
-        pdf_content.seek(0)
-        # todo: need to update the from_email
-        filename = f'transaction .pdf'
-        message = EmailMultiAlternatives(
-            subject=my_subject,
-            body= f"Hi,\nPlease find the attached Gstr9 Report -  \n{email_message}\n--\nRegards,\n",
-            from_email='altostechnologies6@gmail.com',
-            to= emails_list ,  # Use the recipient_email variable here
-            )
-        message.attach(filename, pdf_content.read(), 'application/pdf')
-        
+def html_to_pdf(request):
+    if request.user.is_company:
+        party = Party.objects.filter(company=request.user.company)
+    else:
+        party = Party.objects.filter(company=request.user.employee.company)
+
+    fparty = None
+    ftrans = None
+
+    if request.method == "POST":
+        party_id = request.POST.get('party_id')
         try:
+            fparty = Party.objects.get(id=party_id)
+            ftrans = Transactions_party.objects.filter(party=fparty)
+        except Party.DoesNotExist:
+            messages.error(request, 'Party not found!')
+            return HttpResponse('<script>window.location="/party_list"</script>')
+
+    # Debug print/log
+    print("Party:", party)
+    print("User:", request.user)
+    print("Fetched Party:", fparty)
+    print("Fetched Transactions:", ftrans)
+
+    context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
+    html_content = render(request, 'transaction_pdf.html', context).content
+
+    # Create a BytesIO buffer to receive the PDF content
+    pdf_buffer = BytesIO()
+
+    # Use xhtml2pdf to generate the PDF
+    pisa.CreatePDF(html_content, dest=pdf_buffer)
+
+    # Move the buffer's cursor to the beginning
+    pdf_buffer.seek(0)
+
+    # Set the response content type
+    response = HttpResponse(content_type='application/pdf')
+
+    # Set the content-disposition header to force download
+    response['Content-Disposition'] = 'filename="Transaction details.pdf"'
+
+    # Write the PDF content to the response
+    response.write(pdf_buffer.read())
+
+    return response
+
+
+
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponse
+from django.utils.html import strip_tags
+from xhtml2pdf import pisa
+from io import BytesIO
+
+def shareTransactionpartyToEmail(request, id):
+    if request.user.is_company:
+        party = Party.objects.filter(company=request.user.company)
+    else:
+        party = Party.objects.filter(company=request.user.employee.company)
+        
+    if request.method == "POST":
+        try:
+            fparty = Party.objects.get(id=id)
+            ftrans = Transactions_party.objects.filter(party=fparty)
+            context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
+            
+            email_message = request.POST.get('email_message')
+            my_subject = "Transaction REPORT"
+            emails_string = request.POST.get('email_ids')
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            
+            html_message = render_to_string('transaction_pdf.html', context)
+            plain_message = strip_tags(html_message)
+            
+            pdf_content = BytesIO()
+            pisa.CreatePDF(html_message.encode("UTF-8"), pdf_content)
+            pdf_content.seek(0)
+
+            filename = f'transaction.pdf'
+            message = EmailMultiAlternatives(
+                subject=my_subject,
+                body=f"Hi,\nPlease find the attached Transaction Report - \n{email_message}\n--\nRegards,\n",
+                from_email='altostechnologies6@gmail.com',  # Update with your email
+                to=emails_list,
+            )
+
+            message.attach(filename, pdf_content.read(), 'application/pdf')
             message.send()
-            return HttpResponse('<script>alert("Report has been shared via successfully..!");window.location="/party_list"</script>')
+
+            return HttpResponse('<script>alert("Report has been shared successfully!");window.location="/party_list"</script>')
+        except Party.DoesNotExist:
+            return HttpResponse('<script>alert("Party not found!");window.location="/party_list"</script>')
         except Exception as e:
             # Handle the exception, log the error, or provide an error message
-            return HttpResponse('<script>alert("Failed to send email!");window.location="/party_list"</script>')
+            return HttpResponse(f'<script>alert("Failed to send email: {str(e)}");window.location="/party_list"</script>')
 
-  return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>') 
-
-
-
+    return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>')
 
 
 
@@ -1081,7 +1193,7 @@ def save_sales_invoice(request):
         date=date,
         description=description,
         subtotal=subtotal,
-        vat=vat,
+        vat=request.POST['vat'],
         total_taxamount=taxamount if taxamount is not None else 0,  # Provide a default value if taxamount is None
         adjustment=adjust,
         grandtotal=grandtotal,
@@ -1100,12 +1212,13 @@ def save_sales_invoice(request):
 
     invoice = SalesInvoice.objects.get(id=sales_invoice.id)
     mapped = []  # Initialize mapped
+    print(product,hsn,qty,discount,vat,total,rate)
     if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(vat)==len(total):
       mapped=zip(product, hsn, qty, rate, discount, vat, total)
       mapped=list(mapped)
     for ele in mapped: 
       itm = Item.objects.get(id=ele[0])
-      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], vat=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
+      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], tax=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
 
     if 'save_and_new' in request.POST:
       return redirect(add_salesinvoice)
@@ -1454,27 +1567,27 @@ def profit_loss_data(request):
     parties = Party.objects.filter(company=company)
     # staff = staff_details.objects.get(id=staff_id)
     # company_instance = company.objects.get(id=staff.company.id)
-    labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+  labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 
-    sales_data = (
-        SalesInvoice.objects.filter(date__year=2024,company=company)
-        .values('date__month')
-        .annotate(grandtotal_sum=Sum('grandtotal'))
-    )
+  sales_data = (
+      SalesInvoice.objects.filter(date__year=2024,company=company)
+      .values('date__month')
+      .annotate(grandtotal_sum=Sum('grandtotal'))
+  )
 
-    # Create a dictionary with monthly sales data
-    sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
+  # Create a dictionary with monthly sales data
+  sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
 
-    # Fill in sales values for each month
-    sales = [sales_dict.get(month, 0) for month in range(1, 13)]
+  # Fill in sales values for each month
+  sales = [sales_dict.get(month, 0) for month in range(1, 13)]
 
-    data = {'labels': labels, 'sales': sales, 'parties':parties}
+  data = {'labels': labels, 'sales': sales, 'parties':parties}
+  return JsonResponse(data)
+  
 
 
 
-
-    return JsonResponse(data)
 def graph_salesinvoice(request):
     if request.user.is_company:
         company = request.user.company

@@ -56,9 +56,13 @@
 
                 <div class="d-flex mt-2">
                     <select style="color: black;" class="form-control border-secondary me-2" id="partySelect" name="partyname" required>
-                        <option value="{{getinoice.party.party_name}}" selected hidden>{{getinoice.party.party_name}}</option>
+                        <!-- <option value="{{getinoice.party.party_name}}" selected>{{getinoice.party.party_name}}</option> -->
                         {% for i in party %}
-                            <option value="{{ i.party_name|upper }}">{{ i.party_name|upper }}</option>
+                        {% if i.party_name == getinoice.party.party_name %}
+                            <option selected value="{{ i.party_name|upper }}">{{ i.party_name|upper }}</option>
+                        {% else %}
+                        <option value="{{ i.party_name|upper }}">{{ i.party_name|upper }}</option>
+                        {% endif %}
                         {% endfor %}
                     </select>
 
@@ -124,7 +128,7 @@
                                     </td>
 
                                     <td style="width:12%">
-                                        <input type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.itm_hsn}}" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
+                                        <input type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.hsn}}" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
                                     </td>
 
                                     <td style="width:13%">

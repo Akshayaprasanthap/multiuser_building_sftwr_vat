@@ -201,7 +201,7 @@
                         <div class="ml-auto  " style="padding-left: 20vw;" >
                             <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="window.location.href='{% url 'graph_salesinvoice' %}'">
                                 <span>
-                                   <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
+                                   <img width="30px" src="{% static 'img/graph.png' %}" alt="graph Icon">
                                    <br><span style="color: black; font-size: small; ">Graph</span>
                                 </span>
                             </button>
@@ -209,25 +209,25 @@
 
                             <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="ExportToExcel()">
                                 <span>
-                                    <img width="22px" src="{% static 'images/excel2.png' %}" alt="Excel Icon">
+                                    <img width="22px" src="{% static 'img/excel03.png' %}" alt="Excel Icon">
                                     <br><span style="color: black; font-size: small; ">Export</span>
                                 </span>
                             </button>
 
                              {% comment %} <button class="btn p-0 ps-2 pe-2 ms-2" type="button" data-bs-toggle="modal" data-bs-target="#importTransactions" data-toggle="tooltip" data-placement="top" >
-                                        <span><img width="23px" src="{% static 'images/excel02.png' %}" alt="no img"></span>
+                                        <span><img width="23px" src="{% static 'img/excel03.png' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; ">Import</span>
                                     </button>  {% endcomment %}
 
                                     <button class="btn" type="button" data-toggle="modal" data-target="#excelModal" onclick="excelmodel()">
-                                        <span><img width="23px" src="{% static 'images/excel02.png' %}" alt="no img"></span>
+                                        <span><img width="23px" src="{% static 'img/excel04.png' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; ">Import</span>
                                     </button>
                                   
                                 
                             <button id="printButton" class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printTable()">
                                 <span>
-                                    <img width="28px" src="{% static 'images/printer.png' %}" alt="Printer Icon">
+                                    <img width="28px" src="{% static 'img/printer.png' %}" alt="Printer Icon">
                                     <br><span style="color: black; font-size: small; ">Printer</span>
                                 </span>
                             </button>
