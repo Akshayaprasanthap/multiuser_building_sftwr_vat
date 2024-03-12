@@ -6,6 +6,68 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<style>
+    .chart-container {
+        margin: auto;
+        width: 50%;
+        padding-top: 100px; /* Adjusted top padding */
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="profitLossChart" width="200" height="100"></canvas>
+</div>
+
+<script>
+const fetchData = async () => {
+  try {
+    const response = await fetch('/api/profit_loss_data/');
+    const data = await response.json();
+
+    const ctx = document.getElementById('profitLossChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            label: 'Sales',
+            data: data.sales,
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        // Customize chart options as needed
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+fetchData();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <style>
@@ -46,9 +108,9 @@ const fetchData = async () => {
 };
 
 fetchData();
+ -->
 
-
-
+<!-- 
 // const fetchData = async () => {
 //   try {
 //     const response = await fetch('/api/profit_loss_data/');
@@ -76,7 +138,7 @@ fetchData();
 //   }
 // };
 
-// fetchData();
+// fetchData(); -->
 
 
 </script>

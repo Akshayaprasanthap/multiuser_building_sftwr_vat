@@ -367,7 +367,7 @@
                                                                     <td style="color: #000;">Vat</td>
                                                                     <td style="color: #000;">:</td>
                                                                     <td class="text-right" style="color: #000;">
-                                                                        {{salesinvoice.item.itm_vat}}</td>
+                                                                        {{salesinvoice.vat}}</td>
 
                                                                 </tr>
                                                                 <!-- {% if salesinvoice.state_of_supply == 'state' %}
@@ -452,7 +452,7 @@
                                                 <div class="row  pb-2 mt-3">
                                                     <div class="col-4 pl-0">
                                                         <label class="text-white w-100 p-1 mb-1" style="background-color: #68020F; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>BILLING ADDRESS</b></label>
-                                                        <h5 class="text-secondary" style="font-weight: bold;">{{salesinvoice.company.company_name}}</h5>
+                                                        <h5 class="text" style="font-weight: bold;">{{salesinvoice.company.company_name}}</h5>
                                                         <p class="address" style="font-weight: bold;color: #000;">
                                                             {{salesinvoice.company.address}}
                                                             <br>
@@ -464,8 +464,8 @@
                                                     <div class="col-4"></div>
                                                     <div class="col-4 pr-0">
                                                         <label class="text-white w-100 p-1 mb-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #68020F;" ><b>SHIPPING ADDRESS</b></label>
-                                                        <h5 class="text-secondary" style="font-weight: bold;">{{salesinvoice.party.party_name}}</h5>
-                                                        <p class="address" style="font-weight: bold;color: #000;">{{ salesinvoice.party.address | linebreaksbr}} </p>
+                                                        <h5 class="text" style="font-weight: bold;">{{salesinvoice.party_name}}</h5>
+                                                        <p class="address" style="font-weight: bold;color: #000;">{{ salesinvoice.address | linebreaksbr}} </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -475,22 +475,22 @@
                                             <table class="table table-hover table-bordered " id="table2">
                                                 <thead style="background-color: #68020F ;" >
                                                     <tr class="template3tablehead">
-                                                        <th class="text-center" style="color:black">Items</th>
-                                                        <th class="text-center" style="color:black">HSN</th>
-                                                        <th class="text-center" style="color:black">Quantity</th>
-                                                        <th class="text-center" style="color:black">Rate</th>
-                                                        <th class="text-center" style="color:black">Tax</th>
-                                                        <th class="text-center" style="color:black">Discount</th>
-                                                        <th class="text-center" style="color:black">Total</th>
+                                                        <th class="text-center" style="color:white">Items</th>
+                                                        <th class="text-center" style="color:white">HSN</th>
+                                                        <th class="text-center" style="color:white">Quantity</th>
+                                                        <th class="text-center" style="color:white">Rate</th>
+                                                        <th class="text-center" style="color:white">Tax</th>
+                                                        <th class="text-center" style="color:white">Discount</th>
+                                                        <th class="text-center" style="color:white">Total</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody style="border: 1px solid #68020F;" >
                                                     {% for i in salesinvoiceitems %}
                                                         <tr>
                                                             <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.itm_hsn}}</td>
+                                                            <td class="text-center" style="color:black">{{i.hsn}}</td>
                                                             <td class="text-center" style="color:black">{{i.quantity}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.item_sale_price}}</td>
+                                                            <td class="text-center" style="color:black">{{i.rate}}</td>
                                                             <td class="text-center" style="color:black">{{i.tax}}</td>
                                                             <td class="text-center" style="color:black">{{i.discount}}</td>
                                                             <td class="text-center" style="color:black">{{i.totalamount}}</td>
@@ -512,8 +512,14 @@
                                                                 <td style="color: #000;">:</td>
                                                                 <td class="text-right" style="color: #000;">{{salesinvoice.subtotal}}</td>
                                                             </tr>
-                                                            
-                                                            {% if salesinvoice.state_of_supply != 'state' %}
+                                                            <tr>
+                                                                <td style="color: #000;">Vat</td>
+                                                                <td style="color: #000;">:</td>
+                                                                <td class="text-right" style="color: #000;">
+                                                                    {{salesinvoice.vat}}</td>
+
+                                                            </tr>
+                                                            <!-- {% if salesinvoice.state_of_supply != 'state' %}
                                                             <tr >
                                                                 <td style="color: #000;">IGST</td>
                                                                 <td style="color: #000;">:</td>
@@ -536,7 +542,7 @@
                                                                 <td style="color: #000;">Tax Amount</td>
                                                                 <td style="color: #000;">:</td>
                                                                 <td class="text-right" style="color: #000;">{{salesinvoice.total_taxamount}}</td>
-                                                            </tr>
+                                                            </tr> -->
 
                                                             {% if salesinvoice.adjustment != '0.00' %}
                                                             {% if salesinvoice.adjustment != '0' %}
@@ -577,7 +583,7 @@
                                             <div class="col-sm-12" style="background-color: #68020F;">
                                                 <br>
                                                 <p style="font-size: 4vh; text-align: center; color: white;" >SALES INVOICE</p>
-                                                <p style=" text-align: center;"> 
+                                                <p style=" text-align: center; color: white;"> 
                                                     {{salesinvoice.company.company_name}} <br>
                                                     {{salesinvoice.company.address}} <br>
                                                     {{salesinvoice.company.city}},
@@ -591,8 +597,8 @@
                                                 <div class="col-5">
                                                     <br><br><br>
                                                     <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
-                                                    {{salesinvoice.party.party_name}}<br>
-                                                    {{salesinvoice.party.address|linebreaksbr }}
+                                                    {{salesinvoice.party_name}}<br>
+                                                    {{salesinvoice.address|linebreaksbr }}
                                                     </p>
                                                 </div>
                                                 <div class="col-md-2"></div>
@@ -631,9 +637,9 @@
                                                         {% for i in salesinvoiceitem %}
                                                         <tr>
                                                             <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.itm_hsn}}</td>
+                                                            <td class="text-center" style="color:black">{{i.hsn}}</td>
                                                             <td class="text-center" style="color:black">{{i.quantity}}</td>
-                                                            <td class="text-center" style="color:black">{{i.item.item_sale_price}}</td>
+                                                            <td class="text-center" style="color:black">{{i.rate}}</td>
                                                             <td class="text-center" style="color:black">{{i.tax}}</td>
                                                             <td class="text-center" style="color:black">{{i.discount}}</td>
                                                             <td class="text-center" style="color:black">{{i.totalamount}}</td>
@@ -655,7 +661,14 @@
                                                                 <td style="color: #000;">:</td>
                                                                 <td class="text-right" style="color: #000;">{{salesinvoice.subtotal}}</td>
                                                             </tr>
-                                                            {% if salesinvoice.state_of_supply != 'state' %}
+                                                            <tr>
+                                                                <td style="color: #000;">Vat</td>
+                                                                <td style="color: #000;">:</td>
+                                                                <td class="text-right" style="color: #000;">
+                                                                    {{salesinvoice.vat}}</td>
+
+                                                            </tr>
+                                                            <!-- {% if salesinvoice.state_of_supply != 'state' %}
                                                             <tr >
                                                                 <td style="color: #000;">IGST</td>
                                                                 <td style="color: #000;">:</td>
@@ -677,7 +690,7 @@
                                                                 <td style="color: #000;">Tax Amount</td>
                                                                 <td style="color: #000;">:</td>
                                                                 <td class="text-right" style="color: #000;">{{salesinvoice.total_taxamount}}</td>
-                                                            </tr>
+                                                            </tr> -->
                                                             {% if salesinvoice.adjustment != '0.00' %}
                                                             {% if salesinvoice.adjustment != '0' %}
                                                             <tr >
@@ -794,16 +807,16 @@
                                                 style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
                                                 <div class="equal-length-item"
                                                     style="text-align: center; margin-left: 2px;">
-                                                    {{i.item.item_name}}
+                                                    {{i.item.itm_name}}
                                                 </div>
                                                 <div class="equal-length-item" style="text-align: right;">
-                                                    {{i.item.item_hsn}}
+                                                    {{i.hsn}}
                                                 </div>
                                                 <div class="equal-length-item" style="text-align: center; ">
                                                     {{i.quantity}}
                                                 </div>
                                                 <div class="equal-length-item" style="text-align: center; ">
-                                                    {{i.item.item_sale_price}}
+                                                    {{i.rate}}
                                                 </div>
                                                 <div class="equal-length-item" id="tax{{ forloop.counter }}"
                                                     style="display: none;">
@@ -837,8 +850,15 @@
                                                 <div class="col-md-6 text-right ml-2" style="color: black;">
                                                     {{ salesinvoice.subtotal }}
                                                 </div>
+                                                <div class="col-md-5 text-left" style=" color: black;">
+                                                    Tax
+                                                </div>
+                                                <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                    {{salesinvoice.vat}}
+                                                </div>
+                                              
                                             </div>
-                                            {% if salesinvoice.state_of_supply != 'state' %}
+                                            <!-- {% if salesinvoice.state_of_supply != 'state' %}
                                             <div class="row ml-1">
                                                 <div class="col-md-5 text-left " style=" color: black;">
                                                     IGST
@@ -864,7 +884,8 @@
                                                     {{ salesinvoice.sgst }}
                                                 </div>
                                             </div>
-                                            {% endif %}
+                                            {% endif %} -->
+                                            
 
                                             {% if salesinvoice.adjustment != '0.00' %}
                                             {% if salesinvoice.adjustment != '0' %}
@@ -896,9 +917,9 @@
                                         </div>
 
                                         <div class="ml-2 mt-2">
-                                            <p>Created by : {{salesinvoice.staff.first_name}}
-                                                {{salesinvoice.staff.last_name}} <br>
-                                                Printed by {{staff.first_name}} {{staff.last_name}}
+                                            <p>Created by : {{salesinvoice.company.first_name}}
+                                                {{salesinvoice.comapny.last_name}} <br>
+                                                Printed by {{company.first_name}} {{company.last_name}}
                                                 On <span id="datetimedisplay"></span>
                                             </p>
                                         </div>

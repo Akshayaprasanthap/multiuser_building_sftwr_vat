@@ -1553,61 +1553,118 @@ def salesinvoicehistory(request, id):
 
 
 
-from django.http import JsonResponse
+# from django.http import JsonResponse
 
-from django.db.models import Sum
+# from django.db.models import Sum
 
-def profit_loss_data(request):
+# def profit_loss_data(request):
     
-  if request.user.is_company:
-    company = request.user.company
-    parties = Party.objects.filter(company=company)
-  else:
-    company = request.user.employee.company
-    parties = Party.objects.filter(company=company)
-    # staff = staff_details.objects.get(id=staff_id)
-    # company_instance = company.objects.get(id=staff.company.id)
-  labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+#   if request.user.is_company:
+#     company = request.user.company
+#     parties = Party.objects.filter(company=company)
+#   else:
+#     company = request.user.employee.company
+#     parties = Party.objects.filter(company=company)
+#     # staff = staff_details.objects.get(id=staff_id)
+#     # company_instance = company.objects.get(id=staff.company.id)
+#   labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
 
-  sales_data = (
-      SalesInvoice.objects.filter(date__year=2024,company=company)
-      .values('date__month')
-      .annotate(grandtotal_sum=Sum('grandtotal'))
-  )
+#   sales_data = (
+#       SalesInvoice.objects.filter(date__year=2024,company=company)
+#       .values('date__month')
+#       .annotate(grandtotal_sum=Sum('grandtotal'))
+#   )
 
-  # Create a dictionary with monthly sales data
-  sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
+#   # Create a dictionary with monthly sales data
+#   sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
 
-  # Fill in sales values for each month
-  sales = [sales_dict.get(month, 0) for month in range(1, 13)]
+#   # Fill in sales values for each month
+#   sales = [sales_dict.get(month, 0) for month in range(1, 13)]
 
-  data = {'labels': labels, 'sales': sales, 'parties':parties}
-  return JsonResponse(data)
+#   data = {'labels': labels, 'sales': sales, 'parties':parties}
+#   return JsonResponse(data)
   
 
 
 
-def graph_salesinvoice(request):
-    if request.user.is_company:
-        company = request.user.company
-        parties = Party.objects.filter(company=company)
-    else:
-        company = request.user.employee.company
-        parties = Party.objects.filter(company=company)
+# def graph_salesinvoice(request):
+#     if request.user.is_company:
+#         company = request.user.company
+#         parties = Party.objects.filter(company=company)
+#     else:
+#         company = request.user.employee.company
+#         parties = Party.objects.filter(company=company)
 
-    # Assuming parties is a queryset, you might want to get a specific party from it
-    # For example, you could get the first party in the queryset
+#     # Assuming parties is a queryset, you might want to get a specific party from it
+#     # For example, you could get the first party in the queryset
+#     party = parties.first()
+
+#     # Check if a party exists before proceeding
+#     if party:
+#         cmp = Company.objects.get(id=party.company.id)
+#         user = cmp.user  # Access user attribute of the Company model
+#         salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
+
+#         return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
+
+#     # Handle the case where no party is found
+#     # For example, return an error response or redirect to another page
+#     return HttpResponse("No party found.")
+
+from django.core.serializers import serialize
+from django.http import JsonResponse, HttpResponse
+from django.db.models import Sum
+
+from django.http import JsonResponse
+from django.http import JsonResponse
+
+def profit_loss_data(request):
+    try:
+        company = get_user_company(request.user)
+        print(f"Company: {company}")
+
+        parties = Party.objects.filter(company=company)
+        print(f"Parties: {parties}")
+
+        labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+
+        sales_data = (
+            SalesInvoice.objects.filter(date__year=2024, company=company)
+            .values('date__month')
+            .annotate(grandtotal_sum=Sum('grandtotal'))
+        )
+
+        print(f"Sales Data: {sales_data}")
+
+        sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
+        sales = [sales_dict.get(month, 0) for month in range(1, 13)]
+
+        data = {'labels': labels, 'sales': sales, 'parties': parties}
+        return JsonResponse(data)
+    except Exception as e:
+        # Log the exception details
+        print(f"Exception in profit_loss_data: {e}")
+        return JsonResponse({'error': 'Internal Server Error'}, status=500)
+
+
+def get_user_company(user):
+    if user.is_company:
+        return user.company
+    elif user.employee:
+        return user.employee.company
+    # Handle the case where neither company nor employee is found
+    raise ValueError("User is not associated with a company or employee.")
+
+def graph_salesinvoice(request):
+    company = get_user_company(request.user)
+    parties = Party.objects.filter(company=company)
+
     party = parties.first()
 
-    # Check if a party exists before proceeding
     if party:
-        cmp = Company.objects.get(id=party.company.id)
-        user = cmp.user  # Access user attribute of the Company model
-        salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
-
+        user = company.user  # Assuming user is an attribute of the Company model
+        salesinvoice = SalesInvoiceItem.objects.filter(company=company)
         return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
 
-    # Handle the case where no party is found
-    # For example, return an error response or redirect to another page
     return HttpResponse("No party found.")

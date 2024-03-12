@@ -14,12 +14,12 @@
     }
 
     .form-control:focus {
-        border-color: #007bffb1;
+        border-color: #68020F;
     }
 
     .save-button {
-        background-color: #007bff;
-        border-color: #007bff;
+        background-color: #68020F;
+        border-color: #68020F;
         color: #fff;
         margin-right: 1rem;
     }
@@ -27,7 +27,7 @@
 
     .save-button:hover {
         background-color: #fff;
-        color: #007bff;
+        color: #68020F;
     }
     
     .selectize-input {
@@ -55,7 +55,7 @@
                 <input class="hidden"  id="cus_place" name="hidden_cus_place"  value=""> -->
 
                 <div class="d-flex mt-2">
-                    <select style="color: black;" class="form-control border-secondary me-2" id="partySelect" name="partyname" required>
+                    <select style="color: black; border-color: #68020F;" class="form-control me-2" id="partySelect" name="partyname" required>
                         <!-- <option value="{{getinoice.party.party_name}}" selected>{{getinoice.party.party_name}}</option> -->
                         {% for i in party %}
                         {% if i.party_name == getinoice.party.party_name %}
@@ -66,23 +66,23 @@
                         {% endfor %}
                     </select>
 
-                    <button id="modal_closing" type="button" class="btn " style="background-color: rgb(135, 206, 250);" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"><span class="fa fa-plus " style="color: #fff;" ></span></button>
+                    <button id="modal_closing" type="button" class="btn " style="background-color: #68020F;" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"><span class="fa fa-plus " style="color: #fff;" ></span></button>
                    
                   
-                    <input style="color: black;" class="form-control  bg-light ms-2 " type="number"
+                    <input style="border-color: #68020F; color: black;" class="form-control  bg-light ms-2 " type="number"
                         placeholder="Phone No" autocomplete="off" name="contact" id="partyPhone" value="{{getinoice.contact}}" readonly required>
-                    <input style="color: black;" class="form-control  bg-light ms-2 " type="text"
+                    <input style="border-color: #68020F; color: black;" class="form-control  bg-light ms-2 " type="text"
                         placeholder="Address" autocomplete="off" name="address" id="partyAddress" value="{{getinoice.address}}" readonly required>
                 </div>
 
                 <label for="" id="partyBalance">Balance Amount:{{getinoice.party.openingbalance}}</label>
 
                 <div class="d-flex mt-2">
-                    <input id="invoiceInput" style="color: black; " class="form-control  bg-light fw-bolder"
+                    <input id="invoiceInput" style="border-color: #68020F; color: black; " class="form-control  bg-light fw-bolder"
                         type="text" placeholder="Invoice No" autocomplete="off" name="invoiceno"
                         value="{{ getinoice.invoice_no }}"readonly required>
 
-                    <input style="color: black;" class="form-control  bg-light ms-2 " type="date"
+                    <input style="border-color: #68020F; color: black;" class="form-control  bg-light ms-2 " type="date"
                         placeholder="Date" autocomplete="off" name="date"  value="{{getinoice.date|date:'Y-m-d'}}" required>
                     
                 </div>
@@ -93,18 +93,19 @@
 
                 <div class="row " style="margin-top: 5rem;">
                     <div class="col-md-12 table-responsive-md ">
-                        <table class="table table-bordered text-dark" style="width: 103%; background-color: white"
+                        <table class="table table-bordered text-dark" style=" width: 103%; background-color: white"
                         id="tab_logic" onclick='toggleDateInput()'>
-                            <thead>
+                            <thead style=" background-color:#68020F;">
                                 <tr>
-                                    <th class="text-right">#</th>
-                                    <th>Item</th>
-                                    <th class="text-right">Hsn</th>
-                                    <th class="text-right">Qty</th>
-                                    <th class="text-right">Price</th>
-                                    <th class="text-right">Tax</th>
-                                    <th class="text-right">Discount</th>
-                                    <th class="text-right">Total</th>
+                                    <th style="color: white;" class="text-right">#</th>
+                                    <th style="color: white;"class="text-right" >Item</th>
+                                    <th style="color: white;" class="text-right">Hsn</th>
+                                    <th style="color: white;" class="text-right">Qty</th>
+                                    <th style="color: white;" class="text-right">Price</th>
+                                    <th style="color: white;" class="text-right">Tax</th>
+                                    <th style="color: white;" class="text-right">Discount</th>
+                                    <th style="color: white;" class="text-right">Total</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody id="items-table-body">
@@ -116,33 +117,33 @@
 
                                     <td style="width:21%">
                                         <div class="d-flex">
-                                            <select name='product[]' id="product{{forloop.counter}}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
+                                            <select  name='product[]' id="product{{forloop.counter}}" class="form-control product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white; border: #68020F;">
                                               
                                                 <option value="{{i.item.id}}" selected hidden>{{i.item.itm_name}}</option>
                                                 {% for i in item %}
                                                 <option value="{{i.id}}">{{ i.itm_name }} </option>
                                                 {% endfor %}
                                             </select> &nbsp;&nbsp;&nbsp;
-                                            <button type="button" class="btn btn-sm text-white btn "  id="modal_closing" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo" style="height: 30px;margin-top: 5px; background-color: lightskyblue;"><i class="fa-solid  fa fa-plus rounded"></i></button>
+                                            <button type="button" class="btn btn-sm text-white btn "  id="modal_closing" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo" style="height: 30px;margin-top: 5px; background-color: #68020F;"><i class="fa-solid  fa fa-plus rounded"></i></button>
                                         </div>
                                     </td>
 
                                     <td style="width:12%">
-                                        <input type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.hsn}}" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
+                                        <input  type="text" name='hsn[]' id='hsn{{forloop.counter}}' value="{{i.hsn}}" class="form-control  HSNCODE" style="color: black; background-color: white; border: #68020F;" readonly />
                                     </td>
 
                                     <td style="width:13%">
-                                        <input type="number" name='qty[]' id="qty{{forloop.counter}}" value="{{i.quantity}}"  class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" value=0 />
+                                        <input type="number" name='qty[]' id="qty{{forloop.counter}}" value="{{i.quantity}}"  class="form-control qty mb-1" step=0 min=0 style="color: black; background-color: white; border: #68020F;" value=0 />
                                     </td>
                                 
                                     <td style="width:12%">
-                                        <input type="number" name='price[]' id="unit{{forloop.counter}}" value="{{i.item.itm_sale_price}}" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" value=0 readonly />
+                                        <input type="number" name='price[]' id="unit{{forloop.counter}}" value="{{i.item.itm_sale_price}}" class="form-control  price" step="0.00" min="0" style="color: black; background-color: white; border: #68020F;" value=0 readonly />
                                     </td>
 
 
 
                                     <td style="width:15%">
-                                        <input type="text" name='vat[]' id="vat{{forloop.counter}}" value="{{i.item.itm_vat}}" class="form-control border-secondary tax" style="color: black; border-color: #68020F; background-color: white;"  readonly />
+                                        <input type="text" name='vat[]' id="vat{{forloop.counter}}" value="{{i.item.itm_vat}}" class="form-control  tax" style="color: black; border-color: #68020F; background-color: white;"  readonly />
                                         <!-- <input type="text" name='vat[]' id="vat{{forloop.counter}}" value="{{i.item.itm_vat}}" class="form-control  vat" style="color: black; border-color: #68020F; background-color: white;" placeholder="TRN RATE"  readonly /> -->
                                     </td>
                                     <!-- <td style="width: 15%;">
@@ -157,28 +158,28 @@
                                     </td> -->
 
                                     <td style="width: 10%;">
-                                        <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc{{forloop.counter}}"  value="{{i.discount}}" class="form-control border-secondary disc" step=0 min=0 style="  color: black; background-color: white;"  />
+                                        <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc{{forloop.counter}}"  value="{{i.discount}}" class="form-control disc" step=0 min=0 style="  color: black; background-color: white; border: #68020F;"  />
                                     </td>
                 
                                     <td style="width:13%">
-                                        <input type="number" name='total[]' id="total{{forloop.counter}}" class="form-control border-secondary total" value='{{i.totalamount}}' readonly style="color: black; background-color: white;"  />
+                                        <input type="number" name='total[]' id="total{{forloop.counter}}" class="form-control total" value='{{i.totalamount}}' readonly style="color: black; background-color: white; border: #68020F;"  />
                                     </td>
                                     <td hidden><input type="number" name='taxamount1' id="taxamount{{forloop.counter}}" value='{{i.totalamount}}' class="taxamount" /></td>
                                     
                                     <td style="width:5%">
-                                        <button type="button" id="{{forloop.counter}}" class="btn font-weight-bold btn-outline-info rounded-circle clone_row fa fa-clone px-2 my-1 py-1" title="Clone Row" ></button>
+                                        <button style="color: #68020F;" type="button" id="{{forloop.counter}}" class="btn font-weight-bold  rounded-circle clone_row fa fa-clone px-2 my-1 py-1" title="Clone Row" ></button>
                                         
                                         <br>
                                         <button type='button' id='{{forloop.counter}}'
-                                            class='btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle px-2 my-1 py-1 remove_row'
-                                            style='width:30px'>X</button>
+                                            class='btn btn-transparent text-danger btn-sm  rounded-circle px-2 my-1 py-1 remove_row'
+                                            style='width:30px; color: #68020F;'>X</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <tr>
-                            <td style="border: none;"><a class="btn btn-outline-info ml-1" role="button" id="add" ><span class="fa fa-plus"></span></a></td>
+                            <td style="border-color: #68020F; "><a class="btn btn-outline-danger  ml-1" role="button" id="add" ><span class="fa fa-plus"></span></a></td>
                         </tr>
                     </div>
                 </div>
@@ -190,14 +191,14 @@
                         <label for="">Description</label>
                         <textarea class="form-control bg-light" name="description" id="" cols="8" rows="8" placeholder=" ">{{getinoice.description}}</textarea>
                     </div>
-                    <div class="col-sm-6 " id="tab_logic_total" style=" color: black; border: 1px solid rgba(128, 128, 128, 0.6); margin-left: 2vh; background-color: white; ">
+                    <div class="col-sm-6 " id="tab_logic_total" style=" color: black; border: 1px solid rgba(128, 128, 128, 0.6); margin-left: 2vh; background-color: white; border: #68020F; ">
                         
                         <div class="p-3">
                             <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label class="text-center">Sub Total</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                    <input type="number" step="any" name='subtotal' value="{{getinoice.subtotal}}" readonly style="color: black; background-color: white;" class="form-control border-secondary" id="sub_total">
+                                    <input type="number" step="any" name='subtotal' value="{{getinoice.subtotal}}" readonly style="color: black; background-color: white; border-color: #68020F;" class="form-control" id="sub_total">
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
@@ -265,20 +266,20 @@
                             </div>
                         {% endif %} -->
 
-                            <div class="row container-fluid p-2 m-0">
+                            <!-- <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                <input type="number" step="any" name='taxamount' id="tax_amount"   value="{{getinoice.total_taxamount}}" readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                                <input type="number" step="any" name='taxamount' id="tax_amount"   value="{{getinoice.total_taxamount}}" readonly style="color: black; background-color: white; border-color: #68020F;" class="form-control"/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
-                            </div>
+                            </div> -->
 
                             <div class="row container-fluid p-2 m-0">
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                <input type="number" step="any" name='adj' id="adj" value="{{getinoice.adjustment}}" class="form-control border-secondary" style="color: black; background-color: white;"/>
+                                <input type="number" step="any" name='adj' id="adj" value="{{getinoice.adjustment}}" class="form-control " style="border-color: #68020F; color: black; background-color: white;"/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>
@@ -287,7 +288,7 @@
                                 <div class="col-sm-4 mt-2"><label for="a" class="text-center">Grand Total</label></div>
                                 <div class="col-sm-1 mt-2">:</div>
                                 <div class="col-sm-7">
-                                <input type="number" name='grandtotal' id="grandtotal" value="{{getinoice.grandtotal}}" readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                                <input type="number" name='grandtotal' id="grandtotal" value="{{getinoice.grandtotal}}" readonly style="color: black; background-color: white; border-color: #68020F;" class="form-control "/>
                                 </div>
                                 <div class="col-sm-4 m-0 p-0"></div>
                             </div>

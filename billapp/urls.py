@@ -62,6 +62,7 @@ urlpatterns = [
     path('graph_salesinvoice',views.graph_salesinvoice,name='graph_salesinvoice'),
     path('api/profit_loss_data/', views.profit_loss_data, name='profit_loss_data'),
     path('html_to_pdf', views.html_to_pdf, name='html_to_pdf'),
+    path('get_user_company', views.get_user_company, name='get_user_company'),
 
    
 
