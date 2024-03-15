@@ -1103,6 +1103,142 @@ def party_details(request, party_name):
     except Party.DoesNotExist:
         return JsonResponse({'error': 'Party not found'},status=404)
 
+from django.utils.dateparse import parse_date
+
+# def salesinvoice_save_parties(request):
+#     if request.method == 'POST':
+#         if request.user.is_company:
+#             company = request.user.company
+#             parties = Party.objects.filter(company=company)
+#         else:
+#             company = request.user.employee.company
+#             parties = Party.objects.filter(company=company)
+        
+#         party_name = request.POST['partyname']
+#         trn_no = request.POST.get('trn_no', '')
+#         contact = request.POST.get('contact', '')
+#         trn_type = request.POST.get('trn_type', '')
+#         state = request.POST.get('state', '')
+#         address = request.POST.get('address', '')
+#         email = request.POST.get('email', '')
+#         opening_stock = request.POST['opening_stock']
+#         at_price = request.POST['at_price']
+#         openingbalance = request.POST.get('balance', '')
+#         payment = request.POST.get('paymentType', '')
+#         current_date_str = request.POST.get('currentdate', '')
+
+#         # Validate current_date
+#         if not current_date_str:
+#             return render(request, 'add_salesinvoice.html', {'error_message': 'Current date is required'})
+#         try:
+#             current_date = parse_date(current_date_str)
+#         except ValueError:
+#             return render(request, 'add_salesinvoice.html', {'error_message': 'Invalid date format for current date'})
+
+#         End_date = request.POST.get('enddate', None)
+#         additionalfield1 = request.POST.get('additionalfield1', '')
+#         additionalfield2 = request.POST.get('additionalfield2', '')
+#         additionalfield3 = request.POST.get('additionalfield3', '')
+
+#         # Check if required fields are missing
+#         if not party_name:
+#             return render(request, 'add_salesinvoice.html', {'error_message': 'Party name is required'})
+
+#         part = Party(
+#             party_name=party_name, 
+#             trn_no=trn_no, 
+#             contact=contact, 
+#             trn_type=trn_type, 
+#             state=state,
+#             address=address, 
+#             email=email, 
+#             openingbalance=openingbalance,
+#             opening_stock=opening_stock, 
+#             at_price=at_price, 
+#             payment=payment,
+#             current_date=current_date, 
+#             End_date=End_date, 
+#             additionalfield1=additionalfield1,
+#             additionalfield2=additionalfield2, 
+#             additionalfield3=additionalfield3, 
+#             company=company
+#         )
+#         part.save() 
+
+#         return render(request,'add_salesinvoice.html')
+
+#     return render(request, 'add_salesinvoice.html')
+from django.core.exceptions import ValidationError
+from django.utils.datastructures import MultiValueDictKeyError
+
+def salesinvoice_save_parties(request):
+    if request.user.is_company:
+        cmp = request.user.company
+    else:
+        cmp = request.user.employee.company
+
+    error_message = None  # Initialize error message
+
+    if request.method == 'POST':
+        try:
+            party_name = request.POST['partyname']
+            trn_no = request.POST['trn_no']
+            contact = request.POST.get('contact', '')
+
+            trn_type = request.POST.get('trn_type', '')
+
+            state = request.POST.get('state', '')
+            address = request.POST.get('address', '')
+
+            email = request.POST.get('email', '')
+            opening_stock = request.POST['opening_stock']
+            at_price = request.POST['at_price']
+            openingbalance = request.POST.get('balance', '')
+            payment = request.POST.get('paymentType', '')
+            current_date = request.POST['currentdate']
+
+            End_date = request.POST.get('enddate', None)
+            additionalfield1 = request.POST.get('additionalfield1', '')
+
+            additionalfield2 = request.POST.get('additionalfield2', '')
+
+            additionalfield3 = request.POST.get('additionalfield3', '')
+        except MultiValueDictKeyError:
+            # Handle missing keys in request.POST
+            error_message = 'Required fields are missing.'
+            return render(request, 'add_salesinvoice.html', {'error_message': error_message})
+
+        try:
+            # Check if a party with the same trn_no already exists
+            if Party.objects.filter(trn_no=trn_no, company=cmp).exists():
+                error_message = 'An error occurred while processing your request. TRN number already exists. Please enter a unique TRN number.'
+            # Check if a party with the same email already exists
+            elif Party.objects.filter(email=email, company=cmp).exists():
+                error_message = 'An error occurred while processing your request. Email already exists. Please enter a unique email address.'
+            else:
+                part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
+                             address=address, email=email, openingbalance=openingbalance, opening_stock=opening_stock,
+                             at_price=at_price, payment=payment, current_date=current_date, End_date=End_date,
+                             additionalfield1=additionalfield1, additionalfield2=additionalfield2,
+                             additionalfield3=additionalfield3, company=cmp)
+                part.save()
+
+                trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
+                                           trans_date=current_date, total=openingbalance, balance=openingbalance,
+                                           party=part, company=cmp)
+                trans.save()
+
+                tr_history = PartyTransactionHistory(party=part, Transactions_party=trans, action="CREATED")
+                tr_history.save()
+
+                return redirect('add_salesinvoice')
+
+        except ValidationError as e:
+            error_message = str(e)
+
+    return render(request, 'add_salesinvoice.html', {'error_message': error_message})
+
+
 
     
 
@@ -1668,3 +1804,103 @@ def graph_salesinvoice(request):
         return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
 
     return HttpResponse("No party found.")
+
+
+
+from openpyxl import Workbook
+from django.http import HttpResponse
+
+from openpyxl import load_workbook
+from django.contrib import messages
+from django.utils import timezone
+
+
+
+def importsalesinvoice_excel(request):
+    if request.method == 'POST' and request.FILES['billfile'] and request.FILES['prdfile']:
+        if request.user.is_company:
+          company = request.user.company
+          parties = Party.objects.filter(company=company)
+        else:
+          company = request.user.employee.company
+          parties = Party.objects.filter(company=company)
+
+        
+        totval = int(SalesInvoice.objects.filter(company=company).last().invoice_no) + 1
+
+        excel_bill = request.FILES['billfile']
+        excel_b = load_workbook(excel_bill)
+        eb = excel_b['Sheet1']
+        excel_prd = request.FILES['prdfile']
+        excel_p = load_workbook(excel_prd)
+        ep = excel_p['Sheet1']
+
+        for row_number1 in range(2, eb.max_row + 1):
+            billsheet = [eb.cell(row=row_number1, column=col_num).value for col_num in range(1, eb.max_column + 1)]
+            part = Party.objects.get(party_name=billsheet[0], email=billsheet[1], company=company)
+            SalesInvoice.objects.create(party=part,
+                                        date=billsheet[2],
+                                        state_of_supply=billsheet[3],
+                                        invoice_no=totval,
+                                        company=company, parties=parties)
+            invoice = SalesInvoice.objects.create(
+                        party=part,
+                        date=billsheet[2],
+                        state_of_supply=billsheet[3],
+                        invoice_no=totval,
+                        company=company
+                    )
+
+
+            invoice.paymenttype = billsheet[4]
+                    
+            invoice.save()
+
+            subtotal = total_taxamount = 0
+            for row_number2 in range(2, ep.max_row + 1):
+                        prdsheet = [ep.cell(row=row_number2, column=col_num).value for col_num in range(1, ep.max_column + 1)]
+                        if prdsheet[0] == row_number1:
+                            itm = ItemModel.objects.get(item_name=prdsheet[1], item_hsn=prdsheet[2], company=company_instance)
+                            total = int(prdsheet[3]) * int(itm.item_sale_price) - int(prdsheet[4])
+
+                            # Create SalesInvoiceItem object
+                            SalesInvoiceItem.objects.create(
+                                salesinvoice=invoice,
+                                company=company_instance,
+                                item=itm,
+                                staff=staff,
+                                quantity=prdsheet[3],
+                                discount=prdsheet[4]
+                            )
+
+                            tax = int(prdsheet[5])
+                            subtotal += total
+                            tamount = total * (tax / 100)
+                            total_taxamount += tamount
+
+        gtotal = subtotal + total_taxamount + float(billsheet[6])
+        balance = gtotal - float(billsheet[7])
+        gtotal = round(gtotal, 2)
+        balance = round(balance, 2)
+
+        invoice.subtotal = round(subtotal, 2)
+        invoice.total_taxamount = round(total_taxamount, 2)
+        invoice.adjustment = round(billsheet[6], 2)
+        invoice.grandtotal = gtotal
+        invoice.paidoff = round(billsheet[7], 2)
+        invoice.totalbalance = balance
+        invoice.save()
+
+        SalesInvoiceTransactionHistory.objects.create(
+            salesinvoice=invoice,
+            staff=invoice.staff,
+            company=invoice.company,
+            action='Created',
+            done_by_name=invoice.staff.first_name
+        )
+
+    return JsonResponse({'message': 'File uploaded successfully!'})
+  # except Exception as e:
+  #   return JsonResponse({'message': f'File upload failed: {str(e)}'})
+
+  #   return JsonResponse({'message': 'File upload failed: Invalid request method or missing files.'})

@@ -46,6 +46,30 @@
         border-color: #FFD6D7;
         border-radius: 5px;
     }
+
+    .party-list-container {
+            position: relative;
+        }
+
+        .party-list {
+            display: none;
+            position: absolute;
+            z-index: 1;
+            width: calc(100% - 2px);
+            border: 1px solid #ccc;
+            background-color: #fff;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .party-list-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .party-list-item:hover {
+            background-color: #f0f0f0;
+        }
 </style>
 
 
@@ -65,8 +89,18 @@
 
                 <input class="hidden" type="text" name="samp" id="samp" >
                 <input class="hidden"  id="cus_place" name="hidden_cus_place"  value=""> -->
+                <div>
+                    <label>
+                        <input type="radio" name="partyToggle" value="partyOn" checked> Party On
+                    </label> &nbsp; &nbsp;
+                    <label>
+                        <input type="radio" name="partyToggle" value="partyOff"> Party Off
+                    </label>
+              
 
-                <div class="d-flex mt-2">
+
+
+                <div class="d-flex mt-2 party-list-container ">
                     <select style="color: black; border-color: #68020F; width: 21.5vw;" class="form-control  me-2"  id="partySelect" name="partyname"  required >
                         <option value="" selected hidden>Select</option>
                         {% for i in parties %}
@@ -74,7 +108,7 @@
                         {% endfor %}
                     </select>
                     
-                    
+             
                     <button id="modal_closing" type="button" class="btn " style="background-color: #68020F;" data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo"><span class="fa fa-plus " style="color: #fff;" ></span></button>
 
                   
@@ -82,7 +116,7 @@
                         placeholder="Phone No" autocomplete="off" name="contact" id="partyPhone" readonly >
                     <input style="color: black; border-color: #68020F; width: 21.5vw;" class="form-control  bg-light ms-2 " type="text"
                         placeholder="Address" autocomplete="off" name="address" id="partyAddress" readonly >
-                </div>
+                </div>   </div>
 
                 <label for="" id="partyBalance">Balance Amount: </label>
 
@@ -96,14 +130,14 @@
               
                 </div>
 
-                <div class="d-flex mt-4">
+                <!-- <div class="d-flex mt-4">
                     <select style="color: black; border-color: #68020F; width: 275px;" class="form-control bg-light  me-2" id="bank" name="bank" onchange="updateBankDetails()" >
                         <option value="">Select Payment Type</option>
                         <option value="Cash">Cash</option>
                         <option value="Cheque">Cheque</option>
                         <option value="UPI">UPI</option>
                         
-                    </select>
+                    </select> -->
                 
                     <!-- <div id="chequeNumberBox" style="display: none; width: 21.5vw;">
                         <input style="border-color: #68020F;" type="text" id="chequeNumber" name="chequeNumber" class="form-control bg-light me-2" placeholder=" Cheque Number">
@@ -116,7 +150,7 @@
                     <div id="bankAccountBox" style="display: none; width: 21.5vw;">
                         <input style="border-color: #68020F;" type="text" id="accountNumber" name="accountNumber" class="form-control  bg-light me-2 " placeholder=" Account Number " readonly>
                     </div> -->
-                </div>
+                <!-- </div> -->
 
                 <!-- .............................................  TABLE 1  ..................................................... -->
 
@@ -306,7 +340,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="background-color: #FFD6D7;">
-                <form method="POST" action="" class="p-5" enctype="multipart/form-data" novalidate id="forms">
+                <form method="POST" action="{% url 'salesinvoice_save_parties' %}" class="p-5" enctype="multipart/form-data" novalidate id="forms">
                     {% csrf_token %}
                     <div class="bg-light bs p-4 rounded mb-5">
                         <div id="main_form_div">
@@ -317,7 +351,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="col-form-label" style="color: black;">Trn No</label>
-                                    <input type="text" class="form-control " onchange="checkgst(this)" id="gstin" name="gstin" style="color: black; border-color: #68020F;" placeholder="29APPCK7465F1Z1">
+                                    <input type="text" class="form-control " onchange="checkgst(this)" id="trn_no" name="trn_no" style="color: black; border-color: #68020F;" placeholder="29APPCK7465F1Z1">
                                     <div class="text-danger m-2" id="warngst"></div>
                                 </div>
                                 <div class="col-md-4">
@@ -360,48 +394,10 @@
                                                         <option value="Registered Business or Combosision">Registered Business or Combosision</option>
                                                     </select>
 
-                                                    <label class="col-form-label mt-4" for="company" style="color: black;">Supply State</label>
-                                                    <select class="form-control " name="splystate" id="splystate" style="color: black; background-color: white; border-color: #68020F;">
-                                                        <option value="" selected hidden>Select</option>
-                                                        <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
-                                                        <option value="Andhra Pradhesh">Andhra Pradhesh</option>
-                                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                        <option value="Assam">Assam</option>
-                                                        <option value="Bihar">Bihar</option>
-                                                        <option value="Chandigarh">Chandigarh</option>
-                                                        <option value="Chhattisgarh">Chhattisgarh</option>
-                                                        <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                        <option value="Daman anad Diu">Daman anad Diu</option>
-                                                        <option value="Delhi">Delhi</option>
-                                                        <option value="Goa">Goa</option>
-                                                        <option value="Gujarat">Gujarat</option>
-                                                        <option value="Haryana">Haryana</option>
-                                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                        <option value="Jharkhand">Jharkhand</option>
-                                                        <option value="Karnataka">Karnataka</option>
-                                                        <option value="Kerala">Kerala</option>
-                                                        <option value="Ladakh">Ladakh</option>
-                                                        <option value="Lakshadweep">Lakshadweep</option>
-                                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                        <option value="Maharashtra">Maharashtra</option>
-                                                        <option value="Manipur">Manipur</option>
-                                                        <option value="Meghalaya">Meghalaya</option>
-                                                        <option value="Mizoram">Mizoram</option>
-                                                        <option value="Nagaland">Nagaland</option>
-                                                        <option value="Odisha">Odisha</option>
-                                                        <option value="Pondicherry">Pondicherry</option>
-                                                        <option value="Punjab">Punjab</option>
-                                                        <option value="Rajasthan">Rajasthan</option>
-                                                        <option value="Sikkim">Sikkim</option>
-                                                        <option value="Tamil Nadu">Tamil Nadu</option>
-                                                        <option value="Telangana">Telangana</option>
-                                                        <option value="Tripura">Tripura</option>
-                                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                        <option value="Uttarakhand">Uttarakhand</option>
-                                                        <option value="West Bengal">West Bengal</option>
-                                                        <option value="Other Territory">Other Territory</option>
-                                                    </select>
+                                                    <div class="col-md-13">
+                                                        <label class="col-form-label mt-4" style="color: black;">State</label>
+                                                        <input style="color: black; background-color: white; border-color: #68020F;" type="text" class="form-control " id="state" name="state" placeholder="State" required>
+                                                    </div> 
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="col-form-label mt-4" style="color: black;">Billing Address</label>
@@ -436,9 +432,13 @@
                                                     <input style="border-color: #68020F;" type="radio" class="radio-input " id="toReceiveRadio" name="paymentType" value="To Receive">
                                                     <input type="number" class="form-control" id="openbalance"  name="openbalance" style="color: black; border-color: #68020F; background-color: white;" value="0">
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <label class="col-form-label" style="color: black;" for="openbalance">Credit Limit</label>
-                                                    <input type="number" class="form-control" id="crd_lmt"  name="crd_lmt" style="border-color: #68020F; color: black; background-color: white;" value="0">
+                                                <div class="col md-6" >
+                                                    <label class="col-form-label" style="color: black;" for="openbalance"> Opening Stock </label> 
+                                                    <input style="color: black; border-color: #68020F; background-color: white;" type="number" class="form-control" name="opening_stock" placeholder="Opening Stock">
+                                                </div>
+                                                <div class="col md-6" id="text-box">
+                                                    <label class="col-form-label" style="color: black;" for="openbalance">At Price </label> 
+                                                    <input style="color: black; border-color: #68020F; background-color: white;" type="number" class="form-control" name="at_price" placeholder="At Price">
                                                 </div>
                                             </div>
 
@@ -1811,8 +1811,49 @@ $(document).on("input", "#advance", function(){
 
 
  </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get references to the radio buttons
+        const partyOnRadio = document.querySelector('input[value="partyOn"]');
+        const partyOffRadio = document.querySelector('input[value="partyOff"]');
 
+        // Function to handle Party On action
+        function handlePartyOn() {
+            // Your logic for Party On action goes here
+            console.log("Party On");
+            // Example: Enable some elements related to party when party is on
+            document.getElementById("partySelect").disabled = false;
+            // document.getElementById("modal_closing").disabled = false;
+            document.getElementById("partyPhone").readOnly = false;
+            document.getElementById("partyAddress").readOnly = false;
+        }
 
+        // Function to handle Party Off action
+        function handlePartyOff() {
+            // Your logic for Party Off action goes here
+            console.log("Party Off");
+            // Example: Disable some elements related to party when party is off
+            document.getElementById("partySelect").disabled = true;
+            // document.getElementById("modal_closing").disabled = true;
+            document.getElementById("partyPhone").readOnly = true;
+            document.getElementById("partyAddress").readOnly = true;
+        }
+
+        // Event listener for Party On radio button
+        partyOnRadio.addEventListener("change", function() {
+            if (partyOnRadio.checked) {
+                handlePartyOn();
+            }
+        });
+
+        // Event listener for Party Off radio button
+        partyOffRadio.addEventListener("change", function() {
+            if (partyOffRadio.checked) {
+                handlePartyOff();
+            }
+        });
+    });
+</script>
 
 
 {% endblock %}
