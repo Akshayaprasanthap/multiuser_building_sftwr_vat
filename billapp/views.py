@@ -1755,33 +1755,35 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.http import JsonResponse
 
-def profit_loss_data(request):
+def profit_loss_data(request,year=None):
     try:
         company = get_user_company(request.user)
-        print(f"Company: {company}")
+        print(f"company: {company}")
 
         parties = Party.objects.filter(company=company)
         print(f"Parties: {parties}")
 
         labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
+
         sales_data = (
-            SalesInvoice.objects.filter(date__year=2024, company=company)
+            SalesInvoice.objects.filter(date__year=year, company=company)
             .values('date__month')
             .annotate(grandtotal_sum=Sum('grandtotal'))
         )
 
-        print(f"Sales Data: {sales_data}")
 
         sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
+
+    
         sales = [sales_dict.get(month, 0) for month in range(1, 13)]
 
-        data = {'labels': labels, 'sales': sales, 'parties': parties}
+        data = {'labels': labels, 'sales': sales}
         return JsonResponse(data)
     except Exception as e:
         # Log the exception details
-        print(f"Exception in profit_loss_data: {e}")
-        return JsonResponse({'error': 'Internal Server Error'}, status=500)
+      print(f"Exception in profit_loss_data: {e}")
+    return JsonResponse({'error': 'Internal Server Error'}, status=500)
 
 
 def get_user_company(user):
@@ -1801,7 +1803,9 @@ def graph_salesinvoice(request):
     if party:
         user = company.user  # Assuming user is an attribute of the Company model
         salesinvoice = SalesInvoiceItem.objects.filter(company=company)
-        return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
+        
+        years = list(range(2022, 2031))
+        return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user,'years':years})
 
     return HttpResponse("No party found.")
 
