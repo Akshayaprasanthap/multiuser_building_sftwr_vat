@@ -1864,15 +1864,15 @@ def importsalesinvoice_excel(request):
             for row_number2 in range(2, ep.max_row + 1):
                         prdsheet = [ep.cell(row=row_number2, column=col_num).value for col_num in range(1, ep.max_column + 1)]
                         if prdsheet[0] == row_number1:
-                            itm = ItemModel.objects.get(item_name=prdsheet[1], item_hsn=prdsheet[2], company=company_instance)
+                            itm = Item.objects.get(item_name=prdsheet[1], item_hsn=prdsheet[2], company=company)
                             total = int(prdsheet[3]) * int(itm.item_sale_price) - int(prdsheet[4])
 
                             # Create SalesInvoiceItem object
                             SalesInvoiceItem.objects.create(
                                 salesinvoice=invoice,
-                                company=company_instance,
+                                company=company,
                                 item=itm,
-                                staff=staff,
+                                
                                 quantity=prdsheet[3],
                                 discount=prdsheet[4]
                             )
