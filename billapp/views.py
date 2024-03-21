@@ -476,119 +476,6 @@ def addNewParty(request):
 
 
 
-
-
-
-# def addNewParty(request):
-#     if request.user.is_company:
-#         cmp = request.user.company
-#     else:
-#         cmp = request.user.employee.company
-#         print(cmp)
-
-#     if request.method == 'POST':
-#         party_name = request.POST['partyname']
-#         trn_no = request.POST['trn_no']
-#         contact = request.POST['contact']
-#         trn_type = request.POST['trn_type']
-#         state = request.POST.get('state')
-#         address = request.POST['address']
-#         email = request.POST['email']
-#         openingbalance = request.POST.get('balance', '')
-#         payment = request.POST.get('paymentType', '')
-#         current_date = request.POST['currentdate']
-#         End_date = request.POST.get('enddate', None)
-#         additionalfield1 = request.POST['additionalfield1']
-#         additionalfield2 = request.POST['additionalfield2']
-#         additionalfield3 = request.POST['additionalfield3']
-
-#         part = Party(party_name=party_name, trn_no=trn_no, contact=contact, trn_type=trn_type, state=state,
-#                      address=address, email=email, openingbalance=openingbalance, payment=payment,
-#                      current_date=current_date, End_date=End_date, additionalfield1=additionalfield1,
-#                      additionalfield2=additionalfield2, additionalfield3=additionalfield3)
-
-#         if request.user.is_company:
-#             part.company = request.user.company
-#         else:
-#             part.company = request.user.employee.company
-
-#         part.save()
-
-#         trans = Transactions_party(user=request.user, trans_type='Opening Balance', trans_number=trn_no,
-#                                    trans_date=current_date, total=openingbalance, balance=openingbalance, party=part)
-
-#         if request.user.is_company:
-#             trans.company = request.user.company
-#         else:
-#             trans.company = request.user.employee.company
-
-#         trans.save()
-
-#         tr_history = PartyTransactionHistory(party=part,Transactions_party=trans, action="CREATED")
-#         tr_history.save()
-
-#         if request.POST.get('save_and_next'):
-#             return redirect('load_party_create')
-#         elif request.POST.get('save'):
-#             return redirect('party_list')
-
-#     return render(request, 'add_parties.html')
-
-
-
-
-
-
-
-
-
-# def addNewParty(request):
-#     if request.user.is_company:
-#         cmp = request.user.company
-#     else:
-#         cmp = request.user.employee.company
-#         print(cmp)
-#     if request.method == 'POST':
-#       party_name = request.POST['partyname']
-#       trn_no = request.POST['trn_no']
-#       contact = request.POST['contact']
-#       trn_type = request.POST['trn_type']
-#       state = request.POST.get('state')
-#       address = request.POST['address']
-#       email = request.POST['email']
-#       openingbalance = request.POST.get('balance', '')
-#       payment = request.POST.get('paymentType', '')
-#       current_date = request.POST['currentdate']
-#       End_date = request.POST.get('enddate', None)
-#       additionalfield1 = request.POST['additionalfield1']
-#       additionalfield2 = request.POST['additionalfield2']
-#       additionalfield3 = request.POST['additionalfield3']
-
-#       part = Party(party_name=party_name, trn_no=trn_no,contact=contact,trn_type=trn_type, state=state,address=address, email=email, openingbalance=openingbalance,payment=payment,
-#                       current_date=current_date,End_date=End_date,additionalfield1=additionalfield1,additionalfield2=additionalfield2,additionalfield3=additionalfield3)
-#       part.save()
-
-#       # return JsonResponse({'status':True})
-#       trans = Transactions_party(user = request.user,trans_type ='Opening Balance',trans_number=trn_no,trans_date =current_date,total=openingbalance, balance=openingbalance,party=part)
-#       tr_history = PartyTransactionHistory(party=part,
-#                                               Transactions_party=trans,      
-#                                               action="CREATED",)
-#       tr_history.save()
-#     if request.user.is_company:
-#       part.company = request.user.company
-#       trans.company = request.user.company
-
-#     else:
-#       part.company = request.user.employee.company
-#       trans.company = request.user.employee.company
- 
-#     part.save()
-#     trans.save()
-
-#     if request.POST.get('save_and_next'):
-#       return redirect('load_party_create')
-#     elif request.POST.get('save'):
-#       return redirect('party_list')
     
 
 
@@ -616,29 +503,6 @@ def edit_party(request,id):
   parties=Party.objects.filter(user=request.user)
   ftrans = Transactions_party.objects.filter(party = getparty)
   return render(request, 'edit_party.html',{'usr':request.user,'party':party,'getparty':getparty,'parties':parties,'ftrans':ftrans})
-
-# from django.shortcuts import get_object_or_404
-
-# def edit_party(request, id):
-#   if request.user.is_company:
-#       party = Party.objects.filter(company=request.user.company)
-#   else:
-#       party = Party.objects.filter(company=request.user.employee.company)
-
-#   try:
-#       getparty = get_object_or_404(Party, id=id)
-#       ftrans = Transactions_party.objects.filter(party=getparty)
-#       parties = Party.objects.filter(user=request.user)
-#       return render(request, 'edit_party.html', {'usr': request.user, 'party': party, 'getparty': getparty, 'parties': parties, 'ftrans': ftrans})
-#   except Party.DoesNotExist:
-#         # Handle the case when the party with the specified ID does not exist
-#       return HttpResponseNotFound("Party does not exist")
-
-
-
-
-# from django.shortcuts import render, redirect
-# from .models import Party, Transactions_party
 
 
 from datetime import datetime
@@ -719,108 +583,6 @@ def edit_saveparty(request, id):
 
 
 
-
-# tr_history = PartyTransactionHistory(party=getparty,Transactions_party=trans,action="UPDATED")
-#             print(tr_history,'000000000000000000')
-#             tr_history.save()
-
-
-# Remove has_changed function if not used
-
-# from django.utils import timezone
-
-# def edit_saveparty(request, id):
-#     if request.user.is_company:
-#         party_qs = Party.objects.filter(company=request.user.company)
-#     else:
-#         party_qs = Party.objects.filter(company=request.user.employee.company)
-
-#     getparty = Party.objects.get(id=id)
-
-#     if request.method == 'POST':
-#         # Capture old data before making changes
-#         old_data = {
-#             'party_name': getparty.party_name,
-#             'trn_no': getparty.trn_no,
-#             'contact': getparty.contact,
-#             'trn_type': getparty.trn_type,
-#             'state': getparty.state,
-#             'address': getparty.address,
-#             'email': getparty.email,
-#             'openingbalance': getparty.openingbalance,
-#             'payment': getparty.payment,
-#             'current_date': getparty.current_date,
-#             'additionalfield1': getparty.additionalfield1,
-#             'additionalfield2': getparty.additionalfield2,
-#             'additionalfield3': getparty.additionalfield3,
-#         }
-
-#         getparty.party_name = request.POST.get('partyname', '')
-#         # ... (rest of the fields)
-
-#         # Check for changes
-#         if old_data != {
-#             'party_name': getparty.party_name,
-#             'trn_no': getparty.trn_no,
-#             'contact': getparty.contact,
-#             'trn_type': getparty.trn_type,
-#             'state': getparty.state,
-#             'address': getparty.address,
-#             'email': getparty.email,
-#             'openingbalance': getparty.openingbalance,
-#             'payment': getparty.payment,
-#             'current_date': getparty.current_date,
-#             'additionalfield1': getparty.additionalfield1,
-#             'additionalfield2': getparty.additionalfield2,
-#             'additionalfield3': getparty.additionalfield3,
-#         }:
-#             # Changes detected, update history
-
-#             # Save the party changes
-#             getparty.save()
-
-#             existing_transaction = Transactions_party.objects.filter(party=getparty).first()
-
-#             if existing_transaction:
-#                 existing_transaction.trans_type = 'Opening Balance'
-#                 existing_transaction.trans_number = getparty.trn_no
-#                 existing_transaction.trans_date = getparty.current_date
-#                 existing_transaction.total = getparty.openingbalance
-#                 existing_transaction.balance = getparty.openingbalance
-#                 existing_transaction.save()
-
-#             else:
-#                 trans = Transactions_party(
-#                     user=request.user,
-#                     trans_type='Opening Balance',
-#                     trans_number=getparty.trn_no,
-#                     trans_date=getparty.current_date,
-#                     total=getparty.openingbalance,
-#                     balance=getparty.openingbalance,
-#                     party=getparty
-#                 )
-
-#                 if request.user.is_company:
-#                     trans.company = request.user.company
-#                 else:
-#                     trans.company = request.user.employee.company
-
-#                 trans.save()
-
-#                 # Now that trans is created, create history entry
-#                 history_entry = PartyTransactionHistory(
-#                     party=getparty,
-#                     Transactions_party=trans,
-#                     action="UPDATED",
-#                     # Update with the current timestamp
-#                 )
-#                 history_entry.save()
-
-#         return redirect('view_party', id=getparty.id)
-
-#     return render(request, 'edit_party.html', {'getparty': getparty, 'party': party_qs, 'usr': request.user})
-
-
 def history_party(request, id):
     if request.user.is_company:
         party = Party.objects.filter(company=request.user.company)
@@ -852,104 +614,6 @@ def deleteparty(request,id):
     
 
 
-
-
-
-
-
-
-# def shareTransactionpartyToEmail(request, id):
-#   if request.user.is_company:
-#     party = Party.objects.filter(company=request.user.company)
-#   else:
-#     party = Party.objects.filter(company=request.user.employee.company)
-
-#     if request.method == "POST":
-#         try:
-#             fparty = Party.objects.get(id=id)
-#             ftrans = Transactions_party.objects.filter(party=fparty)
-#             context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
-
-#             email_message = request.POST.get('email_message')
-#             my_subject = "Transaction REPORT"
-#             emails_string = request.POST.get('email_ids')
-#             emails_list = [email.strip() for email in emails_string.split(',')]
-
-#             html_message = render_to_string('transaction_pdf.html', context)
-#             plain_message = strip_tags(html_message)
-
-#             pdf_content = BytesIO()
-#             pisa.CreatePDF(html_message.encode("UTF-8"), dest=pdf_content)
-#             pdf_content.seek(0)
-
-#             filename = f'transaction.pdf'
-#             message = EmailMultiAlternatives(
-#                 subject=my_subject,
-#                 body=f"Hi,\nPlease find the attached Transaction Report - \n{email_message}\n--\nRegards,\n",
-#                 from_email='altostechnologies6@gmail.com',  # Update with your email
-#                 to=emails_list,
-#             )
-
-#             message.attach(filename, pdf_content.read(), 'application/pdf')
-#             message.send()
-
-#             return HttpResponse('<script>alert("Report has been shared successfully!");window.location="/party_list"</script>')
-#         except Exception as e:
-#                 # Handle the exception, log the error, or provide an error message
-#             return HttpResponse('<script>alert("Failed to send email!");window.location="/party_list"</script>')
-
-#     return HttpResponse('<script>alert("Invalid Request!");window.location="/party_list"</script>')
-
-
-
-from django.contrib import messages
-
-def html_to_pdf(request):
-    if request.user.is_company:
-        party = Party.objects.filter(company=request.user.company)
-    else:
-        party = Party.objects.filter(company=request.user.employee.company)
-
-    fparty = None
-    ftrans = None
-
-    if request.method == "POST":
-        party_id = request.POST.get('party_id')
-        try:
-            fparty = Party.objects.get(id=party_id)
-            ftrans = Transactions_party.objects.filter(party=fparty)
-        except Party.DoesNotExist:
-            messages.error(request, 'Party not found!')
-            return HttpResponse('<script>window.location="/party_list"</script>')
-
-    # Debug print/log
-    print("Party:", party)
-    print("User:", request.user)
-    print("Fetched Party:", fparty)
-    print("Fetched Transactions:", ftrans)
-
-    context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
-    html_content = render(request, 'transaction_pdf.html', context).content
-
-    # Create a BytesIO buffer to receive the PDF content
-    pdf_buffer = BytesIO()
-
-    # Use xhtml2pdf to generate the PDF
-    pisa.CreatePDF(html_content, dest=pdf_buffer)
-
-    # Move the buffer's cursor to the beginning
-    pdf_buffer.seek(0)
-
-    # Set the response content type
-    response = HttpResponse(content_type='application/pdf')
-
-    # Set the content-disposition header to force download
-    response['Content-Disposition'] = 'filename="Transaction details.pdf"'
-
-    # Write the PDF content to the response
-    response.write(pdf_buffer.read())
-
-    return response
 
 
 
@@ -1605,58 +1269,62 @@ def edit_salesinvoice(request,id):
 
   return render(request, 'edit_salesinvoice.html',{'parties':parties,'getinoice':getinoice,'getitem':getitem,'party':party,'item':item})
 
-
 def editsave_salesinvoice(request,id):
+    if request.user.is_company:
+        company = request.user.company
+        parties = Party.objects.filter(company=company)
+    else:
+        company = request.user.employee.company
+        parties = Party.objects.filter(company=company)
 
-  if request.user.is_company:
-    company = request.user.company
-    parties = Party.objects.filter(company=company)
-  else:
-    company = request.user.employee.company
-    parties = Party.objects.filter(company=company)
+    sales_invoice = SalesInvoice.objects.get(id=id, company=company)
 
-
-    sales_invoice=SalesInvoice.objects.get(id=id,company=company,parties=parties)
-    
     sales_invoice.party_name = request.POST.get('partyname')
     sales_invoice.contact = request.POST.get('contact')
     sales_invoice.address = request.POST.get('address')
     sales_invoice.invoice_no = request.POST.get('invoiceno')
     sales_invoice.date = request.POST.get('date')
     sales_invoice.description = request.POST.get('description')
-    sales_invoice.subtotal =float(request.POST.get('subtotal'))
+    sales_invoice.subtotal = float(request.POST.get('subtotal'))
     sales_invoice.vat = request.POST.get('vat')
     sales_invoice.total_taxamount = request.POST.get('taxamount')
     sales_invoice.adjustment = request.POST.get('adj')
     sales_invoice.grandtotal = request.POST.get('grandtotal')
-    
+
     sales_invoice.save()
 
-    product = tuple(request.POST.getlist("product[]"))
-    qty = tuple(request.POST.getlist("qty[]"))
-    vat =tuple( request.POST.getlist("vat[]"))
-    discount = tuple(request.POST.getlist("discount[]"))
-    total = tuple(request.POST.getlist("total[]"))
-    SalesInvoiceItem.objects.filter(salesinvoice=sales_invoice,company=company).delete()
-    if len(product)==len(qty)==len(qty)==len(vat):
-      mapped=zip(product,qty,vat,discount,total)
-      mapped=list(mapped)
-      for ele in mapped:
-        itm = Item.objects.get(id=ele[0])
-        SalesInvoiceItem.objects.create(item =itm,quantity=ele[1], tax=ele[2],discount=ele[3],totalamount=ele[4],salesinvoice=sales_invoice,company=company)
+    product = request.POST.getlist("product[]")
+    qty = request.POST.getlist("qty[]")
+    vat = request.POST.getlist("vat[]")
+    discount = request.POST.getlist("discount[]")
+    total = request.POST.getlist("total[]")
 
-    tr_history = SalesInvoiceTransactionHistory(company=company,
-                                              
-                                          salesinvoice=sales_invoice,
-                                          action="UPDATED",
-                                          done_by_name=parties.name,
-                                          )
+    SalesInvoiceItem.objects.filter(salesinvoice=sales_invoice, company=company).delete()
+
+    if len(product) == len(qty) == len(qty) == len(vat):
+        mapped = zip(product, qty, vat, discount, total)
+        mapped = list(mapped)
+        for ele in mapped:
+            itm = Item.objects.get(id=ele[0])
+            SalesInvoiceItem.objects.create(
+                item=itm,
+                quantity=ele[1],
+                tax=ele[2],
+                discount=ele[3],
+                totalamount=ele[4],
+                salesinvoice=sales_invoice,
+                company=company
+            )
+
+    tr_history = SalesInvoiceTransactionHistory.objects.create(
+        company=company,
+        salesinvoice=sales_invoice,
+        action="UPDATED",
+        done_by_name=parties.first().name,  # Assuming parties is a queryset
+    )
     tr_history.save()
-
-    
     return redirect('view_salesinvoice')
 
-  return render(request, 'edit_salesinvoice.html')
 
 
 
@@ -1688,65 +1356,6 @@ def salesinvoicehistory(request, id):
 
 
 
-
-# from django.http import JsonResponse
-
-# from django.db.models import Sum
-
-# def profit_loss_data(request):
-    
-#   if request.user.is_company:
-#     company = request.user.company
-#     parties = Party.objects.filter(company=company)
-#   else:
-#     company = request.user.employee.company
-#     parties = Party.objects.filter(company=company)
-#     # staff = staff_details.objects.get(id=staff_id)
-#     # company_instance = company.objects.get(id=staff.company.id)
-#   labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
-
-
-#   sales_data = (
-#       SalesInvoice.objects.filter(date__year=2024,company=company)
-#       .values('date__month')
-#       .annotate(grandtotal_sum=Sum('grandtotal'))
-#   )
-
-#   # Create a dictionary with monthly sales data
-#   sales_dict = {item['date__month']: item['grandtotal_sum'] for item in sales_data}
-
-#   # Fill in sales values for each month
-#   sales = [sales_dict.get(month, 0) for month in range(1, 13)]
-
-#   data = {'labels': labels, 'sales': sales, 'parties':parties}
-#   return JsonResponse(data)
-  
-
-
-
-# def graph_salesinvoice(request):
-#     if request.user.is_company:
-#         company = request.user.company
-#         parties = Party.objects.filter(company=company)
-#     else:
-#         company = request.user.employee.company
-#         parties = Party.objects.filter(company=company)
-
-#     # Assuming parties is a queryset, you might want to get a specific party from it
-#     # For example, you could get the first party in the queryset
-#     party = parties.first()
-
-#     # Check if a party exists before proceeding
-#     if party:
-#         cmp = Company.objects.get(id=party.company.id)
-#         user = cmp.user  # Access user attribute of the Company model
-#         salesinvoice = SalesInvoiceItem.objects.filter(company=cmp)
-
-#         return render(request, 'graph_salesinvoice.html', {'salesinvoice': salesinvoice, 'user': user})
-
-#     # Handle the case where no party is found
-#     # For example, return an error response or redirect to another page
-#     return HttpResponse("No party found.")
 
 from django.core.serializers import serialize
 from django.http import JsonResponse, HttpResponse
@@ -1819,92 +1428,88 @@ from django.contrib import messages
 from django.utils import timezone
 
 
-
 def importsalesinvoice_excel(request):
-    if request.method == 'POST' and request.FILES['billfile'] and request.FILES['prdfile']:
-        if request.user.is_company:
-          company = request.user.company
-          parties = Party.objects.filter(company=company)
-        else:
-          company = request.user.employee.company
-          parties = Party.objects.filter(company=company)
+    try:
+        if request.method == 'POST' and request.FILES['billfile'] and request.FILES['prdfile']:
+            if request.user.is_company:
+                company = request.user.company
+                parties = Party.objects.filter(company=company)
+            else:
+                company = request.user.employee.company
+                parties = Party.objects.filter(company=company)
 
-        
-        totval = int(SalesInvoice.objects.filter(company=company).last().invoice_no) + 1
+            totval = int(SalesInvoice.objects.filter(company=company).last().invoice_no) + 1
 
-        excel_bill = request.FILES['billfile']
-        excel_b = load_workbook(excel_bill)
-        eb = excel_b['Sheet1']
-        excel_prd = request.FILES['prdfile']
-        excel_p = load_workbook(excel_prd)
-        ep = excel_p['Sheet1']
+            excel_bill = request.FILES['billfile']
+            excel_b = load_workbook(excel_bill)
+            eb = excel_b['Sheet1']
+            excel_prd = request.FILES['prdfile']
+            excel_p = load_workbook(excel_prd)
+            ep = excel_p['Sheet1']
 
-        for row_number1 in range(2, eb.max_row + 1):
-            billsheet = [eb.cell(row=row_number1, column=col_num).value for col_num in range(1, eb.max_column + 1)]
-            part = Party.objects.get(party_name=billsheet[0], email=billsheet[1], company=company)
-            SalesInvoice.objects.create(party=part,
-                                        date=billsheet[2],
-                                        state_of_supply=billsheet[3],
-                                        invoice_no=totval,
-                                        company=company, parties=parties)
-            invoice = SalesInvoice.objects.create(
-                        party=part,
-                        date=billsheet[2],
-                        state_of_supply=billsheet[3],
-                        invoice_no=totval,
-                        company=company
-                    )
+            for row_number1 in range(2, eb.max_row + 1):
+                billsheet = [eb.cell(row=row_number1, column=col_num).value for col_num in range(1, eb.max_column + 1)]
+                part = Party.objects.get(party_name=billsheet[0], email=billsheet[1], company=company)
+                SalesInvoice.objects.create(party=part,
+                                            date=billsheet[2],
+                                            state_of_supply=billsheet[3],
+                                            invoice_no=totval,
+                                            company=company, parties=parties)
+                invoice = SalesInvoice.objects.create(
+                    party=part,
+                    date=billsheet[2],
+                    state_of_supply=billsheet[3],
+                    invoice_no=totval,
+                    company=company
+                )
 
+                # invoice.paymenttype = billsheet[4]
+                invoice.save()
 
-            invoice.paymenttype = billsheet[4]
-                    
-            invoice.save()
+                subtotal = total_taxamount = 0
+                for row_number2 in range(2, ep.max_row + 1):
+                    prdsheet = [ep.cell(row=row_number2, column=col_num).value for col_num in range(1, ep.max_column + 1)]
+                    if prdsheet[0] == row_number1:
+                        itm = Item.objects.get(item_name=prdsheet[1], item_hsn=prdsheet[2], company=company)
+                        total = int(prdsheet[3]) * int(itm.itm_sale_price) - int(prdsheet[4])
 
-            subtotal = total_taxamount = 0
-            for row_number2 in range(2, ep.max_row + 1):
-                        prdsheet = [ep.cell(row=row_number2, column=col_num).value for col_num in range(1, ep.max_column + 1)]
-                        if prdsheet[0] == row_number1:
-                            itm = Item.objects.get(item_name=prdsheet[1], item_hsn=prdsheet[2], company=company)
-                            total = int(prdsheet[3]) * int(itm.item_sale_price) - int(prdsheet[4])
+                        # Create SalesInvoiceItem object
+                        SalesInvoiceItem.objects.create(
+                            salesinvoice=invoice,
+                            company=company,
+                            item=itm,
+                            quantity=prdsheet[3],
+                            discount=prdsheet[4]
+                        )
 
-                            # Create SalesInvoiceItem object
-                            SalesInvoiceItem.objects.create(
-                                salesinvoice=invoice,
-                                company=company,
-                                item=itm,
-                                
-                                quantity=prdsheet[3],
-                                discount=prdsheet[4]
-                            )
+                        tax = int(prdsheet[5])
+                        subtotal += total
+                        tamount = total * (tax / 100)
+                        total_taxamount += tamount
 
-                            tax = int(prdsheet[5])
-                            subtotal += total
-                            tamount = total * (tax / 100)
-                            total_taxamount += tamount
+                gtotal = subtotal + total_taxamount + float(billsheet[6])
+                balance = gtotal - float(billsheet[7])
+                gtotal = round(gtotal, 2)
+                balance = round(balance, 2)
 
-        gtotal = subtotal + total_taxamount + float(billsheet[6])
-        balance = gtotal - float(billsheet[7])
-        gtotal = round(gtotal, 2)
-        balance = round(balance, 2)
+                invoice.subtotal = round(subtotal, 2)
+                invoice.total_taxamount = round(total_taxamount, 2)
+                invoice.adjustment = round(billsheet[6], 2)
+                invoice.grandtotal = gtotal
+                # invoice.paidoff = round(billsheet[7], 2)
+                # invoice.totalbalance = balance
+                invoice.save()
 
-        invoice.subtotal = round(subtotal, 2)
-        invoice.total_taxamount = round(total_taxamount, 2)
-        invoice.adjustment = round(billsheet[6], 2)
-        invoice.grandtotal = gtotal
-        invoice.paidoff = round(billsheet[7], 2)
-        invoice.totalbalance = balance
-        invoice.save()
+                SalesInvoiceTransactionHistory.objects.create(
+                    salesinvoice=invoice,
+                    # staff=invoice.staff,
+                    company=invoice.company,
+                    action='Created',
+                    # done_by_name=invoice.staff.first_name
+                )
 
-        SalesInvoiceTransactionHistory.objects.create(
-            salesinvoice=invoice,
-            staff=invoice.staff,
-            company=invoice.company,
-            action='Created',
-            done_by_name=invoice.staff.first_name
-        )
+            return JsonResponse({'message': 'File uploaded successfully!'})
+    except Exception as e:
+        return JsonResponse({'message': f'File upload failed: {str(e)}'})
 
-    return JsonResponse({'message': 'File uploaded successfully!'})
-  # except Exception as e:
-  #   return JsonResponse({'message': f'File upload failed: {str(e)}'})
-
-  #   return JsonResponse({'message': 'File upload failed: Invalid request method or missing files.'})
+    return JsonResponse({'message': 'File upload failed: Invalid request method or missing files.'})

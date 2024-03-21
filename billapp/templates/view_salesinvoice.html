@@ -691,10 +691,9 @@
         XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
         XLSX.writeFile(wb2, 'SalesInvoiceItemModel.xlsx');
     }
-</script>
 
 
-<script>
+
     function uploadFile() {
         const form = document.getElementById('excelForm');
         const formData = new FormData(form);
@@ -720,9 +719,10 @@
             })
         });
     }
+</script>
+<script>
 
-
-    {% comment %} $(document).ready(function() {
+    {% comment %} $(document).ready(function()) {
         var table = document.getElementById("excelbilltable");
         var rows = table.getElementsByTagName("tr");
         for (var i = 1; i < rows.length; i++) {
@@ -730,7 +730,7 @@
             if(bankid != 'Cash' && bankid != 'Cheque' && bankid != 'UPI'){
                 changetobankname(i,bankid)
             }
-        } {% endcomment %}
+        } }{% endcomment %}
 </script>
 
 <script>
@@ -802,11 +802,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.10/xlsx.full.min.js"></script>
 
 
-
-
-    function ExportToExcel() {
-        const table = document.querySelector('#excelinvoicetable');
-        const ws = XLSX.utils.table_to_sheet(table);
+ <script>
+function ExportToExcel() {
+    const table = document.querySelector('#excelinvoicetable');
+    const ws = XLSX.utils.table_to_sheet(table);
     
         // Specify column widths (in Excel characters, e.g., "15px")
         ws['!cols'] = [
@@ -854,8 +853,9 @@
     })
  
 </script>
+<script>
 
-{% comment %} <script>
+{% comment %} 
 
     function updateTotalBalance() {
         $.ajax({
@@ -872,7 +872,7 @@
         });
     }
     updateTotalBalance();
-</script> {% endcomment %}
+ {% endcomment %}
 
 
     calculatetotal()
@@ -903,7 +903,7 @@
     
 </script>
 
-
+<script>
 // custom dropdown1
 function toggleDropdown1() 
 {
