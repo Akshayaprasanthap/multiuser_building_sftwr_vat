@@ -632,9 +632,11 @@ def shareTransactionpartyToEmail(request, id):
         
     if request.method == "POST":
         try:
+         
             fparty = Party.objects.get(id=id)
             ftrans = Transactions_party.objects.filter(party=fparty)
-            context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans}
+            cmp = fparty.company
+            context = {'party': party, 'usr': request.user, 'fparty': fparty, 'ftrans': ftrans,'cmp':cmp}
             
             email_message = request.POST.get('email_message')
             my_subject = "Transaction REPORT"
@@ -649,15 +651,11 @@ def shareTransactionpartyToEmail(request, id):
             pdf_content.seek(0)
 
             filename = f'transaction.pdf'
-            message = EmailMultiAlternatives(
-                subject=my_subject,
-                body=f"Hi,\nPlease find the attached Transaction Report - \n{email_message}\n--\nRegards,\n",
-                from_email='altostechnologies6@gmail.com',  # Update with your email
-                to=emails_list,
-            )
-
-            message.attach(filename, pdf_content.read(), 'application/pdf')
-            message.send()
+            email=EmailMultiAlternatives(my_subject,f"Hi,\nPlease find the attached Transaction Report - \n{email_message}\n--\nRegards,\n{cmp.company_name},\n{cmp.address},{cmp.city},{cmp.country},\n{cmp.contact}\n",from_email='altostechnologies6@gmail.com',
+                                         to=emails_list, )
+       
+            email.attach(filename, pdf_content.read(), 'application/pdf')
+            email.send()
 
             return HttpResponse('<script>alert("Report has been shared successfully!");window.location="/party_list"</script>')
         except Party.DoesNotExist:
@@ -1328,22 +1326,21 @@ def editsave_salesinvoice(request,id):
 
 
 
-
-
 from django.shortcuts import render, get_object_or_404
 from .models import Party, Employee, SalesInvoiceTransactionHistory
-
+from django.shortcuts import get_object_or_404
 def salesinvoicehistory(request, id):
     if request.user.is_company:
         company = request.user.company
-        employee = None  # Initialize employee variable
+        party_name = company.company_name 
+        employee = None
     else:
-        # Use get_object_or_404 to handle DoesNotExist exception
         employee = get_object_or_404(Employee, user=request.user)
         company = employee.company
+        party_name = employee.user.get_full_name()  
 
     parties = Party.objects.filter(company=company)
-    emp = employee  # Use the retrieved employee object directly
+    emp = employee
 
     history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
 
@@ -1352,7 +1349,34 @@ def salesinvoicehistory(request, id):
         'history': history,
         'company': company,
         'emp': emp,
+        'employee':employee,
+        'party_name': party_name,  # Pass the party name to the template
     })
+
+
+# from django.shortcuts import render, get_object_or_404
+# from .models import Party, Employee, SalesInvoiceTransactionHistory
+
+# def salesinvoicehistory(request, id):
+#     if request.user.is_company:
+#         company = request.user.company
+#         employee = None  # Initialize employee variable
+#     else:
+#         # Use get_object_or_404 to handle DoesNotExist exception
+#         employee = get_object_or_404(Employee, user=request.user)
+#         company = employee.company
+
+#     parties = Party.objects.filter(company=company)
+#     emp = employee  # Use the retrieved employee object directly
+
+#     history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
+
+#     return render(request, 'salesinvoicehistory.html', {
+#         'parties': parties,
+#         'history': history,
+#         'company': company,
+#         'emp': emp,
+#     })
 
 
 
