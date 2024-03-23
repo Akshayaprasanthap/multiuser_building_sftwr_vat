@@ -1329,30 +1329,42 @@ def editsave_salesinvoice(request,id):
 from django.shortcuts import render, get_object_or_404
 from .models import Party, Employee, SalesInvoiceTransactionHistory
 from django.shortcuts import get_object_or_404
+# def salesinvoicehistory(request, id):
+    # if request.user.is_company:
+    #     company = request.user.company
+    #     party_name = company.company_name 
+    #     employee = None
+    # else:
+    #     employee = get_object_or_404(Employee, user=request.user)
+    #     company = employee.company
+    #     party_name = employee.user.get_full_name()  
+
+    # parties = Party.objects.filter(company=company)
+    # emp = employee
+
+    # history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
+
+    # return render(request, 'salesinvoicehistory.html', {
+    #     'parties': parties,
+    #     'history': history,
+    #     'company': company,
+    #     'emp': emp,
+    #     'employee':employee,
+    #     'party_name': party_name,  # Pass the party name to the template
+    # })
+
+
+
 def salesinvoicehistory(request, id):
     if request.user.is_company:
-        company = request.user.company
-        party_name = company.company_name 
-        employee = None
+          cmp = request.user.company
     else:
-        employee = get_object_or_404(Employee, user=request.user)
-        company = employee.company
-        party_name = employee.user.get_full_name()  
-
-    parties = Party.objects.filter(company=company)
-    emp = employee
-
-    history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id)
-
-    return render(request, 'salesinvoicehistory.html', {
-        'parties': parties,
-        'history': history,
-        'company': company,
-        'emp': emp,
-        'employee':employee,
-        'party_name': party_name,  # Pass the party name to the template
-    })
-
+          cmp = request.user.employee.company
+    salesinvoice=SalesInvoice.objects.get(id=id)
+    
+    history = SalesInvoiceTransactionHistory.objects.filter(salesinvoice=id) 
+    context={'c_usr':request.user,'c_comp':cmp,'salesinvoice':salesinvoice,'history':history}
+    return render(request,'salesinvoicehistory.html',context)
 
 # from django.shortcuts import render, get_object_or_404
 # from .models import Party, Employee, SalesInvoiceTransactionHistory

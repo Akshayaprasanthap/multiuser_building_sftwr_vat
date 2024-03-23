@@ -99,12 +99,12 @@
                                     <tr>
                                         <td class="text-center tb">{{ i.date }}</td>
                                         <td class="text-center tb">{{ i.action }}</td>
-                                        <td class="text-center tb">
-                                            {% if request.user.is_company %}
+                                        <td class="text-center tb">{{ i.company.company_name}}
+                                            <!-- {% if request.user.is_company %}
                     {{ i.salesinvoice.company.company_name }}
                 {% else %}
                     {{ i.salesinvoice.employee.user.get_full_name }}
-                {% endif %}
+                {% endif %} -->
 
 
 
