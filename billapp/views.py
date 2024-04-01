@@ -959,7 +959,9 @@ def save_sales_invoice(request):
   
   
   
-  if request.method == 'POST':      
+  if request.method == 'POST':  
+    usr = CustomUser.objects.get(username=request.user)    
+    print(usr)
     party_name = request.POST.get('partyname')
     contact = request.POST.get('contact')
     address = request.POST.get('address')
@@ -1001,7 +1003,7 @@ def save_sales_invoice(request):
     sales_invoice.save()
 
     tr_history = SalesInvoiceTransactionHistory(company=company,
-                                                 
+                                                
                                           salesinvoice=sales_invoice,
                                           action="CREATED",
                                           done_by_name=party.party_name,
