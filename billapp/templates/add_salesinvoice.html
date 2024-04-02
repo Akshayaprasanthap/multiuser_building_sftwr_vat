@@ -85,34 +85,30 @@
                     <a class="text-dark" style="font-size: 1.5rem;">Add Sales Invoice</a>
                 </div><br><br>
                 <div class="form-group row g-3">
-                    <div class="col-md-6" style="display: flex; margin-top: 10px; margin-left: 10px;">
-                        <input type="text" name="partystatus" id="partystatus" hidden>
-                        <div class="form-check">  
-                            <label style="user-select: none;" class="fs-4 tb" for="partyRadio">
-                                Party ON
-                            </label>
-                            <input type="radio" name="partyToggle" value="partyOn" checked> 
-                        </div>
-                        <div class="form-check" style="margin-left: 30px;">
-                            
-                            <label style="user-select: none;" class="fs-4 tb" for="partyRadio">
-                                Party OFF
-                            </label>
-                            <input type="radio" name="partyToggle" value="partyOff">
-                        </div>
+                    
+                        <div class="form-check"> 
+                            <div class="col-md-6" style="display: flex; margin-top: 10px; margin-left: 10px;">
+                            <input type="text" name="partystatus" id="partystatus" hidden>
+                            <div class="form-check">  
+                                <label style="user-select: none;" class="fs-4 tb" for="partyRadio">
+                                    Party ON
+                                </label>
+                                <input class="me-1" type="radio" name="partyStatusGroup" id="partyonRadio">
+                            </div>
+                            <div class="form-check" style="margin-left: 30px;">
+                                
+                                <label style="user-select: none;" class="fs-4 tb" for="partyRadio">
+                                    Party OFF
+                                </label>
+                                <input class="me-1" type="radio" name="partyStatusGroup" id="partyoffRadio">
+                            </div>
                     </div><br>  
                 </div>
+            </div> 
 
 
 
-                <!-- <div>
-                    <label>
-                        <input type="radio" name="partyToggle" value="partyOn" checked> Party On
-                    </label> &nbsp; &nbsp;
-                    <label>
-                        <input type="radio" name="partyToggle" value="partyOff"> Party Off
-                    </label>
-                </div> -->
+                
                 
                 <div class="d-flex mt-2 party-list-container">
                     <select style="color: black; border-color: #68020F; width: 21.5vw;" class="form-control me-2 partyField" id="partySelect" name="partyname" required>
@@ -1796,7 +1792,7 @@ $(document).on("input", "#advance", function(){
 
 
  </script>
-
+<!-- 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Get references to the radio buttons
@@ -1839,50 +1835,50 @@ $(document).on("input", "#advance", function(){
             }
         });
     });
-</script>
- <!-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get references to the radio buttons
-        const partyOnRadio = document.querySelector('input[value="partyOn"]');
-        const partyOffRadio = document.querySelector('input[value="partyOff"]');
-
-        // Function to handle Party On action
-        function handlePartyOn() {
-            // Show party fields
-            document.querySelectorAll('.partyField').forEach(function(field) {
-                field.style.display = 'block';
-            });
-        }
-
-        // Function to handle Party Off action
-        function handlePartyOff() {
-            // Hide party fields
-            document.querySelectorAll('.partyField').forEach(function(field) {
-                field.style.display = 'none';
-            });
-        }
-
-        // Event listener for Party On radio button
-        partyOnRadio.addEventListener("change", function() {
-            if (partyOnRadio.checked) {
-                handlePartyOn();
-            }
-        });
-
-        // Event listener for Party Off radio button
-        partyOffRadio.addEventListener("change", function() {
-            if (partyOffRadio.checked) {
-                handlePartyOff();
-            }
-        });
-
-        // Initially, hide party fields if partyOffRadio is checked
-        if (partyOffRadio.checked) {
-            handlePartyOff();
-        }
-    });
 </script> -->
 
+<script>
+    
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#partyonRadio').on('click', function () {
+        $('#partystatus').val('partyon');
+        $('.partyField').removeAttr('hidden');
+    });
+
+    $('#partyoffRadio').on('click', function () {
+        $('#partystatus').val('partyoff');
+        $('.partyField').attr('hidden', true);
+    });
+
+    // Trigger the click event for the initial state (party off)
+    $('#partyoffRadio').trigger('click');
+
+    // Function to validate party selection before saving
+    function validateBeforeSave() {
+        var partystatus = $('input[name="partyStatusGroup"]:checked').val();
+        var partySelect = $('#partySelect').val();
+
+        if (partystatus === 'partyoff' && partySelect === '') {
+            alert('Please select a party before saving.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Add event listener to Save buttons
+    $('.save-button').on('click', function (event) {
+        if (!validateBeforeSave()) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+});
+
+</script>
 
 
 {% endblock %}

@@ -948,85 +948,96 @@ def itemdata_salesinvoiceedit(request):
         raise Http404("Item not found")
 
 
+from django.shortcuts import get_object_or_404
+
 def save_sales_invoice(request):
-  if request.user.is_company:
-      company = request.user.company
-      parties = Party.objects.filter(company=company)
-  else:
-    company = request.user.employee.company
-    parties = Party.objects.filter(company=company)
-  
-  
-  
-  
-  if request.method == 'POST':  
-    usr = CustomUser.objects.get(username=request.user)    
-    print(usr)
-    party_name = request.POST.get('partyname')
-    contact = request.POST.get('contact')
-    address = request.POST.get('address')
-    invoice_no = request.POST.get('invoiceno')
-    tax=request.POST.get('tax')
-    date = request.POST.get('date')
-    product = tuple(request.POST.getlist("product[]"))
-    hsn =  tuple(request.POST.getlist("hsn[]"))
-    qty =  tuple(request.POST.getlist("qty[]"))
-    rate =  tuple(request.POST.getlist("price[]"))
-    discount =  tuple(request.POST.getlist("discount[]"))
-    vat =  tuple(request.POST.getlist("vat[]"))
-    total =  tuple(request.POST.getlist("total[]"))
-    description = request.POST.get('description')
-    subtotal = float(request.POST.get('subtotal'))
-    adjust = request.POST.get("adj")
-    grandtotal=request.POST.get('grandtotal')
-    taxamount = request.POST.get("taxamount")
-    party=Party.objects.get(party_name=party_name)
-
-        
-      
-    sales_invoice = SalesInvoice(
-        company=company,
-        party_name=party_name,
-        contact=contact,
-        address=address,
-        invoice_no=invoice_no,
-        date=date,
-        description=description,
-        subtotal=subtotal,
-        vat=request.POST['vat'],
-        total_taxamount=taxamount if taxamount is not None else 0,  # Provide a default value if taxamount is None
-        adjustment=adjust,
-        grandtotal=grandtotal,
-        
-    )
-
-    sales_invoice.save()
-
-    tr_history = SalesInvoiceTransactionHistory(company=company,
-                                                
-                                          salesinvoice=sales_invoice,
-                                          action="CREATED",
-                                          done_by_name=party.party_name,
-                                          )
-    tr_history.save()
-
-    invoice = SalesInvoice.objects.get(id=sales_invoice.id)
-    mapped = []  # Initialize mapped
-    print(product,hsn,qty,discount,vat,total,rate)
-    if len(product)==len(hsn)==len(qty)==len(rate)==len(discount)==len(vat)==len(total):
-      mapped=zip(product, hsn, qty, rate, discount, vat, total)
-      mapped=list(mapped)
-    for ele in mapped: 
-      itm = Item.objects.get(id=ele[0])
-      SalesInvoiceItem.objects.create(item=itm, hsn=ele[1], quantity=ele[2], rate=ele[3], discount=ele[4], tax=ele[5], totalamount=ele[6], salesinvoice=invoice, company=company)
-
-    if 'save_and_new' in request.POST:
-      return redirect(add_salesinvoice)
+    if request.user.is_company:
+        company = request.user.company
+        parties = Party.objects.filter(company=company)
     else:
-      return redirect('salesinvoice_billtemplate', sales_invoice.id)
+        company = request.user.employee.company
+        parties = Party.objects.filter(company=company)
 
-  
-  return HttpResponse("Default response")
+    if request.method == 'POST':  
+        usr = CustomUser.objects.get(username=request.user)    
+        party_name = request.POST.get('partyname')
+        contact = request.POST.get('contact')
+        address = request.POST.get('address')
+        invoice_no = request.POST.get('invoiceno')
+        tax = request.POST.get('tax')
+        date = request.POST.get('date')
+        product = tuple(request.POST.getlist("product[]"))
+        hsn = tuple(request.POST.getlist("hsn[]"))
+        qty = tuple(request.POST.getlist("qty[]"))
+        rate = tuple(request.POST.getlist("price[]"))
+        discount = tuple(request.POST.getlist("discount[]"))
+        vat = tuple(request.POST.getlist("vat[]"))
+        total = tuple(request.POST.getlist("total[]"))
+        description = request.POST.get('description')
+        subtotal = float(request.POST.get('subtotal'))
+        adjust = request.POST.get("adj")
+        grandtotal = request.POST.get('grandtotal')
+        taxamount = request.POST.get("taxamount")
+
+        try:
+            party = get_object_or_404(Party, party_name=party_name)
+        except Http404:
+            # Return a response containing JavaScript code to show a pop-up message
+            return HttpResponse("""
+                <script>
+                    alert('Party not found. Please select a valid party.');
+                    window.location.href = '/add_salesinvoice'; // Redirect to the Add Sales Invoice page
+                </script>
+            """)
+
+        sales_invoice = SalesInvoice(
+            company=company,
+            party_name=party_name,
+            contact=contact,
+            address=address,
+            invoice_no=invoice_no,
+            date=date,
+            description=description,
+            subtotal=subtotal,
+            vat=request.POST['vat'],
+            total_taxamount=taxamount if taxamount is not None else 0,
+            adjustment=adjust,
+            grandtotal=grandtotal,
+        )
+        sales_invoice.save()
+
+        tr_history = SalesInvoiceTransactionHistory(
+            company=company,
+            salesinvoice=sales_invoice,
+            action="CREATED",
+            done_by_name=party.party_name,
+        )
+        tr_history.save()
+
+        invoice = SalesInvoice.objects.get(id=sales_invoice.id)
+        mapped = zip(product, hsn, qty, rate, discount, vat, total)
+
+        for ele in mapped: 
+            itm = Item.objects.get(id=ele[0])
+            SalesInvoiceItem.objects.create(
+                item=itm,
+                hsn=ele[1],
+                quantity=ele[2],
+                rate=ele[3],
+                discount=ele[4],
+                tax=ele[5],
+                totalamount=ele[6],
+                salesinvoice=invoice,
+                company=company
+            )
+
+        if 'save_and_new' in request.POST:
+            return redirect(add_salesinvoice)
+        else:
+            return redirect('salesinvoice_billtemplate', sales_invoice.id)
+
+    return HttpResponse("Default response")
+
         # if 'save_and_new' in request.POST:
         #   return redirect(add_salesinvoice)
         # else:

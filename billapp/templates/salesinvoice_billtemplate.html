@@ -486,16 +486,17 @@
                                                 </thead>
                                                 <tbody style="border: 1px solid #68020F;" >
                                                     {% for i in salesinvoiceitems %}
-                                                        <tr>
-                                                            <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.hsn}}</td>
-                                                            <td class="text-center" style="color:black">{{i.quantity}}</td>
-                                                            <td class="text-center" style="color:black">{{i.rate}}</td>
-                                                            <td class="text-center" style="color:black">{{i.tax}}</td>
-                                                            <td class="text-center" style="color:black">{{i.discount}}</td>
-                                                            <td class="text-center" style="color:black">{{i.totalamount}}</td>
-                                                        </tr>
-                                                    {% endfor %} 
+                                                        
+                                                    <tr>
+                                                        <td style="color:black; text-align: center;">{{ i.item.itm_name }}</td>
+                                                        <td style="color:black">{{ i.hsn }}</td>
+                                                        <td style="color:black">{{ i.rate }}</td>
+                                                        <td style="color:black">{{ i.quantity }}</td>
+                                                        <td style="color:black">{{ i.tax }}</td>
+                                                        <td style="color:black">{{ i.discount }}</td>
+                                                        <td style="color:black">{{ i.totalamount }}</td>
+                                                    </tr>
+                                                    {% endfor %}
                                                 </tbody>
                                             </table>
                                         </section>
@@ -592,6 +593,7 @@
                                                     <br>
                                                 </p>
                                             </div>
+                                            <section class="store-user">
                                             <div class="row col-12">
                                                 <div class="col-md-1"></div>
                                                 <div class="col-5">
@@ -619,36 +621,39 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="col-md-1"></div>
-                                            <div class="col-md-10"><br>
-                                                <table class="table table-hover table-bordered  template3table" id="table3" style="border:1px solid black">
-                                                    <thead >
-                                                        <tr class="template3tablehead" style="background-color: #68020F;">
-                                                            <th class="text-center"  style="color:white">Items</th>
-                                                            <th class="text-center"  style="color:white">HSN</th>
-                                                            <th class="text-center"  style="color:white">Quantity</th>
-                                                            <th class="text-center"  style="color:white">Rate</th>
-                                                            <th class="text-center"  style="color:white">Tax</th>
-                                                            <th class="text-center"  style="color:white">Discount</th>
-                                                            <th class="text-center"  style="color:white">Total</th>
+                                            </section>
+                                            <section class="product-area mt-4">
+                                                <table class=" table table-hover table-bordered border-dark"
+                                                    id="table1">
+                                                    <thead class="  " style="background-color: #68020F;">
+                                                        <tr>
+                                                            <td
+                                                                style="text-align: center; font-weight:bold; color:white ">
+                                                                Items</td>
+                                                            <td style="font-weight:bold; color:white ">HSN</td>
+                                                            <td style="font-weight:bold; color:white ">Price</td>
+                                                            <td style="font-weight:bold; color:white">Quantity</td>
+                                                            <td style="font-weight:bold; color:white">Tax</td>
+                                                            <td style="font-weight:bold; color:white">Discount</td>
+                                                            <td style="font-weight:bold; color:white">Total</td>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {% for i in salesinvoiceitem %}
+                                                        {% for i in salesinvoiceitems %}
+                                                        
                                                         <tr>
-                                                            <td class="text-center" style="color:black">{{i.item.itm_name}}</td>
-                                                            <td class="text-center" style="color:black">{{i.hsn}}</td>
-                                                            <td class="text-center" style="color:black">{{i.quantity}}</td>
-                                                            <td class="text-center" style="color:black">{{i.rate}}</td>
-                                                            <td class="text-center" style="color:black">{{i.tax}}</td>
-                                                            <td class="text-center" style="color:black">{{i.discount}}</td>
-                                                            <td class="text-center" style="color:black">{{i.totalamount}}</td>
+                                                            <td style="color:black; text-align: center;">{{ i.item.itm_name }}</td>
+                                                            <td style="color:black">{{ i.hsn }}</td>
+                                                            <td style="color:black">{{ i.rate }}</td>
+                                                            <td style="color:black">{{ i.quantity }}</td>
+                                                            <td style="color:black">{{ i.tax }}</td>
+                                                            <td style="color:black">{{ i.discount }}</td>
+                                                            <td style="color:black">{{ i.totalamount }}</td>
                                                         </tr>
-                                                    {% endfor %}  
+                                                        {% endfor %}
                                                     </tbody>
-                                                </table>
-                                            </div>
-                                        </div> 
+                                                </table><br><br>
+                                            </section>
                                         <section class="balance-info">
                                             <div class="row">
                                                 <div class="col-md-7"></div>
